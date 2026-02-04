@@ -42,58 +42,71 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter }) => {
     <div className="flex flex-col gap-8 p-2 sm:p-4 max-w-5xl mx-auto pb-20">
       
       {/* SEÇÃO SUPERIOR: MOEDAS E CARGA */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
         {/* MOEDAS (BOLSA DE VALORES) */}
-        <div className="lg:col-span-7 bg-[#fdf5e6] border-2 border-[#8b4513] p-5 rounded-2xl shadow-xl relative overflow-hidden">
+        <div className="lg:col-span-8 bg-[#fdf5e6] border-2 border-[#8b4513] p-5 rounded-2xl shadow-xl relative overflow-hidden">
           <h2 className="cinzel text-[11px] font-bold text-[#8b4513] mb-6 tracking-widest uppercase border-b border-[#8b4513]/20 pb-1">Bolsa de Moedas</h2>
           
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {/* Platina */}
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#708090] via-[#e2e8f0] to-[#ffffff] border-2 border-[#4a5568] shadow-lg flex items-center justify-center mb-2 group transition-transform hover:scale-110">
+                <span className="text-[#2d3748] font-bold text-lg drop-shadow-sm">PL</span>
+              </div>
+              <input 
+                type="number" 
+                defaultValue={0} 
+                className="bg-transparent text-xl font-bold fantasy-title text-center w-full focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
+              />
+              <span className="text-[8px] cinzel font-bold text-[#8b4513]/60 uppercase">Platina</span>
+            </div>
+
             {/* Ouro */}
             <div className="flex flex-col items-center">
               <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#b8860b] via-[#ffd700] to-[#fffacd] border-2 border-[#8b4513] shadow-lg flex items-center justify-center mb-2 group transition-transform hover:scale-110">
-                <span className="text-[#8b4513] font-bold text-lg drop-shadow-sm">GP</span>
+                <span className="text-[#8b4513] font-bold text-lg drop-shadow-sm">PO</span>
               </div>
               <input 
                 type="number" 
                 defaultValue={15} 
                 className="bg-transparent text-xl font-bold fantasy-title text-center w-full focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
               />
-              <span className="text-[8px] cinzel font-bold text-[#8b4513]/60 uppercase">Peças de Ouro</span>
+              <span className="text-[8px] cinzel font-bold text-[#8b4513]/60 uppercase">Ouro</span>
             </div>
 
             {/* Prata */}
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#708090] via-[#c0c0c0] to-[#f5f5f5] border-2 border-[#4a5568] shadow-lg flex items-center justify-center mb-2 group transition-transform hover:scale-110">
-                <span className="text-[#2d3748] font-bold text-lg drop-shadow-sm">SP</span>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#4a5568] via-[#cbd5e0] to-[#f7fafc] border-2 border-[#4a5568] shadow-lg flex items-center justify-center mb-2 group transition-transform hover:scale-110">
+                <span className="text-[#2d3748] font-bold text-lg drop-shadow-sm">PP</span>
               </div>
               <input 
                 type="number" 
                 defaultValue={0} 
                 className="bg-transparent text-xl font-bold fantasy-title text-center w-full focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
               />
-              <span className="text-[8px] cinzel font-bold text-[#8b4513]/60 uppercase">Peças de Prata</span>
+              <span className="text-[8px] cinzel font-bold text-[#8b4513]/60 uppercase">Prata</span>
             </div>
 
             {/* Cobre */}
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#8b4513] via-[#cd7f32] to-[#ffebcd] border-2 border-[#5d4037] shadow-lg flex items-center justify-center mb-2 group transition-transform hover:scale-110">
-                <span className="text-[#3e2723] font-bold text-lg drop-shadow-sm">CP</span>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#5d4037] via-[#a16207] to-[#fef3c7] border-2 border-[#5d4037] shadow-lg flex items-center justify-center mb-2 group transition-transform hover:scale-110">
+                <span className="text-[#3e2723] font-bold text-lg drop-shadow-sm">PC</span>
               </div>
               <input 
                 type="number" 
                 defaultValue={0} 
                 className="bg-transparent text-xl font-bold fantasy-title text-center w-full focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" 
               />
-              <span className="text-[8px] cinzel font-bold text-[#8b4513]/60 uppercase">Peças de Cobre</span>
+              <span className="text-[8px] cinzel font-bold text-[#8b4513]/60 uppercase">Cobre</span>
             </div>
           </div>
         </div>
 
         {/* MEDIDOR DE CARGA (CAPACIDADE) */}
-        <div className="lg:col-span-5 bg-[#fdf5e6] border-2 border-[#8b4513] p-5 rounded-2xl shadow-xl flex flex-col justify-between h-full">
+        <div className="lg:col-span-4 bg-[#fdf5e6] border-2 border-[#8b4513] p-5 rounded-2xl shadow-xl flex flex-col justify-between">
           <div className="flex justify-between items-center mb-4">
-             <h2 className="cinzel text-[11px] font-bold text-[#8b4513] tracking-widest uppercase">Encumbramento</h2>
+             <h2 className="cinzel text-[11px] font-bold text-[#8b4513] tracking-widest uppercase">Carga</h2>
              <div className="text-right">
                 <span className={`text-2xl font-bold fantasy-title ${totalWeight > carryCapacity ? 'text-red-700 animate-pulse' : 'text-[#8b4513]'}`}>
                   {totalWeight.toFixed(1)}
@@ -111,7 +124,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter }) => {
             </div>
           </div>
           <p className="text-[9px] parchment-text italic text-[#8b4513]/70 mt-3 text-center">
-            "Um fardo pesado diminui o passo do caçador."
+            "Sua jornada depende do que você carrega."
           </p>
         </div>
       </div>
@@ -122,16 +135,16 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter }) => {
         <div className="bg-[#8b4513]/5 border-b-2 border-[#8b4513]/20 p-5">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
             <div className="md:col-span-6 flex flex-col">
-              <label className="cinzel text-[8px] font-bold text-[#8b4513] uppercase mb-1">Nome do Item</label>
+              <label className="cinzel text-[8px] font-bold text-[#8b4513] uppercase mb-1 tracking-widest">Nome do Item</label>
               <input 
-                placeholder="Ex: Poção de Cura, Corda de Cânhamo..."
-                className="bg-white/70 border-2 border-[#8b4513]/30 rounded-lg p-2 focus:border-[#8b4513] outline-none parchment-text font-bold text-[#3e2723] placeholder:text-[#8b4513]/70 placeholder:italic placeholder:font-normal"
+                placeholder="Ex: Poção de Cura, Mochila..."
+                className="bg-white/70 border-2 border-[#8b4513]/30 rounded-lg p-2 focus:border-[#8b4513] outline-none parchment-text font-bold text-[#3e2723] placeholder:text-[#8b4513]/40 placeholder:italic placeholder:font-normal"
                 value={newItem.name}
                 onChange={e => setNewItem({...newItem, name: e.target.value})}
               />
             </div>
             <div className="md:col-span-2 flex flex-col">
-              <label className="cinzel text-[8px] font-bold text-[#8b4513] uppercase mb-1 text-center">Peso (KG)</label>
+              <label className="cinzel text-[8px] font-bold text-[#8b4513] uppercase mb-1 text-center tracking-widest">Peso (KG)</label>
               <input 
                 type="number"
                 placeholder="0.0"
@@ -141,7 +154,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter }) => {
               />
             </div>
             <div className="md:col-span-2 flex flex-col">
-              <label className="cinzel text-[8px] font-bold text-[#8b4513] uppercase mb-1 text-center">Qtd.</label>
+              <label className="cinzel text-[8px] font-bold text-[#8b4513] uppercase mb-1 text-center tracking-widest">Qtd.</label>
               <input 
                 type="number"
                 placeholder="1"
@@ -182,12 +195,10 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter }) => {
                   key={item.id} 
                   className={`grid grid-cols-12 items-center gap-2 p-4 border-b border-[#8b4513]/10 transition-colors group relative ${item.equipped ? 'bg-[#8b4513]/5' : 'bg-transparent'} hover:bg-[#8b4513]/10`}
                 >
-                  {/* Quantidade */}
                   <div className="col-span-1 flex justify-center">
                     <span className="fantasy-title text-xl text-[#8b4513]">{item.quantity}</span>
                   </div>
 
-                  {/* Nome e Toggle Equipar */}
                   <div className="col-span-7 pl-4 flex items-center gap-3">
                     <button 
                       onClick={() => toggleEquip(item.id)}
@@ -198,17 +209,15 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter }) => {
                       <span className={`parchment-text text-base font-bold transition-all ${item.equipped ? 'text-[#8b4513]' : 'text-[#3e2723]'}`}>
                         {item.name}
                       </span>
-                      {item.equipped && <span className="text-[7px] cinzel font-bold text-[#8b4513]/60 uppercase tracking-tighter">Item em Uso</span>}
+                      {item.equipped && <span className="text-[7px] cinzel font-bold text-[#8b4513]/60 uppercase tracking-tighter">Em Uso</span>}
                     </div>
                   </div>
 
-                  {/* Peso Unitário e Total */}
                   <div className="col-span-2 text-center flex flex-col">
                     <span className="text-sm font-bold text-[#8b4513]">{item.weight * item.quantity}kg</span>
-                    <span className="text-[8px] cinzel text-[#8b4513]/40 uppercase">{item.weight}u</span>
+                    <span className="text-[8px] cinzel text-[#8b4513]/40 uppercase tracking-widest">{item.weight}u</span>
                   </div>
 
-                  {/* Botões de Ação */}
                   <div className="col-span-2 flex justify-end pr-4 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
                       onClick={() => removeItem(item.id)} 

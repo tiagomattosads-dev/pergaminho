@@ -88,7 +88,6 @@ const App: React.FC = () => {
   };
 
   const handleImport = (importedChar: Character) => {
-    // Garantir ID único para evitar conflitos
     const charWithNewId = { ...importedChar, id: Date.now().toString() };
     setAllCharacters(prev => [...prev, charWithNewId]);
   };
@@ -189,66 +188,66 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex-none w-full md:w-auto max-w-xl bg-black/40 rounded-xl border border-[#8b4513]/40 p-3 shadow-inner">
-              <div className="flex items-center justify-between gap-4 mb-2">
-                <div className="flex items-center gap-2">
+            <div className="flex-none w-full md:w-auto flex items-center gap-4">
+              <div className="flex-grow md:flex-none md:w-72 lg:w-96 bg-black/40 rounded-xl border border-[#8b4513]/40 p-3 shadow-inner">
+                <div className="flex items-center justify-between gap-4 mb-2">
                   <div className="flex flex-col items-center min-w-[40px]">
-                    <span className="text-[7px] cinzel font-bold text-[#d4af37] uppercase">Nível</span>
+                    <span className="text-[7px] cinzel font-bold text-[#d4af37] uppercase tracking-widest">Nível</span>
                     <span className="text-xl font-bold fantasy-title leading-none">{levelData?.level}</span>
                   </div>
                   
-                  {/* Ícone de Configurações Estático ao lado do nível */}
-                  <button 
-                    onClick={() => setActiveTab(Tab.Settings)}
-                    className={`p-1.5 rounded-lg border transition-colors ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-black/20 border-[#8b4513]/40 text-[#d4af37] hover:bg-[#8b4513]/20'}`}
-                    title="Configurações da Crônica"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </button>
-                </div>
-                
-                <div className="flex-grow flex flex-col gap-1">
-                  <div className="flex justify-between items-center text-[7px] cinzel font-bold text-[#e8d5b5]/60 uppercase">
-                    <span>Experiência</span>
-                    <span>{levelData?.nextLevelXp ? `${character.exp} / ${levelData.nextLevelXp}` : 'Máximo'}</span>
-                  </div>
-                  <div className="h-2 w-full bg-black/50 border border-[#8b4513]/20 rounded-full overflow-hidden shadow-inner">
-                    <div 
-                      className="h-full bg-gradient-to-r from-[#8b4513] via-[#d4af37] to-[#8b4513] transition-all duration-700 relative"
-                      style={{ width: `${levelData?.progressPercent}%` }}
-                    >
-                      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] opacity-20"></div>
+                  <div className="flex-grow flex flex-col gap-1">
+                    <div className="flex justify-between items-center text-[7px] cinzel font-bold text-[#e8d5b5]/60 uppercase tracking-widest">
+                      <span>Experiência</span>
+                      <span>{levelData?.nextLevelXp ? `${character.exp} / ${levelData.nextLevelXp}` : 'Máximo'}</span>
                     </div>
+                    <div className="h-2 w-full bg-black/50 border border-[#8b4513]/20 rounded-full overflow-hidden shadow-inner">
+                      <div 
+                        className="h-full bg-gradient-to-r from-[#8b4513] via-[#d4af37] to-[#8b4513] transition-all duration-700 relative"
+                        style={{ width: `${levelData?.progressPercent}%` }}
+                      >
+                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] opacity-20"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="relative group flex-grow">
+                    <input 
+                      type="number"
+                      min="0"
+                      value={character.exp}
+                      onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
+                      className="bg-black/20 border border-[#8b4513]/40 text-[#f4e4bc] text-center text-xs cinzel font-bold py-1 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="number"
+                      min="0"
+                      value={xpToAdd}
+                      onChange={(e) => setXpToAdd(Math.max(0, parseInt(e.target.value) || 0))}
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddXp()}
+                      placeholder="+"
+                      className="bg-black/30 border border-[#8b4513]/60 text-[#d4af37] text-center text-xs cinzel font-bold py-1 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-14 [appearance:textfield]"
+                    />
+                    <button onClick={handleAddXp} className="px-3 py-1 bg-[#3d2511] border border-[#d4af37]/40 rounded-lg cinzel text-[10px] font-bold text-[#d4af37] hover:bg-[#8b4513] hover:text-[#fdf5e6] transition-all uppercase">Adicionar</button>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="relative group">
-                  <input 
-                    type="number"
-                    min="0"
-                    value={character.exp}
-                    onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
-                    className="bg-black/20 border border-[#8b4513]/40 text-[#f4e4bc] text-center text-xs cinzel font-bold py-1 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-24 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <input 
-                    type="number"
-                    min="0"
-                    value={xpToAdd}
-                    onChange={(e) => setXpToAdd(Math.max(0, parseInt(e.target.value) || 0))}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddXp()}
-                    placeholder="+"
-                    className="bg-black/30 border border-[#8b4513]/60 text-[#d4af37] text-center text-xs cinzel font-bold py-1 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-16 [appearance:textfield]"
-                  />
-                  <button onClick={handleAddXp} className="px-3 py-1 bg-[#3d2511] border border-[#d4af37]/40 rounded-lg cinzel text-[10px] font-bold text-[#d4af37] hover:bg-[#8b4513] hover:text-[#fdf5e6] transition-all uppercase">Adicionar</button>
-                </div>
-              </div>
+              {/* Botão de Configurações FORA do bloco de nível */}
+              <button 
+                onClick={() => setActiveTab(Tab.Settings)}
+                className={`flex-none p-3 rounded-xl border-2 transition-all duration-300 shadow-lg active:scale-95 ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_15px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
+                title="Configurações do Pergaminho"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
             </div>
           </div>
 
