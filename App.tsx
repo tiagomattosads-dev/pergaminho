@@ -188,7 +188,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex-none w-full md:w-auto flex items-center gap-4">
+            <div className="flex-none w-full md:w-auto flex items-center gap-4 lg:gap-6">
               <div className="flex-grow md:flex-none md:w-72 lg:w-96 bg-black/40 rounded-xl border border-[#8b4513]/40 p-3 shadow-inner">
                 <div className="flex items-center justify-between gap-4 mb-2">
                   <div className="flex flex-col items-center min-w-[40px]">
@@ -237,7 +237,7 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Botão de Configurações FORA do bloco de nível */}
+              {/* Botão de Configurações FORA do bloco de nível e com espaçamento no desktop */}
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
                 className={`flex-none p-3 rounded-xl border-2 transition-all duration-300 shadow-lg active:scale-95 ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_15px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
