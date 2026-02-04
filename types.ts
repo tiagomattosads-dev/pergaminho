@@ -72,4 +72,8 @@ export interface Character {
   weapons: Weapon[];
   spells: Spell[];
   spellSlots: Record<number, { total: number; used: number }>;
+  // Campos de override para conjuração
+  spellcastingAbility?: Attribute;
+  spellSaveDC?: number;
+  spellAttackBonus?: string;
 }

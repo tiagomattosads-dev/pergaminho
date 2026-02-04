@@ -8,14 +8,30 @@ interface Props {
   updateCharacter: (updates: Partial<Character>) => void;
 }
 
+const ATTRIBUTE_LABELS: Record<Attribute, string> = {
+  [Attribute.FOR]: 'Força',
+  [Attribute.DES]: 'Destreza',
+  [Attribute.CON]: 'Constituição',
+  [Attribute.INT]: 'Inteligência',
+  [Attribute.SAB]: 'Sabedoria',
+  [Attribute.CAR]: 'Carisma',
+};
+
 const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
   const [newSpell, setNewSpell] = useState({ name: '', level: 0, description: '' });
 
   const currentLevel = getLevelFromXP(character.exp);
   const profBonus = getProficiencyFromLevel(currentLevel);
-  const intMod = Math.floor((character.stats[Attribute.INT] - 10) / 2);
-  const spellDC = 8 + intMod + profBonus;
-  const attackMod = intMod + profBonus;
+  
+  // Lógica de cálculo automático vs manual
+  const castingAbility = character.spellcastingAbility || Attribute.INT;
+  const abilityMod = Math.floor((character.stats[castingAbility] - 10) / 2);
+  
+  const autoDC = 8 + abilityMod + profBonus;
+  const autoAttack = (abilityMod + profBonus) >= 0 ? `+${abilityMod + profBonus}` : `${abilityMod + profBonus}`;
+
+  const displayDC = character.spellSaveDC !== undefined ? character.spellSaveDC : autoDC;
+  const displayAttack = character.spellAttackBonus !== undefined ? character.spellAttackBonus : autoAttack;
 
   const toggleSlot = (level: number, used: boolean) => {
     const slots = { ...character.spellSlots };
@@ -51,17 +67,14 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
     });
   };
 
-  const SpellSeal: React.FC<{ label: string; value: string | number; sub: string; isMod?: boolean }> = ({ label, value, sub, isMod }) => (
+  const SpellSeal: React.FC<{ label: string; sub: string; children: React.ReactNode }> = ({ label, sub, children }) => (
     <div className="flex flex-col items-center group relative">
-      {/* Legenda SUPERIOR (FORA do Círculo) */}
       <span className="cinzel text-[7px] sm:text-[9px] font-bold text-[#8b4513] uppercase tracking-[0.2em] mb-3 relative z-10 transition-colors group-hover:text-[#d4af37]">
         {label}
       </span>
 
-      {/* Moldura de Selo Arcano */}
       <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full border-4 border-[#8b4513] bg-[#fdf5e6] shadow-[0_10px_25px_rgba(0,0,0,0.3)] flex flex-col items-center justify-center relative overflow-hidden transition-all duration-500 group-hover:border-[#d4af37] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
         
-        {/* Diagrama Arcano de Fundo */}
         <div className="absolute inset-0 opacity-[0.07] pointer-events-none group-hover:opacity-[0.12] transition-opacity duration-700 rotate-0 group-hover:rotate-45">
           <svg viewBox="0 0 100 100" className="w-full h-full fill-none stroke-[#8b4513] stroke-[0.5]">
             <circle cx="50" cy="50" r="45" />
@@ -72,25 +85,19 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
           </svg>
         </div>
 
-        {/* Gradiente de Brilho Central */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15)_0%,transparent_70%)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
         
-        <div className="relative z-10 flex items-center justify-center">
-          <span className={`text-3xl sm:text-5xl font-bold fantasy-title text-[#3e2723] leading-none drop-shadow-md ${isMod ? 'text-[#8b4513]' : ''}`}>
-            {value}
-          </span>
+        <div className="relative z-20 flex items-center justify-center w-full px-2">
+          {children}
         </div>
 
-        {/* Detalhes de Borda Interna */}
         <div className="absolute inset-2 border border-[#8b4513]/10 rounded-full pointer-events-none"></div>
       </div>
 
-      {/* Legenda INFERIOR (FORA do Círculo) */}
       <span className="cinzel text-[7px] sm:text-[8px] font-bold text-[#8b4513]/60 mt-3 uppercase tracking-widest relative z-10">
         {sub}
       </span>
 
-      {/* Ornamentos Laterais (Desktop Only) */}
       <div className="hidden lg:block absolute -left-4 top-1/2 -translate-y-1/2 w-3 h-12 bg-gradient-to-b from-transparent via-[#8b4513]/20 to-transparent rounded-full"></div>
       <div className="hidden lg:block absolute -right-4 top-1/2 -translate-y-1/2 w-3 h-12 bg-gradient-to-b from-transparent via-[#8b4513]/20 to-transparent rounded-full"></div>
     </div>
@@ -99,14 +106,39 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
   return (
     <div className="flex flex-col gap-8 p-4 sm:p-6 max-w-6xl mx-auto pb-24">
       
-      {/* CABEÇALHO ARCANO (STATS) */}
+      {/* CABEÇALHO ARCANO (STATS EDITÁVEIS) */}
       <div className="flex flex-wrap justify-center gap-8 sm:gap-20 py-8 relative">
-        {/* Linha Decorativa de Conexão */}
         <div className="absolute top-1/2 left-20 right-20 h-0.5 bg-gradient-to-r from-transparent via-[#8b4513]/10 to-transparent -translate-y-1/2 hidden lg:block"></div>
         
-        <SpellSeal label="Atributo de Poder" value="INT" sub="Inteligência" />
-        <SpellSeal label="CD de Resistência" value={spellDC} sub="Dificuldade" />
-        <SpellSeal label="Ataque Mágico" value={`+${attackMod}`} sub="Bônus" isMod />
+        <SpellSeal label="Atributo de Poder" sub={ATTRIBUTE_LABELS[castingAbility]}>
+          <select 
+            value={castingAbility}
+            onChange={(e) => updateCharacter({ spellcastingAbility: e.target.value as Attribute })}
+            className="bg-transparent text-2xl sm:text-4xl font-bold fantasy-title text-[#3e2723] text-center outline-none cursor-pointer appearance-none w-full relative z-30"
+          >
+            {Object.values(Attribute).map(attr => (
+              <option key={attr} value={attr} className="bg-[#fdf5e6] text-[#3e2723] cinzel text-sm">{attr}</option>
+            ))}
+          </select>
+        </SpellSeal>
+
+        <SpellSeal label="CD de Resistência" sub="Dificuldade">
+          <input 
+            type="number"
+            value={displayDC}
+            onChange={(e) => updateCharacter({ spellSaveDC: parseInt(e.target.value) || 0 })}
+            className="bg-transparent text-3xl sm:text-5xl font-bold fantasy-title text-[#3e2723] text-center outline-none w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          />
+        </SpellSeal>
+
+        <SpellSeal label="Ataque Mágico" sub="Bônus">
+          <input 
+            type="text"
+            value={displayAttack}
+            onChange={(e) => updateCharacter({ spellAttackBonus: e.target.value })}
+            className="bg-transparent text-3xl sm:text-5xl font-bold fantasy-title text-[#8b4513] text-center outline-none w-full"
+          />
+        </SpellSeal>
       </div>
 
       {/* REGISTRO DE NOVA MAGIA */}
@@ -169,7 +201,6 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
 
           return (
             <div key={level} className="bg-[#fdf5e6] border-2 border-[#8b4513] rounded-3xl shadow-2xl overflow-hidden relative">
-              {/* Cabeçalho do Círculo */}
               <div className="bg-[#8b4513] p-5 flex justify-between items-center border-b-2 border-[#d4af37]/30">
                 <div className="flex items-center gap-5">
                   <div className="w-12 h-12 rounded-full bg-[#2d1b0d] border-2 border-[#d4af37] flex items-center justify-center shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
@@ -180,7 +211,6 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
                   </h3>
                 </div>
 
-                {/* Espaços de Magia (Runas) */}
                 {level > 0 && character.spellSlots[level] && (
                   <div className="flex gap-3 items-center bg-black/30 px-5 py-2.5 rounded-full border border-white/10 shadow-inner">
                     <span className="cinzel text-[8px] font-bold text-[#fdf5e6]/40 uppercase mr-1 tracking-widest">Espaços:</span>
@@ -200,7 +230,6 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
                 )}
               </div>
 
-              {/* Lista de Magias do Círculo */}
               <div className="p-0">
                 {circleSpells.length === 0 ? (
                   <div className="p-12 text-center opacity-30 italic cinzel text-xs py-16">
@@ -211,7 +240,6 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter }) => {
                     {circleSpells.map((spell, idx) => (
                       <div key={idx} className={`p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 group transition-all hover:bg-[#8b4513]/5 ${spell.prepared ? 'bg-[#d4af37]/5' : ''}`}>
                         <div className="flex gap-5 items-start">
-                          {/* Botão Preparar */}
                           {level > 0 && (
                             <button 
                               onClick={() => togglePrepare(spell.name)}
