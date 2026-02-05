@@ -115,9 +115,9 @@ const App: React.FC = () => {
   const renderTab = () => {
     if (!character) return null;
     switch (activeTab) {
-      case Tab.Sheet: return <CharacterSheet character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} />;
-      case Tab.Inventory: return <Inventory character={character} updateCharacter={updateCharacter} />;
-      case Tab.Magic: return <Spellbook character={character} updateCharacter={updateCharacter} />;
+      case Tab.Sheet: return <CharacterSheet character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} theme={theme} />;
+      case Tab.Inventory: return <Inventory character={character} updateCharacter={updateCharacter} theme={theme} />;
+      case Tab.Magic: return <Spellbook character={character} updateCharacter={updateCharacter} theme={theme} />;
       case Tab.History: return <Backstory character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} />;
       case Tab.Settings: return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} />;
       default: return null;
@@ -166,8 +166,6 @@ const App: React.FC = () => {
       />
     );
   }
-
-  const mainClasses = theme === 'dark' ? 'bg-[#0d0d0d]' : 'bg-[#fdf5e6]/95';
 
   return (
     <div className={`fixed inset-0 flex flex-col overflow-hidden selection:bg-orange-200 ${theme === 'dark' ? 'dark-mode' : ''}`}>
@@ -226,27 +224,27 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="relative group flex-grow">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
                     <input 
                       type="number"
                       min="0"
                       value={character.exp}
                       onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
-                      className="bg-black/20 border border-[#8b4513]/40 text-[#f4e4bc] text-center text-xs cinzel font-bold py-1 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="bg-black/20 border border-[#8b4513]/40 text-[#f4e4bc] text-center text-xs cinzel font-bold py-1.5 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex-1 flex items-center gap-2">
                     <input 
                       type="number"
                       min="0"
-                      value={xpToAdd}
+                      value={xpToAdd || ''}
                       onChange={(e) => setXpToAdd(Math.max(0, parseInt(e.target.value) || 0))}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddXp()}
                       placeholder="+"
-                      className="bg-black/30 border border-[#8b4513]/60 text-[#d4af37] text-center text-xs cinzel font-bold py-1 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-14 [appearance:textfield]"
+                      className="bg-black/30 border border-[#8b4513]/60 text-[#d4af37] text-center text-xs cinzel font-bold py-1.5 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-full [appearance:textfield]"
                     />
-                    <button onClick={handleAddXp} className="px-3 py-1 bg-[#3d2511] border border-[#d4af37]/40 rounded-lg cinzel text-[10px] font-bold text-[#d4af37] hover:bg-[#8b4513] hover:text-[#fdf5e6] transition-all uppercase">Adicionar</button>
+                    <button onClick={handleAddXp} className="flex-none px-3 py-1.5 bg-[#3d2511] border border-[#d4af37]/40 rounded-lg cinzel text-[9px] font-bold text-[#d4af37] hover:bg-[#8b4513] hover:text-[#fdf5e6] transition-all uppercase whitespace-nowrap">Add</button>
                   </div>
                 </div>
               </div>
