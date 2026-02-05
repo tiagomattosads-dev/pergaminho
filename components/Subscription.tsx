@@ -105,8 +105,7 @@ const Subscription: React.FC<Props> = ({ theme, onBack }) => {
           highlight={true}
           features={[
             "Tudo do plano Andarilho.",
-            "Pergaminhos ilimitados",
-            "Suporte prioritário do Mestre"
+            "Pergaminhos ilimitados"
           ]}
           sealColor="bg-orange-800"
           buttonText="Consagrar Aventureiro"
