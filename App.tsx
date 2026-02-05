@@ -174,34 +174,58 @@ const App: React.FC = () => {
 
       <header className={`flex-none z-[60] bg-[#2d1b0d] text-[#e8d5b5] shadow-2xl border-b-4 ${theme === 'dark' ? 'border-[#1a1a1a]' : 'border-[#8b4513]'}`}>
         <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center py-2 md:py-3 lg:py-5 gap-3 md:gap-4">
-            <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+          <div className="flex flex-col md:flex-row justify-between items-stretch py-2 md:py-4 lg:py-6 gap-3 md:gap-6">
+            
+            {/* ARTEFATO DE IDENTIDADE (NOME, CLASSE, RAÇA) */}
+            <div className="flex-1 flex items-center gap-3 md:gap-4 bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/identity">
+              {/* Textura de pergaminho sutil */}
+              <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
+              
+              {/* Botão de Retorno Estilo Joia */}
               <button 
                 onClick={() => setSelectedCharId(null)}
-                className="flex-none p-1.5 md:p-2 hover:bg-[#8b4513]/20 rounded-full transition-colors group"
+                className="flex-none w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-b from-[#3d2511] to-[#1a0f00] border border-[#8b4513]/50 flex items-center justify-center hover:border-[#d4af37] transition-all group/back active:scale-95 shadow-lg"
                 title="Trocar Herói"
               >
-                <svg className="w-5 h-5 md:w-6 md:h-6 text-[#d4af37] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                <svg className="w-4 h-4 md:w-6 md:h-6 text-[#d4af37] group-hover/back:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-              
-              <div className="flex-grow min-w-0">
-                <input 
-                  value={character.name}
-                  onChange={(e) => updateCharacter({ name: e.target.value })}
-                  className="bg-transparent text-lg md:text-3xl fantasy-title leading-tight text-[#d4af37] w-full focus:outline-none truncate"
-                />
-                <div className="flex items-center text-[7px] md:text-[10px] uppercase tracking-widest cinzel opacity-70">
-                  <span>{character.class}</span>
-                  <span className="mx-1 text-[#8b4513]">|</span>
-                  <span>{character.race}</span>
+
+              {/* Brasão de Perfil (Substituto para o Medalhão de Nível) */}
+              <div className="relative flex-none hidden sm:block">
+                <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-b from-[#d4af37] via-[#8b4513] to-[#3d2511] p-[1.5px] shadow-[0_0_15px_rgba(212,175,55,0.2)]">
+                  <div className="w-full h-full rounded-full bg-[#2d1b0d] flex items-center justify-center border border-black/40">
+                    <svg className="w-5 h-5 md:w-7 md:h-7 text-[#d4af37]/80" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v.683a3.7 3.7 0 011.055.025 4.5 4.5 0 10-5.277 5.277A3.702 3.702 0 014.102 10H3a1 1 0 100 2h.683a3.7 3.7 0 01.025 1.055 4.5 4.5 0 105.277-5.277A3.702 3.702 0 019.898 10H11a1 1 0 100-2h-1.055a3.702 3.702 0 01-.025-1.055A4.5 4.5 0 104.643 1.643 3.7 3.7 0 014.618 1.618 1 1 0 0010 2z" />
+                    </svg>
+                  </div>
                 </div>
               </div>
 
+              <div className="flex-grow min-w-0 flex flex-col justify-center">
+                <div className="relative group/name">
+                  <input 
+                    value={character.name}
+                    onChange={(e) => updateCharacter({ name: e.target.value })}
+                    className="bg-transparent text-xl md:text-3xl lg:text-4xl fantasy-title leading-none text-[#d4af37] w-full focus:outline-none truncate drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-all focus:text-[#fffacd]"
+                  />
+                  <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#d4af37] group-focus-within/name:w-1/2 transition-all duration-500 opacity-50"></div>
+                </div>
+                
+                <div className="flex items-center mt-1.5 md:mt-2">
+                  <div className={`px-2 md:px-3 py-0.5 md:py-1 rounded-md bg-[#3d2511]/80 border border-[#8b4513]/30 flex items-center gap-2 shadow-inner`}>
+                    <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5] whitespace-nowrap">{character.class}</span>
+                    <span className="w-1 h-1 rounded-full bg-[#d4af37] opacity-40"></span>
+                    <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5]/70 whitespace-nowrap">{character.race}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botão de Configurações Mobile (ao lado do Brasão de Identidade) */}
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
-                className={`md:hidden flex-none p-2 rounded-lg border transition-all duration-300 ${activeTab === Tab.Settings ? 'bg-[#d4af37] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
+                className={`md:hidden flex-none p-2.5 rounded-xl border-2 transition-all duration-300 shadow-lg ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
