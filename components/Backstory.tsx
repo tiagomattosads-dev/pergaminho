@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { Character } from '../types';
 
@@ -54,7 +53,7 @@ const Backstory: React.FC<Props> = ({ character, updateCharacter, onImageUpload 
                 <textarea 
                   value={character.personality}
                   onChange={(e) => updateCharacter({ personality: e.target.value })}
-                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none"
+                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none custom-scrollbar"
                   rows={3}
                 />
              </div>
@@ -63,7 +62,7 @@ const Backstory: React.FC<Props> = ({ character, updateCharacter, onImageUpload 
                 <textarea 
                   value={character.ideals}
                   onChange={(e) => updateCharacter({ ideals: e.target.value })}
-                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none"
+                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none custom-scrollbar"
                   rows={2}
                 />
              </div>
@@ -72,7 +71,7 @@ const Backstory: React.FC<Props> = ({ character, updateCharacter, onImageUpload 
                 <textarea 
                   value={character.bonds}
                   onChange={(e) => updateCharacter({ bonds: e.target.value })}
-                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none"
+                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none custom-scrollbar"
                   rows={2}
                 />
              </div>
@@ -81,7 +80,7 @@ const Backstory: React.FC<Props> = ({ character, updateCharacter, onImageUpload 
                 <textarea 
                   value={character.flaws}
                   onChange={(e) => updateCharacter({ flaws: e.target.value })}
-                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none"
+                  className="w-full bg-transparent parchment-text text-sm italic pt-2 leading-relaxed focus:outline-none resize-none custom-scrollbar"
                   rows={2}
                 />
              </div>
@@ -97,7 +96,7 @@ const Backstory: React.FC<Props> = ({ character, updateCharacter, onImageUpload 
           <textarea 
             value={character.backstory}
             onChange={(e) => updateCharacter({ backstory: e.target.value })}
-            className="w-full bg-transparent parchment-text text-lg leading-relaxed text-justify focus:outline-none resize-none min-h-[500px] relative z-10"
+            className="w-full bg-transparent parchment-text text-lg leading-relaxed text-justify focus:outline-none resize-none min-h-[500px] relative z-10 custom-scrollbar pr-2"
             placeholder="Escreva sua lenda aqui..."
           />
           <div className="mt-8 pt-8 border-t-2 border-[#8b4513]/10 relative z-10">
@@ -105,7 +104,7 @@ const Backstory: React.FC<Props> = ({ character, updateCharacter, onImageUpload 
              <div className="p-4 bg-orange-100/30 rounded-lg border-2 border-dashed border-[#8b4513]/20">
                 <textarea 
                   placeholder="Anotações extras..."
-                  className="w-full bg-transparent cinzel italic text-sm focus:outline-none resize-none opacity-60"
+                  className="w-full bg-transparent cinzel italic text-sm focus:outline-none resize-none opacity-60 custom-scrollbar"
                   rows={4}
                 />
              </div>

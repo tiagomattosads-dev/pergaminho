@@ -114,30 +114,37 @@ const App: React.FC = () => {
   const renderTab = () => {
     if (!character) return null;
     switch (activeTab) {
-      case Tab.Sheet: return <CharacterSheet character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} theme={theme} />;
-      case Tab.Inventory: return <Inventory character={character} updateCharacter={updateCharacter} theme={theme} />;
-      case Tab.Magic: return <Spellbook character={character} updateCharacter={updateCharacter} theme={theme} />;
-      case Tab.History: return <Backstory character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} />;
-      case Tab.Settings: return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} />;
-      default: return null;
+      case Tab.Sheet: 
+        return <CharacterSheet character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} theme={theme} />;
+      case Tab.Inventory: 
+        return <Inventory character={character} updateCharacter={updateCharacter} theme={theme} />;
+      case Tab.Magic: 
+        return <Spellbook character={character} updateCharacter={updateCharacter} theme={theme} />;
+      case Tab.History: 
+        return <Backstory character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} />;
+      case Tab.Settings: 
+        return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} />;
+      default: 
+        return null;
     }
   };
 
-  const NavButton: React.FC<{ tab: Tab; label: string; icon?: React.ReactNode }> = ({ tab, label, icon }) => (
+  // Botão de Aba Desktop (Preservado: Apenas Texto)
+  const NavButton: React.FC<{ tab: Tab; label: string }> = ({ tab, label }) => (
     <button
       onClick={() => setActiveTab(tab)}
-      className={`relative px-4 py-3 cinzel text-sm font-bold transition-all duration-300 flex items-center gap-2 justify-center whitespace-nowrap ${
+      className={`relative px-4 py-3 cinzel text-sm font-bold transition-all duration-300 flex items-center justify-center whitespace-nowrap ${
         activeTab === tab 
           ? 'text-[#f4e4bc] bg-[#8b4513] shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] scale-105 z-10' 
           : 'text-[#e8d5b5]/60 hover:text-[#e8d5b5] hover:bg-[#3d2511]'
       }`}
     >
       {activeTab === tab && <div className="absolute top-0 left-0 w-full h-1 bg-[#d4af37]"></div>}
-      {icon}
       {label}
     </button>
   );
 
+  // Botão de Aba Mobile (Com Ícones corrigidos)
   const MobileNavButton: React.FC<{ tab: Tab; label: string; icon: React.ReactNode }> = ({ tab, label, icon }) => (
     <button
       onClick={() => setActiveTab(tab)}
@@ -155,18 +162,13 @@ const App: React.FC = () => {
     </button>
   );
 
-  /**
-   * MagicIcon usa uma máscara para permitir que o ícone PNG herde a cor 'currentColor'.
-   * Isso garante paridade visual exata com os ícones SVG.
-   */
-  const MagicIcon = (className: string) => (
+  // Ícone de Magia PNG com Máscara para herdar cor 'currentColor' (dourado quando ativo)
+  const MagicIconMobile = () => (
     <div 
-      className={`${className} transition-all duration-300 bg-current ${
-        activeTab === Tab.Magic ? 'drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]' : ''
-      }`}
+      className="w-6 h-6 bg-current transition-all duration-300"
       style={{
-        maskImage: `url('https://cdn-icons-png.flaticon.com/512/12616/12616964.png')`,
-        WebkitMaskImage: `url('https://cdn-icons-png.flaticon.com/512/12616/12616964.png')`,
+        maskImage: "url('https://cdn-icons-png.flaticon.com/512/12616/12616964.png')",
+        WebkitMaskImage: "url('https://cdn-icons-png.flaticon.com/512/12616/12616964.png')",
         maskSize: 'contain',
         WebkitMaskSize: 'contain',
         maskRepeat: 'no-repeat',
@@ -198,6 +200,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-stretch py-2 md:py-4 lg:py-6 gap-3 md:gap-6">
             
+            {/* Identidade do Personagem */}
             <div className="flex-1 flex items-center gap-3 md:gap-6 bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/identity">
               <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
               
@@ -240,6 +243,7 @@ const App: React.FC = () => {
               </button>
             </div>
 
+            {/* Status e Experiência */}
             <div className="flex-none w-full md:w-auto flex items-center gap-3 lg:gap-6">
               <div className="flex-grow md:flex-none md:w-[320px] lg:w-[450px] bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/artifact">
                 <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
@@ -264,7 +268,7 @@ const App: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="h-1.5 md:h-3 w-full bg-black/60 rounded-full border border-[#8b4513]/40 overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] p-[1.5px] relative">
+                    <div className="h-1.5 md:h-3 w-full bg-black/60 rounded-full border border-[#8b4513]/40 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] p-[1.5px] relative">
                       <div 
                         className="h-full bg-gradient-to-r from-[#5d4037] via-[#d4af37] to-[#f4e4bc] transition-all duration-1000 ease-out relative rounded-full"
                         style={{ width: `${levelData?.progressPercent}%` }}
@@ -289,7 +293,7 @@ const App: React.FC = () => {
                   </div>
 
                   <div className="flex-[1.5] flex items-center gap-1.5 md:gap-2">
-                    <div className="relative flex-grow flex items-center justify-center">
+                    <div className="relative flex-grow">
                       <input 
                         type="number"
                         min="0"
@@ -322,16 +326,17 @@ const App: React.FC = () => {
                 </svg>
               </button>
             </div>
-
-            <nav className="hidden xl:flex justify-start border-t border-[#8b4513]/30">
-              <div className="flex bg-[#1a0f00]/40 overflow-hidden rounded-t-lg">
-                <NavButton tab={Tab.Sheet} label="FICHA TÉCNICA" />
-                <NavButton tab={Tab.Inventory} label="INVENTÁRIO" />
-                <NavButton tab={Tab.Magic} label="TRUQUES E MAGIAS" icon={MagicIcon("w-5 h-5")} />
-                <NavButton tab={Tab.History} label="HISTÓRIA" />
-              </div>
-            </nav>
           </div>
+
+          {/* Navegação Desktop (Apenas Texto - Restaurada Fora do Flexbox do Cabeçalho) */}
+          <nav className="hidden xl:flex justify-start border-t border-[#8b4513]/30 mt-4">
+            <div className="flex bg-[#1a0f00]/40 overflow-hidden rounded-t-lg">
+              <NavButton tab={Tab.Sheet} label="FICHA TÉCNICA" />
+              <NavButton tab={Tab.Inventory} label="INVENTÁRIO" />
+              <NavButton tab={Tab.Magic} label="TRUQUES E MAGIAS" />
+              <NavButton tab={Tab.History} label="HISTÓRIA" />
+            </div>
+          </nav>
         </div>
       </header>
 
@@ -343,15 +348,32 @@ const App: React.FC = () => {
         </div>
       </main>
 
+      {/* Navegação Mobile/Tablet (Com Ícones e Cores Corrigidas) */}
       <nav className="xl:hidden flex-none z-[100] bg-[#2d1b0d] border-t-2 border-[#8b4513] shadow-[0_-5px_20px_rgba(0,0,0,0.7)] flex backdrop-blur-md">
-        <MobileNavButton tab={Tab.Sheet} label="Ficha" icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg>} />
-        <MobileNavButton tab={Tab.Inventory} label="Itens" icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>} />
+        <MobileNavButton 
+          tab={Tab.Sheet} 
+          label="Ficha" 
+          icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg>} 
+        />
+        <MobileNavButton 
+          tab={Tab.Inventory} 
+          label="Itens" 
+          icon={
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18 7H17V6C17 4.34 15.66 3 14 3H10C8.34 3 7 4.34 7 6V7H6C4.34 7 3 8.34 3 10V20C3 21.66 4.34 23 6 23H18C19.66 23 21 21.66 21 20V10C21 8.34 19.66 7 18 7ZM9 6C9 5.45 9.45 5 10 5H14C14.55 5 15 5.45 15 6V7H9V6ZM15 13H9V11H15V13Z" />
+            </svg>
+          } 
+        />
         <MobileNavButton 
           tab={Tab.Magic} 
           label="Magias" 
-          icon={MagicIcon("w-6 h-6")} 
+          icon={<MagicIconMobile />} 
         />
-        <MobileNavButton tab={Tab.History} label="Bio" icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" /></svg>} />
+        <MobileNavButton 
+          tab={Tab.History} 
+          label="Bio" 
+          icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" /></svg>} 
+        />
       </nav>
     </div>
   );
