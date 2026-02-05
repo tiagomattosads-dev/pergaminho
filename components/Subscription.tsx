@@ -108,7 +108,7 @@ const Subscription: React.FC<Props> = ({ theme, onBack }) => {
             "Pergaminhos ilimitados"
           ]}
           sealColor="bg-orange-800"
-          buttonText="Consagrar Aventureiro"
+          buttonText="Consagrar Pergaminhos"
         />
 
         <PlanCard 
