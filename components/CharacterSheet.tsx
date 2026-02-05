@@ -82,12 +82,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
     updateCharacter({ proficiencies: { ...character.proficiencies, saves: currentSaves } });
   };
 
-  const updateDeathSave = (type: 'successes' | 'failures', index: number) => {
-    const current = character.deathSaves[type];
-    const newVal = index + 1 === current ? index : index + 1;
-    updateCharacter({ deathSaves: { ...character.deathSaves, [type]: newVal } });
-  };
-
   return (
     <div className="flex flex-col p-2 sm:p-4 lg:p-6 pb-12 gap-6">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && onImageUpload(e.target.files[0])} />
@@ -133,80 +127,26 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
         {/* COLUNA CENTRAL: RETRATO, DEFESA, SALVAGUARDAS E VIDA */}
         <section className="lg:col-span-6 flex flex-col gap-6 order-1 lg:order-2">
           <div className="flex flex-col md:flex-row lg:flex-col gap-6">
-            {/* Retrato e Status de Cabeçalho */}
+            {/* Retrato Quadrado */}
             <div className={`border-2 p-3 rounded-2xl shadow-xl flex flex-col items-center gap-4 relative ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
-              <div className="w-full flex justify-between items-center z-10 gap-2">
-                {/* Bônus de Proficiência */}
-                <div className={`flex flex-col items-center backdrop-blur-sm border-2 p-2 rounded-xl w-16 shadow-lg ${isDark ? 'bg-black/60 border-white/10' : 'bg-white/80 border-[#8b4513]/30'}`}>
-                  <span className={`text-[8px] cinzel font-extrabold uppercase tracking-widest ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Prof.</span>
-                  <span className={`text-xl font-bold fantasy-title ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>+{profBonus}</span>
+              <div className="w-full flex justify-between items-center z-10">
+                <div className={`flex flex-col items-center backdrop-blur-sm border p-1.5 rounded-lg w-16 shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
+                  <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Prof.</span>
+                  <span className={`text-lg font-bold fantasy-title ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>+{profBonus}</span>
                 </div>
-
-                {/* Salvaguarda de Morte (UI Melhorada) */}
-                <div className={`flex-1 flex flex-col items-center backdrop-blur-sm border-2 p-2 rounded-xl shadow-lg relative overflow-hidden ${isDark ? 'bg-black/60 border-white/10' : 'bg-white/80 border-[#8b4513]/30'}`}>
-                  <span className={`text-[8px] cinzel font-extrabold uppercase tracking-[0.2em] mb-2 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Salva-Vidas</span>
-                  
-                  <div className="flex flex-col gap-2 w-full max-w-[120px]">
-                    {/* Sucessos com Ícone de Coração */}
-                    <div className="flex items-center justify-between">
-                      <svg className={`w-3 h-3 ${isDark ? 'text-green-400' : 'text-green-700'}`} fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                      </svg>
-                      <div className="flex gap-1.5">
-                        {[0, 1, 2].map(i => (
-                          <div 
-                            key={i} 
-                            onClick={() => updateDeathSave('successes', i)}
-                            className={`w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-300 relative shadow-inner ${
-                              i < character.deathSaves.successes 
-                                ? (isDark ? 'bg-green-500 border-green-300 shadow-[0_0_10px_rgba(34,197,94,0.6)]' : 'bg-green-600 border-green-900 shadow-[0_0_8px_rgba(22,101,52,0.5)]')
-                                : (isDark ? 'bg-black/40 border-white/10' : 'bg-[#e8d5b5]/30 border-[#8b4513]/20')
-                            }`} 
-                          >
-                            {i < character.deathSaves.successes && <div className="absolute inset-0.5 rounded-full bg-white/20 blur-[1px]"></div>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Falhas com Ícone de Caveira */}
-                    <div className="flex items-center justify-between">
-                      <svg className={`w-3 h-3 ${isDark ? 'text-red-400' : 'text-red-700'}`} fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 001 1 1 1 0 001-1V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm6 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" clipRule="evenodd" />
-                      </svg>
-                      <div className="flex gap-1.5">
-                        {[0, 1, 2].map(i => (
-                          <div 
-                            key={i} 
-                            onClick={() => updateDeathSave('failures', i)}
-                            className={`w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-300 relative shadow-inner ${
-                              i < character.deathSaves.failures 
-                                ? (isDark ? 'bg-red-500 border-red-300 shadow-[0_0_10px_rgba(239,68,68,0.6)]' : 'bg-red-600 border-red-900 shadow-[0_0_8px_rgba(153,27,27,0.5)]')
-                                : (isDark ? 'bg-black/40 border-white/10' : 'bg-[#e8d5b5]/30 border-[#8b4513]/20')
-                            }`} 
-                          >
-                            {i < character.deathSaves.failures && <div className="absolute inset-0.5 rounded-full bg-white/20 blur-[1px]"></div>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Inspiração */}
-                <div className={`flex flex-col items-center backdrop-blur-sm border-2 p-2 rounded-xl w-16 shadow-lg ${isDark ? 'bg-black/60 border-white/10' : 'bg-white/80 border-[#8b4513]/30'}`}>
-                  <span className={`text-[8px] cinzel font-extrabold uppercase tracking-widest ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Insp.</span>
+                <div className={`flex flex-col items-center backdrop-blur-sm border p-1.5 rounded-lg w-16 shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
+                  <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Insp.</span>
                   <input 
                     type="number" 
                     value={character.inspiration} 
                     onChange={(e) => updateCharacter({ inspiration: parseInt(e.target.value) || 0 })} 
-                    className={`w-full text-center bg-transparent focus:outline-none font-bold text-xl fantasy-title [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`} 
+                    className={`w-full text-center bg-transparent focus:outline-none font-bold text-lg fantasy-title [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`} 
                   />
                 </div>
               </div>
 
               <div 
-                className={`w-full aspect-square rounded-xl border-4 overflow-hidden shadow-2xl relative group cursor-pointer ${isDark ? 'bg-black border-white/10' : 'bg-[#1a0f00] border-[#8b4513]'}`} 
+                className={`w-full aspect-square rounded-xl border overflow-hidden shadow-2xl relative group cursor-pointer ${isDark ? 'bg-black border-white/10' : 'bg-[#1a0f00] border-[#8b4513]'}`} 
                 onClick={() => fileInputRef.current?.click()}
               >
                 {character.portrait ? (
@@ -214,13 +154,10 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center italic p-6 text-center text-xs cinzel uppercase tracking-widest opacity-20">Clique para Carregar Retrato</div>
                 )}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="cinzel text-[10px] text-white font-bold tracking-widest uppercase">Alterar Efígie</span>
-                </div>
               </div>
             </div>
 
-            {/* Defesa e Atributos de Combate */}
+            {/* Defesa e Salvaguardas */}
             <div className="w-full md:w-1/2 lg:w-full space-y-6">
               <div className="grid grid-cols-3 gap-3">
                 {[

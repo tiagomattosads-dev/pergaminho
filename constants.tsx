@@ -47,9 +47,9 @@ export const INITIAL_CHARACTER: Character = {
   alignment: "Caótico e Neutro",
   exp: 0,
   inspiration: 0,
+  // Retrato atualizado com o link definitivo fornecido pelo usuário
   portrait: "https://res.cloudinary.com/dutufef4s/image/upload/v1770315204/artifice_lwcguq.png",
   hp: { current: 16, max: 16, temp: 0 },
-  deathSaves: { successes: 0, failures: 0 },
   ac: 15,
   initiativeBonus: 0,
   speed: "9m",
@@ -91,7 +91,6 @@ export const createNewCharacter = (): Character => ({
   race: "Humano",
   portrait: null,
   inspiration: 0,
-  deathSaves: { successes: 0, failures: 0 },
   stats: {
     [Attribute.FOR]: 10, [Attribute.DES]: 10, [Attribute.CON]: 10,
     [Attribute.INT]: 10, [Attribute.SAB]: 10, [Attribute.CAR]: 10,
