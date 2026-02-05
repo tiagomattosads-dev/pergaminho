@@ -123,16 +123,17 @@ const App: React.FC = () => {
     }
   };
 
-  const NavButton: React.FC<{ tab: Tab; label: string }> = ({ tab, label }) => (
+  const NavButton: React.FC<{ tab: Tab; label: string; icon?: React.ReactNode }> = ({ tab, label, icon }) => (
     <button
       onClick={() => setActiveTab(tab)}
-      className={`relative px-4 py-3 cinzel text-sm font-bold transition-all duration-300 flex items-center justify-center whitespace-nowrap ${
+      className={`relative px-4 py-3 cinzel text-sm font-bold transition-all duration-300 flex items-center gap-2 justify-center whitespace-nowrap ${
         activeTab === tab 
           ? 'text-[#f4e4bc] bg-[#8b4513] shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] scale-105 z-10' 
           : 'text-[#e8d5b5]/60 hover:text-[#e8d5b5] hover:bg-[#3d2511]'
       }`}
     >
       {activeTab === tab && <div className="absolute top-0 left-0 w-full h-1 bg-[#d4af37]"></div>}
+      {icon}
       {label}
     </button>
   );
@@ -152,6 +153,28 @@ const App: React.FC = () => {
       <span className="text-[10px] cinzel font-bold tracking-tight uppercase">{label}</span>
       {activeTab === tab && <div className="absolute bottom-0 w-1/3 h-0.5 bg-[#d4af37]"></div>}
     </button>
+  );
+
+  /**
+   * MagicIcon usa uma máscara para permitir que o ícone PNG herde a cor 'currentColor'.
+   * Isso garante paridade visual exata com os ícones SVG.
+   */
+  const MagicIcon = (className: string) => (
+    <div 
+      className={`${className} transition-all duration-300 bg-current ${
+        activeTab === Tab.Magic ? 'drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]' : ''
+      }`}
+      style={{
+        maskImage: `url('https://cdn-icons-png.flaticon.com/512/12616/12616964.png')`,
+        WebkitMaskImage: `url('https://cdn-icons-png.flaticon.com/512/12616/12616964.png')`,
+        maskSize: 'contain',
+        WebkitMaskSize: 'contain',
+        maskRepeat: 'no-repeat',
+        WebkitMaskRepeat: 'no-repeat',
+        maskPosition: 'center',
+        WebkitMaskPosition: 'center',
+      }}
+    />
   );
 
   if (!selectedCharId || !character) {
@@ -175,12 +198,9 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-stretch py-2 md:py-4 lg:py-6 gap-3 md:gap-6">
             
-            {/* ARTEFATO DE IDENTIDADE (NOME, CLASSE, RAÇA) */}
             <div className="flex-1 flex items-center gap-3 md:gap-6 bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/identity">
-              {/* Textura de pergaminho sutil */}
               <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
               
-              {/* Botão de Retorno Estilo Joia */}
               <button 
                 onClick={() => setSelectedCharId(null)}
                 className="flex-none w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-b from-[#3d2511] to-[#1a0f00] border border-[#8b4513]/50 flex items-center justify-center hover:border-[#d4af37] transition-all group/back active:scale-95 shadow-lg"
@@ -210,7 +230,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Botão de Configurações Mobile */}
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
                 className={`md:hidden flex-none p-2.5 rounded-xl border-2 transition-all duration-300 shadow-lg ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
@@ -221,14 +240,11 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            {/* BARRA DE NÍVEL E XP - ESTÉTICA PREMIUM */}
             <div className="flex-none w-full md:w-auto flex items-center gap-3 lg:gap-6">
               <div className="flex-grow md:flex-none md:w-[320px] lg:w-[450px] bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/artifact">
-                {/* Textura de pergaminho sutil no fundo */}
                 <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
                 
                 <div className="flex items-center gap-2 md:gap-5 mb-1.5 md:mb-3 relative z-10">
-                  {/* Medalhão de Nível Estilo Selo de Lacre */}
                   <div className="relative flex-none">
                     <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-b from-[#d4af37] via-[#8b4513] to-[#3d2511] p-[2px] shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-[#d4af37]/20">
                       <div className="w-full h-full rounded-full bg-[#2d1b0d] flex flex-col items-center justify-center border border-black/50 shadow-inner">
@@ -248,13 +264,11 @@ const App: React.FC = () => {
                       </div>
                     </div>
                     
-                    {/* Barra de Progresso Arcano com Efeito de Brilho */}
-                    <div className="h-1.5 md:h-3 w-full bg-black/60 rounded-full border border-[#8b4513]/40 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] p-[1.5px] relative">
+                    <div className="h-1.5 md:h-3 w-full bg-black/60 rounded-full border border-[#8b4513]/40 overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] p-[1.5px] relative">
                       <div 
                         className="h-full bg-gradient-to-r from-[#5d4037] via-[#d4af37] to-[#f4e4bc] transition-all duration-1000 ease-out relative rounded-full"
                         style={{ width: `${levelData?.progressPercent}%` }}
                       >
-                        {/* Partícula de Luz na Ponta */}
                         <div className="absolute top-0 right-0 w-4 h-full bg-white/40 blur-sm rounded-full"></div>
                         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/p6.png')] opacity-20 mix-blend-overlay"></div>
                       </div>
@@ -262,7 +276,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Controles de Experiência - Design Unificado */}
                 <div className="flex items-center gap-2 relative z-10 pt-1.5 border-t border-[#8b4513]/20">
                   <div className="flex-1 relative group/input">
                     <input 
@@ -276,7 +289,7 @@ const App: React.FC = () => {
                   </div>
 
                   <div className="flex-[1.5] flex items-center gap-1.5 md:gap-2">
-                    <div className="relative flex-grow">
+                    <div className="relative flex-grow flex items-center justify-center">
                       <input 
                         type="number"
                         min="0"
@@ -298,7 +311,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Botão de Configurações Desktop */}
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
                 className={`hidden md:flex flex-none p-3.5 rounded-2xl border-2 transition-all duration-300 shadow-xl active:scale-95 ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
@@ -310,16 +322,16 @@ const App: React.FC = () => {
                 </svg>
               </button>
             </div>
-          </div>
 
-          <nav className="hidden xl:flex justify-start border-t border-[#8b4513]/30">
-            <div className="flex bg-[#1a0f00]/40 overflow-hidden rounded-t-lg">
-              <NavButton tab={Tab.Sheet} label="FICHA TÉCNICA" />
-              <NavButton tab={Tab.Inventory} label="INVENTÁRIO" />
-              <NavButton tab={Tab.Magic} label="TRUQUES E MAGIAS" />
-              <NavButton tab={Tab.History} label="HISTÓRIA" />
-            </div>
-          </nav>
+            <nav className="hidden xl:flex justify-start border-t border-[#8b4513]/30">
+              <div className="flex bg-[#1a0f00]/40 overflow-hidden rounded-t-lg">
+                <NavButton tab={Tab.Sheet} label="FICHA TÉCNICA" />
+                <NavButton tab={Tab.Inventory} label="INVENTÁRIO" />
+                <NavButton tab={Tab.Magic} label="TRUQUES E MAGIAS" icon={MagicIcon("w-5 h-5")} />
+                <NavButton tab={Tab.History} label="HISTÓRIA" />
+              </div>
+            </nav>
+          </div>
         </div>
       </header>
 
@@ -332,14 +344,14 @@ const App: React.FC = () => {
       </main>
 
       <nav className="xl:hidden flex-none z-[100] bg-[#2d1b0d] border-t-2 border-[#8b4513] shadow-[0_-5px_20px_rgba(0,0,0,0.7)] flex backdrop-blur-md">
-        <MobileNavButton tab={Tab.Sheet} label="Ficha" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg>} />
-        <MobileNavButton tab={Tab.Inventory} label="Itens" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>} />
+        <MobileNavButton tab={Tab.Sheet} label="Ficha" icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg>} />
+        <MobileNavButton tab={Tab.Inventory} label="Itens" icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>} />
         <MobileNavButton 
           tab={Tab.Magic} 
           label="Magias" 
-          icon={<img src="https://cdn-icons-png.flaticon.com/512/2267/2267395.png" className={`w-6 h-6 transition-all ${activeTab === Tab.Magic ? 'drop-shadow-[0_0_8px_rgba(212,175,55,1)] scale-110' : 'opacity-40 grayscale'}`} alt="Magias" />} 
+          icon={MagicIcon("w-6 h-6")} 
         />
-        <MobileNavButton tab={Tab.History} label="Bio" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" /></svg>} />
+        <MobileNavButton tab={Tab.History} label="Bio" icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" /></svg>} />
       </nav>
     </div>
   );
