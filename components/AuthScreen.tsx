@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface Props {
   onLogin: () => void;
@@ -11,7 +10,17 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const isDark = theme === 'dark';
+
+  useEffect(() => {
+    // Garantir que o vídeo comece a tocar em navegadores com restrições de autoplay
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.log("Autoplay assistido: ", error);
+      });
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,21 +33,20 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden relative selection:bg-[#d4af37]/40">
-      {/* Background Video - Limpo, sem sobreposições escuras */}
+      {/* Background Video solicitado */}
       <video 
+        ref={videoRef}
         autoPlay 
         muted 
         loop 
         playsInline 
         className="fixed inset-0 w-full h-full object-cover z-0"
-      >
-        <source src="https://res.cloudinary.com/dutufef4s/video/upload/v1770328032/2970d572d03a4160ac6d731f004e9275_gysx0u.mp4" type="video/mp4" />
-      </video>
+        src="https://res.cloudinary.com/dutufef4s/video/upload/v1770328032/2970d572d03a4160ac6d731f004e9275_gysx0u.mp4"
+      />
 
       {/* Sutil gradiente para profundidade sem escurecer o centro */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(0,0,0,0.3)_100%)] z-[1] pointer-events-none"></div>
 
-      {/* Removido o transform scale condicional aqui */}
       <div className="relative z-10 w-full max-w-md transition-all duration-700 transform scale-100">
         
         {/* Tomo de Couro - Compacto */}
@@ -81,7 +89,6 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
                   Correio Arcano
                 </label>
                 <div className="relative">
-                  {/* Removido scale-110 do ícone */}
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-10 ${focusedField === 'email' ? 'text-[#d4af37]' : 'text-gray-400 opacity-40'}`}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                   </div>
@@ -109,7 +116,6 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
                   Senha
                 </label>
                 <div className="relative">
-                  {/* Removido scale-110 do ícone */}
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-10 ${focusedField === 'password' ? 'text-[#d4af37]' : 'text-gray-400 opacity-40'}`}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
                   </div>

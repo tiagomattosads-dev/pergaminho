@@ -16,6 +16,24 @@
             --p-gold: #d4af37;
         }
 
+        /* CURSOR PERSONALIZADO GLOBAL - PADRÃO (Ajustado para 35px com hotspot na ponta 0 0) */
+        * {
+            cursor: url('https://res.cloudinary.com/dutufef4s/image/upload/w_35,h_35,c_scale/v1770333154/81040f0935a24bc6ae56784a930540bdbKy0vHIUKJqNYP3D-2_riywsm.png') 0 0, auto;
+        }
+
+        /* CURSOR DE INTERAÇÃO - HOVER E CLICK (Ajustado para 35px com hotspot na ponta 0 0 para precisão total) */
+        a, 
+        button, 
+        [role="button"], 
+        input,
+        select, 
+        textarea,
+        label, 
+        .cursor-pointer,
+        *:active {
+            cursor: url('https://res.cloudinary.com/dutufef4s/image/upload/w_35,h_35,c_scale/v1770333136/07e60ce0ca344686dc46781e6e782e27NhbelZMZLXMAeyVb-2_zwwaue.png') 0 0, pointer !important;
+        }
+
         body {
             background-color: var(--p-bg);
             color: var(--p-text);
