@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Character, Attribute } from './types';
 import { INITIAL_CHARACTER, createNewCharacter, getLevelFromXP, getProficiencyFromLevel, XP_TABLE } from './constants';
@@ -271,7 +270,7 @@ const App: React.FC = () => {
                       min="0"
                       value={character.exp}
                       onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
-                      className="bg-black/40 border border-[#8b4513]/50 text-[#e8d5b5] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-1 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all group-hover/input:border-[#8b4513] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="bg-black/40 border border-[#8b4513]/50 text-[#e8d5b5] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-0 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all group-hover/input:border-[#8b4513] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
                     <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">Acúmulo</span>
                   </div>
@@ -285,7 +284,7 @@ const App: React.FC = () => {
                         onChange={(e) => setXpToAdd(Math.max(0, parseInt(e.target.value) || 0))}
                         onKeyDown={(e) => e.key === 'Enter' && handleAddXp()}
                         placeholder="+"
-                        className="bg-black/50 border border-[#d4af37]/30 text-[#d4af37] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-1 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all [appearance:textfield]"
+                        className="bg-black/50 border border-[#d4af37]/30 text-[#d4af37] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-0 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                       <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">Dádiva</span>
                     </div>

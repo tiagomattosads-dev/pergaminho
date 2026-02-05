@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
 <head>
@@ -32,6 +31,16 @@
         .fantasy-title { font-family: 'MedievalSharp', cursive; }
         .cinzel { font-family: 'Cinzel', serif; }
         
+        /* Ocultar Spinners Numéricos Globalmente para evitar desalinhamento */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
         /* Scrollbar Dinâmica */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(139, 69, 19, 0.05); }
