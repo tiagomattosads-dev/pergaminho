@@ -144,7 +144,7 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
                     : 'bg-gradient-to-b from-[#8b4513] to-[#3e2723] text-[#fdf5e6] border-[#1a0f00] hover:brightness-105'
                 }`}
               >
-                <span className="relative z-10 drop-shadow-md">
+                <span className="relative z-10 drop-shadow-md pointer-events-none">
                   {isRegistering ? 'Registrar-se' : 'Selar Contrato'}
                 </span>
               </button>
