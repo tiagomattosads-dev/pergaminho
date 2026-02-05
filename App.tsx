@@ -26,6 +26,9 @@ const App: React.FC = () => {
   const [selectedCharId, setSelectedCharId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Sheet);
   const [xpToAdd, setXpToAdd] = useState<number>(0);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('dnd_app_theme') as 'light' | 'dark') || 'light';
+  });
 
   const character = useMemo(() => {
     return allCharacters.find(c => c.id === selectedCharId) || null;
@@ -51,6 +54,15 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('dnd_5e_characters_list', JSON.stringify(allCharacters));
   }, [allCharacters]);
+
+  useEffect(() => {
+    localStorage.setItem('dnd_app_theme', theme);
+    if (theme === 'dark') {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [theme]);
 
   const updateCharacter = useCallback((updates: Partial<Character>) => {
     if (!selectedCharId) return;
@@ -107,7 +119,7 @@ const App: React.FC = () => {
       case Tab.Inventory: return <Inventory character={character} updateCharacter={updateCharacter} />;
       case Tab.Magic: return <Spellbook character={character} updateCharacter={updateCharacter} />;
       case Tab.History: return <Backstory character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} />;
-      case Tab.Settings: return <Settings character={character} updateCharacter={updateCharacter} />;
+      case Tab.Settings: return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} />;
       default: return null;
     }
   };
@@ -155,12 +167,14 @@ const App: React.FC = () => {
     );
   }
 
-  return (
-    <div className="fixed inset-0 flex flex-col bg-[#1a0f00] overflow-hidden selection:bg-orange-200">
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/p6.png')]"></div>
-      <div className="fixed inset-0 pointer-events-none z-0 opacity-10 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
+  const mainClasses = theme === 'dark' ? 'bg-[#0d0d0d]' : 'bg-[#fdf5e6]/95';
 
-      <header className="flex-none z-[60] bg-[#2d1b0d] text-[#e8d5b5] shadow-2xl border-b-4 border-[#8b4513]">
+  return (
+    <div className={`fixed inset-0 flex flex-col overflow-hidden selection:bg-orange-200 ${theme === 'dark' ? 'dark-mode' : ''}`}>
+      <div className={`fixed inset-0 pointer-events-none z-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/p6.png')] ${theme === 'dark' ? 'invert opacity-10' : ''}`}></div>
+      <div className={`fixed inset-0 pointer-events-none z-0 opacity-10 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] ${theme === 'dark' ? 'invert' : ''}`}></div>
+
+      <header className={`flex-none z-[60] bg-[#2d1b0d] text-[#e8d5b5] shadow-2xl border-b-4 ${theme === 'dark' ? 'border-[#1a1a1a]' : 'border-[#8b4513]'}`}>
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center py-2 lg:py-4 gap-4">
             <div className="flex items-center gap-4 w-full md:w-auto">
@@ -237,7 +251,6 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Botão de Configurações FORA do bloco de nível e com espaçamento no desktop */}
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
                 className={`flex-none p-3 rounded-xl border-2 transition-all duration-300 shadow-lg active:scale-95 ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_15px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
@@ -264,7 +277,7 @@ const App: React.FC = () => {
 
       <main className="flex-1 overflow-y-auto custom-scrollbar relative z-10">
         <div className="max-w-7xl mx-auto p-2 lg:p-8">
-           <div className="bg-[#fdf5e6]/95 backdrop-blur-[2px] rounded-xl shadow-2xl border border-[#8b4513]/20">
+           <div className={`transition-all duration-500 rounded-xl shadow-2xl border ${theme === 'dark' ? 'bg-[#121212] border-[#2a2a2a]' : 'bg-[#fdf5e6]/95 border-[#8b4513]/20'}`}>
               {renderTab()}
            </div>
         </div>
@@ -273,7 +286,11 @@ const App: React.FC = () => {
       <nav className="xl:hidden flex-none z-[100] bg-[#2d1b0d] border-t-2 border-[#8b4513] shadow-[0_-5px_20px_rgba(0,0,0,0.7)] flex backdrop-blur-md">
         <MobileNavButton tab={Tab.Sheet} label="Ficha" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg>} />
         <MobileNavButton tab={Tab.Inventory} label="Itens" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>} />
-        <MobileNavButton tab={Tab.Magic} label="Magias" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" /></svg>} />
+        <MobileNavButton 
+          tab={Tab.Magic} 
+          label="Magias" 
+          icon={<img src="https://cdn-icons-png.flaticon.com/512/7057/7057841.png" className={`w-6 h-6 transition-all ${activeTab === Tab.Magic ? 'drop-shadow-[0_0_5px_rgba(212,175,55,0.8)]' : 'opacity-60 grayscale'}`} alt="Grimório" />} 
+        />
         <MobileNavButton tab={Tab.History} label="Bio" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" /></svg>} />
       </nav>
     </div>

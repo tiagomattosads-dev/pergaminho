@@ -10,22 +10,73 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=IM+Fell+DW+Pica:ital@0;1&family=MedievalSharp&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --p-bg: #1a0f00;
+            --p-text: #3e2723;
+            --p-accent: #8b4513;
+            --p-gold: #d4af37;
+        }
+
         body {
-            background-color: #1a0f00;
-            color: #3e2723;
+            background-color: var(--p-bg);
+            color: var(--p-text);
             margin: 0;
             padding: 0;
             -webkit-font-smoothing: antialiased;
-            overflow: hidden; /* Trava o scroll do body */
+            overflow: hidden; 
             height: 100%;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
+
         .parchment-text { font-family: 'IM Fell DW Pica', serif; }
         .fantasy-title { font-family: 'MedievalSharp', cursive; }
         .cinzel { font-family: 'Cinzel', serif; }
         
+        /* Scrollbar Dinâmica */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(139, 69, 19, 0.1); }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(139, 69, 19, 0.05); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #8b4513; border-radius: 10px; }
+
+        /* REFINAMENTO DARK MODE (MASMORRA) */
+        .dark-mode {
+            --p-bg: #0f0f0f;
+            --p-text: #e8d5b5;
+            --p-accent: #d4af37;
+            background-color: #0f0f0f !important;
+        }
+
+        .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4af37; }
+        .dark-mode .custom-scrollbar::-webkit-scrollbar-track { background: rgba(212, 175, 55, 0.05); }
+
+        .dark-mode .bg-parchment-card {
+            background-color: #1a1a1a !important;
+            border-color: #333 !important;
+            color: #e8d5b5 !important;
+        }
+
+        .dark-mode input, .dark-mode textarea, .dark-mode select {
+            color: #f4e4bc !important;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-color: rgba(212, 175, 55, 0.2);
+        }
+
+        .dark-mode input:focus, .dark-mode textarea:focus {
+            border-color: #d4af37 !important;
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .dark-mode .text-medieval-primary { color: #d4af37 !important; }
+        .dark-mode .opacity-overlay { opacity: 0.15; filter: invert(1); }
+        
+        /* Efeito de brilho em itens ativos no dark mode */
+        .dark-mode .active-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        }
+
+        /* Ajuste de contraste para placeholders */
+        .dark-mode ::placeholder {
+            color: rgba(232, 213, 181, 0.3) !important;
+        }
     </style>
 <script type="importmap">
 {
