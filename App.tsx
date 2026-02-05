@@ -6,6 +6,7 @@ import Inventory from './components/Inventory';
 import Spellbook from './components/Spellbook';
 import Backstory from './components/Backstory';
 import Settings from './components/Settings';
+import Subscription from './components/Subscription';
 import CharacterSelection from './components/CharacterSelection';
 
 enum Tab {
@@ -13,7 +14,8 @@ enum Tab {
   Inventory = 'INVENTORY',
   Magic = 'MAGIC',
   History = 'HISTORY',
-  Settings = 'SETTINGS'
+  Settings = 'SETTINGS',
+  Subscription = 'SUBSCRIPTION'
 }
 
 const App: React.FC = () => {
@@ -123,7 +125,9 @@ const App: React.FC = () => {
       case Tab.History: 
         return <Backstory character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} />;
       case Tab.Settings: 
-        return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} />;
+        return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} onNavigate={(tab: any) => setActiveTab(tab)} />;
+      case Tab.Subscription:
+        return <Subscription theme={theme} onBack={() => setActiveTab(Tab.Settings)} />;
       default: 
         return null;
     }
@@ -235,7 +239,7 @@ const App: React.FC = () => {
 
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
-                className={`md:hidden flex-none p-2.5 rounded-xl border-2 transition-all duration-300 shadow-lg ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
+                className={`md:hidden flex-none p-2.5 rounded-xl border-2 transition-all duration-300 shadow-lg ${activeTab === Tab.Settings || activeTab === Tab.Subscription ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -317,7 +321,7 @@ const App: React.FC = () => {
 
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
-                className={`hidden md:flex flex-none p-3.5 rounded-2xl border-2 transition-all duration-300 shadow-xl active:scale-95 ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
+                className={`hidden md:flex flex-none p-3.5 rounded-2xl border-2 transition-all duration-300 shadow-xl active:scale-95 ${activeTab === Tab.Settings || activeTab === Tab.Subscription ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
                 title="Configurações do Pergaminho"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

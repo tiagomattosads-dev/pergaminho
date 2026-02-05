@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Character } from '../types';
 
@@ -7,9 +6,10 @@ interface Props {
   updateCharacter: (updates: Partial<Character>) => void;
   theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
+  onNavigate: (tab: string) => void;
 }
 
-const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme }) => {
+const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme, onNavigate }) => {
   const [currentLang, setCurrentLang] = useState<'pt' | 'en'>('pt');
   
   const handleExport = () => {
@@ -32,17 +32,39 @@ const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme
   );
 
   return (
-    <div className="flex flex-col gap-12 p-4 sm:p-10 max-w-5xl mx-auto pb-32">
+    <div className="flex flex-col gap-10 p-4 sm:p-10 max-w-5xl mx-auto pb-32">
       
       {/* CABEÇALHO DAS CONFIGURAÇÕES */}
-      <header className="relative text-center py-6">
+      <header className="relative text-center py-4">
         <h2 className={`cinzel text-3xl sm:text-4xl font-bold mb-4 uppercase tracking-[0.2em] drop-shadow-sm ${theme === 'dark' ? 'text-[#d4af37]' : 'text-[#3e2723]'}`}>Configurações</h2>
         <div className="flex items-center justify-center gap-4 opacity-40">
            <div className={`h-px w-24 bg-gradient-to-r from-transparent ${theme === 'dark' ? 'to-[#d4af37]' : 'to-[#8b4513]'}`}></div>
-           <svg className={`w-6 h-6 ${theme === 'dark' ? 'text-[#d4af37]' : 'text-[#8b4513]'}`} fill="currentColor" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+           <svg className={`w-6 h-6 ${theme === 'dark' ? 'text-[#d4af37]' : 'text-[#8b4513]'}`} fill="currentColor" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73-1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
            <div className={`h-px w-24 bg-gradient-to-l from-transparent ${theme === 'dark' ? 'to-[#d4af37]' : 'to-[#8b4513]'}`}></div>
         </div>
       </header>
+
+      {/* SEÇÃO DE ASSINATURA (SaaS) */}
+      <section>
+        <SectionHeader title="Selo de Herói" subtitle="Status da sua Jornada" />
+        <div className={`border-2 rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden group transition-all flex flex-col md:flex-row items-center justify-between gap-6 ${theme === 'dark' ? 'bg-gradient-to-br from-[#1a1a1a] to-[#2d1b0d] border-[#d4af37]/40' : 'bg-gradient-to-br from-[#fdf5e6] to-[#fffacd] border-[#8b4513]/40'}`}>
+          <div className="flex items-center gap-6">
+            <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg border-2 ${theme === 'dark' ? 'bg-black/40 border-white/10 text-white/40' : 'bg-white/40 border-black/10 text-black/20'}`}>
+               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg>
+            </div>
+            <div>
+              <p className={`cinzel font-bold text-lg leading-none ${theme === 'dark' ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>Andarilho</p>
+              <p className={`parchment-text text-sm italic opacity-60 ${theme === 'dark' ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>Nível de Assinante: Gratuito</p>
+            </div>
+          </div>
+          <button 
+            onClick={() => onNavigate('SUBSCRIPTION')}
+            className={`cinzel font-bold py-3 px-8 rounded-xl transition-all shadow-[0_5px_15px_rgba(0,0,0,0.3)] active:translate-y-1 border-b-4 uppercase tracking-widest text-[10px] whitespace-nowrap ${theme === 'dark' ? 'bg-[#d4af37] text-[#1a1a1a] border-[#b8860b] hover:bg-[#b8860b]' : 'bg-[#8b4513] text-[#fdf5e6] border-[#3e2723] hover:bg-[#5d4037]'}`}
+          >
+            Gerenciar Plano de Aventureiro
+          </button>
+        </div>
+      </section>
 
       {/* 1. GESTÃO DE MANUSCRITOS (EXPORTAÇÃO) */}
       <section>
@@ -127,7 +149,7 @@ const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex items-start gap-4">
               <div className={`p-2 rounded-lg ${theme === 'dark' ? 'bg-[#d4af37]/10 text-[#d4af37]' : 'bg-[#8b4513]/10 text-[#8b4513]'}`}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2-2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
               </div>
               <div>
                 <h4 className={`cinzel text-[10px] font-bold uppercase ${theme === 'dark' ? 'text-[#d4af37]' : 'text-[#3e2723]'}`}>Privacidade Total</h4>
