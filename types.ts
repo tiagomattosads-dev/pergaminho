@@ -53,6 +53,10 @@ export interface Character {
     max: number;
     temp: number;
   };
+  deathSaves: {
+    successes: number;
+    failures: number;
+  };
   ac: number;
   initiativeBonus: number;
   speed: string;

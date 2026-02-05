@@ -82,6 +82,13 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
     updateCharacter({ proficiencies: { ...character.proficiencies, saves: currentSaves } });
   };
 
+  const updateDeathSave = (type: 'successes' | 'failures', index: number) => {
+    const current = character.deathSaves[type];
+    // Se clicar no atual, desmarca tudo até ali. Se clicar num novo, marca até ali.
+    const newVal = index + 1 === current ? index : index + 1;
+    updateCharacter({ deathSaves: { ...character.deathSaves, [type]: newVal } });
+  };
+
   return (
     <div className="flex flex-col p-2 sm:p-4 lg:p-6 pb-12 gap-6">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && onImageUpload(e.target.files[0])} />
@@ -127,13 +134,53 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
         {/* COLUNA CENTRAL: RETRATO, DEFESA, SALVAGUARDAS E VIDA */}
         <section className="lg:col-span-6 flex flex-col gap-6 order-1 lg:order-2">
           <div className="flex flex-col md:flex-row lg:flex-col gap-6">
-            {/* Retrato Quadrado */}
+            {/* Retrato e Status de Cabeçalho */}
             <div className={`border-2 p-3 rounded-2xl shadow-xl flex flex-col items-center gap-4 relative ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
-              <div className="w-full flex justify-between items-center z-10">
+              <div className="w-full flex justify-between items-center z-10 gap-2">
+                {/* Bônus de Proficiência */}
                 <div className={`flex flex-col items-center backdrop-blur-sm border p-1.5 rounded-lg w-16 shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
                   <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Prof.</span>
                   <span className={`text-lg font-bold fantasy-title ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>+{profBonus}</span>
                 </div>
+
+                {/* Salvaguarda de Morte (Inserido aqui) */}
+                <div className={`flex-1 flex flex-col items-center backdrop-blur-sm border p-1 rounded-lg shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
+                  <span className={`text-[8px] cinzel font-bold uppercase tracking-wider mb-1 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Morte</span>
+                  <div className="flex flex-col gap-1 w-full">
+                    {/* Sucessos */}
+                    <div className="flex justify-center gap-1 items-center">
+                      <span className="text-[6px] cinzel opacity-40 mr-1">S</span>
+                      {[0, 1, 2].map(i => (
+                        <div 
+                          key={i} 
+                          onClick={() => updateDeathSave('successes', i)}
+                          className={`w-3 h-3 rounded-full border cursor-pointer transition-all ${
+                            i < character.deathSaves.successes 
+                              ? (isDark ? 'bg-green-500 border-green-400 shadow-[0_0_5px_rgba(34,197,94,0.5)]' : 'bg-green-600 border-green-800 shadow-[0_0_5px_rgba(22,101,52,0.5)]')
+                              : (isDark ? 'bg-black/20 border-white/10' : 'bg-white border-[#8b4513]/20')
+                          }`} 
+                        />
+                      ))}
+                    </div>
+                    {/* Falhas */}
+                    <div className="flex justify-center gap-1 items-center">
+                      <span className="text-[6px] cinzel opacity-40 mr-1">F</span>
+                      {[0, 1, 2].map(i => (
+                        <div 
+                          key={i} 
+                          onClick={() => updateDeathSave('failures', i)}
+                          className={`w-3 h-3 rounded-full border cursor-pointer transition-all ${
+                            i < character.deathSaves.failures 
+                              ? (isDark ? 'bg-red-500 border-red-400 shadow-[0_0_5px_rgba(239,68,68,0.5)]' : 'bg-red-600 border-red-800 shadow-[0_0_5px_rgba(153,27,27,0.5)]')
+                              : (isDark ? 'bg-black/20 border-white/10' : 'bg-white border-[#8b4513]/20')
+                          }`} 
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Inspiração */}
                 <div className={`flex flex-col items-center backdrop-blur-sm border p-1.5 rounded-lg w-16 shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
                   <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Insp.</span>
                   <input 
