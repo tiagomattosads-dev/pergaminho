@@ -173,85 +173,123 @@ const App: React.FC = () => {
       <div className={`fixed inset-0 pointer-events-none z-0 opacity-10 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] ${theme === 'dark' ? 'invert' : ''}`}></div>
 
       <header className={`flex-none z-[60] bg-[#2d1b0d] text-[#e8d5b5] shadow-2xl border-b-4 ${theme === 'dark' ? 'border-[#1a1a1a]' : 'border-[#8b4513]'}`}>
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center py-2 lg:py-4 gap-4">
-            <div className="flex items-center gap-4 w-full md:w-auto">
+        <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center py-2 md:py-3 lg:py-5 gap-3 md:gap-4">
+            <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
               <button 
                 onClick={() => setSelectedCharId(null)}
-                className="flex-none p-2 hover:bg-[#8b4513]/20 rounded-full transition-colors group"
+                className="flex-none p-1.5 md:p-2 hover:bg-[#8b4513]/20 rounded-full transition-colors group"
                 title="Trocar Herói"
               >
-                <svg className="w-6 h-6 text-[#d4af37] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 md:w-6 md:h-6 text-[#d4af37] group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               
-              <div className="flex-grow">
+              <div className="flex-grow min-w-0">
                 <input 
                   value={character.name}
                   onChange={(e) => updateCharacter({ name: e.target.value })}
-                  className="bg-transparent text-xl md:text-3xl fantasy-title leading-tight text-[#d4af37] w-full focus:outline-none"
+                  className="bg-transparent text-lg md:text-3xl fantasy-title leading-tight text-[#d4af37] w-full focus:outline-none truncate"
                 />
-                <div className="flex items-center text-[8px] md:text-[10px] uppercase tracking-widest cinzel opacity-70">
+                <div className="flex items-center text-[7px] md:text-[10px] uppercase tracking-widest cinzel opacity-70">
                   <span>{character.class}</span>
                   <span className="mx-1 text-[#8b4513]">|</span>
                   <span>{character.race}</span>
                 </div>
               </div>
+
+              <button 
+                onClick={() => setActiveTab(Tab.Settings)}
+                className={`md:hidden flex-none p-2 rounded-lg border transition-all duration-300 ${activeTab === Tab.Settings ? 'bg-[#d4af37] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                </svg>
+              </button>
             </div>
 
-            <div className="flex-none w-full md:w-auto flex items-center gap-4 lg:gap-6">
-              <div className="flex-grow md:flex-none md:w-72 lg:w-96 bg-black/40 rounded-xl border border-[#8b4513]/40 p-3 shadow-inner">
-                <div className="flex items-center justify-between gap-4 mb-2">
-                  <div className="flex flex-col items-center min-w-[40px]">
-                    <span className="text-[7px] cinzel font-bold text-[#d4af37] uppercase tracking-widest">Nível</span>
-                    <span className="text-xl font-bold fantasy-title leading-none">{levelData?.level}</span>
+            {/* BARRA DE NÍVEL E XP - ESTÉTICA PREMIUM */}
+            <div className="flex-none w-full md:w-auto flex items-center gap-3 lg:gap-6">
+              <div className="flex-grow md:flex-none md:w-[320px] lg:w-[450px] bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/artifact">
+                {/* Textura de pergaminho sutil no fundo */}
+                <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
+                
+                <div className="flex items-center gap-2 md:gap-5 mb-1.5 md:mb-3 relative z-10">
+                  {/* Medalhão de Nível Estilo Selo de Lacre */}
+                  <div className="relative flex-none">
+                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-b from-[#d4af37] via-[#8b4513] to-[#3d2511] p-[2px] shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-[#d4af37]/20">
+                      <div className="w-full h-full rounded-full bg-[#2d1b0d] flex flex-col items-center justify-center border border-black/50 shadow-inner">
+                        <span className="text-[5px] md:text-[7px] cinzel font-extrabold text-[#d4af37] uppercase tracking-widest leading-none">Nvl</span>
+                        <span className="text-lg md:text-2xl font-bold fantasy-title text-[#e8d5b5] leading-none mt-0.5">{levelData?.level}</span>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="flex-grow flex flex-col gap-1">
-                    <div className="flex justify-between items-center text-[7px] cinzel font-bold text-[#e8d5b5]/60 uppercase tracking-widest">
-                      <span>Experiência</span>
-                      <span>{levelData?.nextLevelXp ? `${character.exp} / ${levelData.nextLevelXp}` : 'Máximo'}</span>
+                  <div className="flex-grow flex flex-col min-w-0">
+                    <div className="flex justify-between items-end mb-1">
+                      <span className="text-[7px] md:text-[10px] cinzel font-bold text-[#d4af37] uppercase tracking-[0.2em] truncate opacity-80">Jornada do Herói</span>
+                      <div className="text-right whitespace-nowrap">
+                        <span className="text-[8px] md:text-[11px] fantasy-title text-[#f4e4bc] drop-shadow-md">{character.exp}</span>
+                        <span className="text-[7px] md:text-[8px] cinzel text-[#e8d5b5]/30 mx-1">/</span>
+                        <span className="text-[8px] md:text-[10px] fantasy-title text-[#e8d5b5]/40">{levelData?.nextLevelXp || 'LENDÁRIO'}</span>
+                      </div>
                     </div>
-                    <div className="h-2 w-full bg-black/50 border border-[#8b4513]/20 rounded-full overflow-hidden shadow-inner">
+                    
+                    {/* Barra de Progresso Arcano com Efeito de Brilho */}
+                    <div className="h-1.5 md:h-3 w-full bg-black/60 rounded-full border border-[#8b4513]/40 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] p-[1.5px] relative">
                       <div 
-                        className="h-full bg-gradient-to-r from-[#8b4513] via-[#d4af37] to-[#8b4513] transition-all duration-700 relative"
+                        className="h-full bg-gradient-to-r from-[#5d4037] via-[#d4af37] to-[#f4e4bc] transition-all duration-1000 ease-out relative rounded-full"
                         style={{ width: `${levelData?.progressPercent}%` }}
                       >
-                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] opacity-20"></div>
+                        {/* Partícula de Luz na Ponta */}
+                        <div className="absolute top-0 right-0 w-4 h-full bg-white/40 blur-sm rounded-full"></div>
+                        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/p6.png')] opacity-20 mix-blend-overlay"></div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="flex-1">
+                {/* Controles de Experiência - Design Unificado */}
+                <div className="flex items-center gap-2 relative z-10 pt-1.5 border-t border-[#8b4513]/20">
+                  <div className="flex-1 relative group/input">
                     <input 
                       type="number"
                       min="0"
                       value={character.exp}
                       onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
-                      className="bg-black/20 border border-[#8b4513]/40 text-[#f4e4bc] text-center text-xs cinzel font-bold py-1.5 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="bg-black/40 border border-[#8b4513]/50 text-[#e8d5b5] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-1 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all group-hover/input:border-[#8b4513] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                     />
+                    <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">Acúmulo</span>
                   </div>
-                  <div className="flex-1 flex items-center gap-2">
-                    <input 
-                      type="number"
-                      min="0"
-                      value={xpToAdd || ''}
-                      onChange={(e) => setXpToAdd(Math.max(0, parseInt(e.target.value) || 0))}
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddXp()}
-                      placeholder="+"
-                      className="bg-black/30 border border-[#8b4513]/60 text-[#d4af37] text-center text-xs cinzel font-bold py-1.5 px-2 rounded-lg focus:outline-none focus:border-[#d4af37] w-full [appearance:textfield]"
-                    />
-                    <button onClick={handleAddXp} className="flex-none px-3 py-1.5 bg-[#3d2511] border border-[#d4af37]/40 rounded-lg cinzel text-[9px] font-bold text-[#d4af37] hover:bg-[#8b4513] hover:text-[#fdf5e6] transition-all uppercase whitespace-nowrap">Add</button>
+
+                  <div className="flex-[1.5] flex items-center gap-1.5 md:gap-2">
+                    <div className="relative flex-grow">
+                      <input 
+                        type="number"
+                        min="0"
+                        value={xpToAdd || ''}
+                        onChange={(e) => setXpToAdd(Math.max(0, parseInt(e.target.value) || 0))}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAddXp()}
+                        placeholder="+"
+                        className="bg-black/50 border border-[#d4af37]/30 text-[#d4af37] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-1 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all [appearance:textfield]"
+                      />
+                      <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">Dádiva</span>
+                    </div>
+                    <button 
+                      onClick={handleAddXp} 
+                      className="flex-none h-7 md:h-9 px-3 md:px-5 bg-gradient-to-b from-[#8b4513] to-[#3d2511] border border-[#d4af37]/50 rounded-lg md:rounded-xl cinzel text-[8px] md:text-[10px] font-bold text-[#d4af37] hover:from-[#d4af37] hover:to-[#8b4513] hover:text-[#1a0f00] transition-all shadow-lg active:scale-95 uppercase whitespace-nowrap border-b-2"
+                    >
+                      Adicionar
+                    </button>
                   </div>
                 </div>
               </div>
 
+              {/* Botão de Configurações Desktop */}
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
-                className={`flex-none p-3 rounded-xl border-2 transition-all duration-300 shadow-lg active:scale-95 ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_15px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
+                className={`hidden md:flex flex-none p-3.5 rounded-2xl border-2 transition-all duration-300 shadow-xl active:scale-95 ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00] shadow-[0_0_20px_rgba(212,175,55,0.4)]' : 'bg-[#1a0f00] border-[#8b4513]/60 text-[#d4af37] hover:bg-[#2d1b0d] hover:border-[#d4af37]'}`}
                 title="Configurações do Pergaminho"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -287,7 +325,7 @@ const App: React.FC = () => {
         <MobileNavButton 
           tab={Tab.Magic} 
           label="Magias" 
-          icon={<img src="https://cdn-icons-png.flaticon.com/512/7057/7057841.png" className={`w-6 h-6 transition-all ${activeTab === Tab.Magic ? 'drop-shadow-[0_0_5px_rgba(212,175,55,0.8)]' : 'opacity-60 grayscale'}`} alt="Grimório" />} 
+          icon={<img src="https://cdn-icons-png.flaticon.com/512/2267/2267395.png" className={`w-6 h-6 transition-all ${activeTab === Tab.Magic ? 'drop-shadow-[0_0_8px_rgba(212,175,55,1)] scale-110' : 'opacity-40 grayscale'}`} alt="Magias" />} 
         />
         <MobileNavButton tab={Tab.History} label="Bio" icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" /></svg>} />
       </nav>
