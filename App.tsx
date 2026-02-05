@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Character, Attribute } from './types';
 import { INITIAL_CHARACTER, createNewCharacter, getLevelFromXP, getProficiencyFromLevel, XP_TABLE } from './constants';
@@ -8,6 +9,7 @@ import Backstory from './components/Backstory';
 import Settings from './components/Settings';
 import Subscription from './components/Subscription';
 import CharacterSelection from './components/CharacterSelection';
+import AuthScreen from './components/AuthScreen';
 
 enum Tab {
   Sheet = 'SHEET',
@@ -22,6 +24,10 @@ const App: React.FC = () => {
   const [allCharacters, setAllCharacters] = useState<Character[]>(() => {
     const saved = localStorage.getItem('dnd_5e_characters_list');
     return saved ? JSON.parse(saved) : [INITIAL_CHARACTER];
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return sessionStorage.getItem('dnd_session_active') === 'true';
   });
 
   const [selectedCharId, setSelectedCharId] = useState<string | null>(null);
@@ -64,6 +70,17 @@ const App: React.FC = () => {
       document.body.classList.remove('dark-mode');
     }
   }, [theme]);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    sessionStorage.setItem('dnd_session_active', 'true');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setSelectedCharId(null);
+    sessionStorage.removeItem('dnd_session_active');
+  };
 
   const updateCharacter = useCallback((updates: Partial<Character>) => {
     if (!selectedCharId) return;
@@ -125,7 +142,7 @@ const App: React.FC = () => {
       case Tab.History: 
         return <Backstory character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} />;
       case Tab.Settings: 
-        return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} onNavigate={(tab: any) => setActiveTab(tab)} />;
+        return <Settings character={character} updateCharacter={updateCharacter} theme={theme} setTheme={setTheme} onNavigate={(tab: any) => setActiveTab(tab)} onLogout={handleLogout} />;
       case Tab.Subscription:
         return <Subscription theme={theme} onBack={() => setActiveTab(Tab.Settings)} />;
       default: 
@@ -133,7 +150,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Botão de Aba Desktop (Preservado: Apenas Texto)
   const NavButton: React.FC<{ tab: Tab; label: string }> = ({ tab, label }) => (
     <button
       onClick={() => setActiveTab(tab)}
@@ -148,7 +164,6 @@ const App: React.FC = () => {
     </button>
   );
 
-  // Botão de Aba Mobile (Com Ícones corrigidos)
   const MobileNavButton: React.FC<{ tab: Tab; label: string; icon: React.ReactNode }> = ({ tab, label, icon }) => (
     <button
       onClick={() => setActiveTab(tab)}
@@ -166,7 +181,6 @@ const App: React.FC = () => {
     </button>
   );
 
-  // Ícone de Magia PNG com Máscara para herdar cor 'currentColor' (dourado quando ativo)
   const MagicIconMobile = () => (
     <div 
       className="w-6 h-6 bg-current transition-all duration-300"
@@ -183,6 +197,10 @@ const App: React.FC = () => {
     />
   );
 
+  if (!isAuthenticated) {
+    return <AuthScreen onLogin={handleLogin} theme={theme} />;
+  }
+
   if (!selectedCharId || !character) {
     return (
       <CharacterSelection 
@@ -191,6 +209,7 @@ const App: React.FC = () => {
         onCreate={handleCreateNew}
         onDelete={handleDelete}
         onImport={handleImport}
+        onLogout={handleLogout}
       />
     );
   }
@@ -242,7 +261,7 @@ const App: React.FC = () => {
                 className={`md:hidden flex-none p-2.5 rounded-xl border-2 transition-all duration-300 shadow-lg ${activeTab === Tab.Settings || activeTab === Tab.Subscription ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924-1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 </svg>
               </button>
             </div>
@@ -325,14 +344,14 @@ const App: React.FC = () => {
                 title="Configurações do Pergaminho"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924-1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </button>
             </div>
           </div>
 
-          {/* Navegação Desktop (Apenas Texto - Restaurada Fora do Flexbox do Cabeçalho) */}
+          {/* Navegação Desktop */}
           <nav className="hidden xl:flex justify-start border-t border-[#8b4513]/30 mt-4">
             <div className="flex bg-[#1a0f00]/40 overflow-hidden rounded-t-lg">
               <NavButton tab={Tab.Sheet} label="FICHA TÉCNICA" />
@@ -352,7 +371,7 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Navegação Mobile/Tablet (Com Ícones e Cores Corrigidas) */}
+      {/* Navegação Mobile/Tablet */}
       <nav className="xl:hidden flex-none z-[100] bg-[#2d1b0d] border-t-2 border-[#8b4513] shadow-[0_-5px_20px_rgba(0,0,0,0.7)] flex backdrop-blur-md">
         <MobileNavButton 
           tab={Tab.Sheet} 

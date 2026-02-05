@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Character } from '../types';
 
@@ -7,9 +8,10 @@ interface Props {
   theme: 'light' | 'dark';
   setTheme: (theme: 'light' | 'dark') => void;
   onNavigate: (tab: string) => void;
+  onLogout: () => void;
 }
 
-const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme, onNavigate }) => {
+const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme, onNavigate, onLogout }) => {
   const [currentLang, setCurrentLang] = useState<'pt' | 'en'>('pt');
   
   const handleExport = () => {
@@ -44,6 +46,46 @@ const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme
         </div>
       </header>
 
+      {/* SEÇÃO DE CONTA E SEGURANÇA */}
+      <section>
+        <SectionHeader title="Portal de Acesso" subtitle="Gerenciamento de Identidade" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button 
+            onClick={onLogout}
+            className={`flex items-center justify-center gap-4 p-6 rounded-2xl border-2 transition-all group ${
+              theme === 'dark' 
+                ? 'bg-red-900/10 border-red-900/30 hover:bg-red-900/20 hover:border-red-500' 
+                : 'bg-red-50 border-red-100 hover:bg-red-100 hover:border-red-300'
+            }`}
+          >
+            <svg className={`w-6 h-6 transition-transform group-hover:scale-110 ${theme === 'dark' ? 'text-red-500' : 'text-red-700'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <div className="text-left">
+               <span className={`block cinzel text-xs font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-red-400' : 'text-red-800'}`}>Deslogar</span>
+               <span className={`block parchment-text text-[10px] opacity-60 ${theme === 'dark' ? 'text-red-300' : 'text-red-900'}`}>Sair desta sessão</span>
+            </div>
+          </button>
+
+          <button 
+            onClick={onLogout}
+            className={`flex items-center justify-center gap-4 p-6 rounded-2xl border-2 transition-all group ${
+              theme === 'dark' 
+                ? 'bg-[#d4af37]/5 border-[#d4af37]/20 hover:bg-[#d4af37]/10 hover:border-[#d4af37]' 
+                : 'bg-[#8b4513]/5 border-[#8b4513]/10 hover:bg-[#8b4513]/10 hover:border-[#8b4513]'
+            }`}
+          >
+            <svg className={`w-6 h-6 transition-transform group-hover:rotate-12 ${theme === 'dark' ? 'text-[#d4af37]' : 'text-[#8b4513]'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+            <div className="text-left">
+               <span className={`block cinzel text-xs font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-[#d4af37]' : 'text-[#3e2723]'}`}>Trocar de conta</span>
+               <span className={`block parchment-text text-[10px] opacity-60 ${theme === 'dark' ? 'text-[#e8d5b5]' : 'text-[#5d4037]'}`}>Entrar como outro herói</span>
+            </div>
+          </button>
+        </div>
+      </section>
+
       {/* SEÇÃO DE ASSINATURA (SaaS) */}
       <section>
         <SectionHeader title="Selo de Herói" subtitle="Status da sua Jornada" />
@@ -73,7 +115,7 @@ const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme
           <div className="flex flex-col sm:flex-row items-center gap-8 relative z-10">
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg rotate-3 ${theme === 'dark' ? 'bg-[#d4af37] text-[#1a1a1a]' : 'bg-[#8b4513] text-[#fdf5e6]'}`}>
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 00-2 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
               </svg>
             </div>
             <div className="flex-grow text-center sm:text-left">

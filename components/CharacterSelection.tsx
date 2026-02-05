@@ -8,11 +8,11 @@ interface Props {
   onCreate: () => void;
   onDelete: (id: string) => void;
   onImport: (char: Character) => void;
+  onLogout: () => void;
 }
 
-const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, onDelete, onImport }) => {
+const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, onDelete, onImport, onLogout }) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const importInputRef = useRef<HTMLInputElement>(null);
 
   const handleDeleteClick = (e: React.MouseEvent, id: string) => {
@@ -65,6 +65,17 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
     <div className="min-h-screen bg-[#0d0700] flex flex-col items-center justify-start md:justify-center p-4 py-12 md:py-24 overflow-y-auto custom-scrollbar relative">
       <div className="fixed inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] pointer-events-none"></div>
       
+      {/* Botão de Sair no Canto Superior Direito */}
+      <button 
+        onClick={onLogout}
+        className="fixed top-6 right-6 z-[100] cinzel font-bold text-[10px] md:text-xs text-[#d4af37] border-2 border-[#d4af37]/30 px-4 py-2 rounded-xl bg-black/40 hover:bg-[#d4af37] hover:text-[#1a0f00] transition-all uppercase tracking-widest shadow-xl flex items-center gap-2 group"
+      >
+        <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Sair
+      </button>
+
       <input 
         type="file" 
         ref={importInputRef} 
