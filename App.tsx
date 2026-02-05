@@ -177,7 +177,7 @@ const App: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-stretch py-2 md:py-4 lg:py-6 gap-3 md:gap-6">
             
             {/* ARTEFATO DE IDENTIDADE (NOME, CLASSE, RAÇA) */}
-            <div className="flex-1 flex items-center gap-3 md:gap-4 bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/identity">
+            <div className="flex-1 flex items-center gap-3 md:gap-6 bg-[#1a0f00]/60 backdrop-blur-md rounded-xl md:rounded-2xl border-2 border-[#8b4513]/50 p-2 md:p-4 shadow-[0_10px_30px_rgba(0,0,0,0.6)] relative overflow-hidden group/identity">
               {/* Textura de pergaminho sutil */}
               <div className="absolute inset-0 pointer-events-none opacity-5 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]"></div>
               
@@ -191,17 +191,6 @@ const App: React.FC = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
-
-              {/* Brasão de Perfil (Substituto para o Medalhão de Nível) */}
-              <div className="relative flex-none hidden sm:block">
-                <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-b from-[#d4af37] via-[#8b4513] to-[#3d2511] p-[1.5px] shadow-[0_0_15px_rgba(212,175,55,0.2)]">
-                  <div className="w-full h-full rounded-full bg-[#2d1b0d] flex items-center justify-center border border-black/40">
-                    <svg className="w-5 h-5 md:w-7 md:h-7 text-[#d4af37]/80" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v.683a3.7 3.7 0 011.055.025 4.5 4.5 0 10-5.277 5.277A3.702 3.702 0 014.102 10H3a1 1 0 100 2h.683a3.7 3.7 0 01.025 1.055 4.5 4.5 0 105.277-5.277A3.702 3.702 0 019.898 10H11a1 1 0 100-2h-1.055a3.702 3.702 0 01-.025-1.055A4.5 4.5 0 104.643 1.643 3.7 3.7 0 014.618 1.618 1 1 0 0010 2z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
 
               <div className="flex-grow min-w-0 flex flex-col justify-center">
                 <div className="relative group/name">
@@ -222,7 +211,7 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Botão de Configurações Mobile (ao lado do Brasão de Identidade) */}
+              {/* Botão de Configurações Mobile */}
               <button 
                 onClick={() => setActiveTab(Tab.Settings)}
                 className={`md:hidden flex-none p-2.5 rounded-xl border-2 transition-all duration-300 shadow-lg ${activeTab === Tab.Settings ? 'bg-[#d4af37] border-[#fffacd] text-[#1a0f00]' : 'bg-[#1a0f00]/50 border-[#8b4513]/40 text-[#d4af37]'}`}
