@@ -255,26 +255,48 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                     </h2>
                     
                     <div className="w-full space-y-4 px-4">
+                      {/* Sucessos */}
                       <div className="flex flex-col items-center">
                         <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Sucessos</span>
                         <div className="flex gap-4">
                           {[1, 2, 3].map(i => (
-                            <button key={i} onClick={() => toggleDeathSave('successes', i)} className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${i <= character.deathSaves.successes ? 'bg-[#d4af37] border-[#fffacd] shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-black/20 border-white/10 opacity-30'}`}>
+                            <button 
+                              key={i}
+                              onClick={() => toggleDeathSave('successes', i)}
+                              className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${
+                                i <= character.deathSaves.successes 
+                                  ? 'bg-[#d4af37] border-[#fffacd] shadow-[0_0_10px_rgba(212,175,55,0.4)]' 
+                                  : 'bg-black/20 border-white/10 opacity-30'
+                              }`}
+                            >
                               {i <= character.deathSaves.successes && (
-                                <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                                <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
                               )}
                             </button>
                           ))}
                         </div>
                       </div>
 
+                      {/* Falhas */}
                       <div className="flex flex-col items-center">
                         <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-red-400' : 'text-red-700'}`}>Falhas</span>
                         <div className="flex gap-4">
                           {[1, 2, 3].map(i => (
-                            <button key={i} onClick={() => toggleDeathSave('failures', i)} className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${i <= character.deathSaves.failures ? 'bg-red-700 border-red-400 shadow-[0_0_10px_rgba(185,28,28,0.4)]' : 'bg-black/20 border-white/10 opacity-30'}`}>
+                            <button 
+                              key={i}
+                              onClick={() => toggleDeathSave('failures', i)}
+                              className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${
+                                i <= character.deathSaves.failures 
+                                  ? 'bg-red-700 border-red-400 shadow-[0_0_10px_rgba(185,28,28,0.4)]' 
+                                  : 'bg-black/20 border-white/10 opacity-30'
+                              }`}
+                            >
                               {i <= character.deathSaves.failures && (
-                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
                               )}
                             </button>
                           ))}
@@ -290,6 +312,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
 
         {/* COLUNA DIREITA: PERÍCIAS E COMBATE */}
         <section className="lg:col-span-4 flex flex-col gap-6 order-3">
+          {/* BLOCO DE PERÍCIAS */}
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
             <h2 className={`cinzel text-sm font-bold border-b mb-6 pb-2 tracking-[0.2em] uppercase text-center ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/30'}`}>Perícias</h2>
             <div className="flex flex-col gap-2">
@@ -301,9 +324,12 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                     isDark ? 'border-white/5 hover:bg-white/5' : 'border-[#8b4513]/5 hover:bg-[#8b4513]/5'
                   } ${isProf ? (isDark ? 'bg-white/5' : 'bg-[#8b4513]/5') : ''}`}>
                     <input type="checkbox" checked={isProf} onChange={() => toggleSkill(skill.name)} className={`w-4 h-4 cursor-pointer ${isDark ? 'accent-[#d4af37]' : 'accent-[#8b4513]'}`} />
+                    
                     <span className={`w-7 font-bold text-center text-base ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{mod >= 0 ? `+${mod}` : mod}</span>
                     <div className="flex items-center flex-grow truncate">
-                      <span className={`parchment-text font-bold uppercase tracking-tighter mr-1 transition-colors ${isProf ? (isDark ? 'text-[#d4af37]' : 'text-[#8b4513]') : (isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]')}`}>
+                      <span className={`parchment-text font-bold uppercase tracking-tighter mr-1 transition-colors ${
+                        isProf ? (isDark ? 'text-[#d4af37]' : 'text-[#8b4513]') : (isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]')
+                      }`}>
                         {skill.name}
                       </span>
                       <span className={`text-[9px] cinzel opacity-40 font-bold ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>({skill.attribute})</span>
@@ -314,50 +340,146 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             </div>
           </div>
 
+          {/* BLOCO DE COMBATE (ARMAS E ATAQUES) */}
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
+            {/* Sub-menu de Navegação */}
             <div className="flex mb-5 border-b-2 border-black/10 overflow-hidden rounded-t-lg bg-black/5">
-              <button onClick={() => setCombatTab('weapons')} className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'weapons' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}>Armas</button>
-              <button onClick={() => setCombatTab('attacks')} className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'attacks' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}>Ataques</button>
+              <button 
+                onClick={() => setCombatTab('weapons')}
+                className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'weapons' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
+              >
+                Armas
+              </button>
+              <button 
+                onClick={() => setCombatTab('attacks')}
+                className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'attacks' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
+              >
+                Ataques
+              </button>
             </div>
+
             <div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-              {(combatTab === 'weapons' ? character.weapons : character.otherAttacks).map((item, idx) => (
-                <div key={idx} className={`border p-3 rounded-lg relative group ${isDark ? 'bg-black/20 border-white/5' : 'bg-white/40 border-[#8b4513]/10'}`}>
-                  <div className="flex justify-between items-start mb-2">
-                    <input value={item.name} onChange={(e) => {
-                      const key = combatTab === 'weapons' ? 'weapons' : 'otherAttacks';
-                      const next = [...(character[key] as any)];
-                      next[idx].name = e.target.value;
-                      updateCharacter({ [key]: next });
-                    }} className={`bg-transparent font-bold fantasy-title outline-none focus:border-b border-white/20 w-2/3 ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`} />
+              {combatTab === 'weapons' ? (
+                character.weapons.length === 0 ? (
+                  <div className="py-8 text-center opacity-30 italic cinzel text-[10px] uppercase tracking-widest">
+                    Nenhuma arma registrada
                   </div>
-                  <div className="grid grid-cols-4 gap-2">
-                    <div className="col-span-1 text-center p-1 rounded border">
-                      <span className="block text-[8px] cinzel font-bold">Atk</span>
-                      <input value={(item as any).bonus} onChange={(e) => {
-                        const key = combatTab === 'weapons' ? 'weapons' : 'otherAttacks';
-                        const next = [...(character[key] as any)];
-                        next[idx].bonus = e.target.value;
-                        updateCharacter({ [key]: next });
-                      }} className="bg-transparent w-full text-center font-bold outline-none" />
+                ) : (
+                  character.weapons.map((w, idx) => (
+                    <div key={idx} className={`border p-3 rounded-lg relative group ${isDark ? 'bg-black/20 border-white/5' : 'bg-white/40 border-[#8b4513]/10'}`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <input 
+                          value={w.name}
+                          onChange={(e) => {
+                            const next = [...character.weapons];
+                            next[idx].name = e.target.value;
+                            updateCharacter({ weapons: next });
+                          }}
+                          className={`bg-transparent font-bold fantasy-title outline-none focus:border-b border-white/20 w-2/3 ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}
+                        />
+                        <button 
+                          onClick={() => updateCharacter({ weapons: character.weapons.filter((_, i) => i !== idx) })}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Bônus</span>
+                          <input value={w.bonus} onChange={(e) => { const next = [...character.weapons]; next[idx].bonus = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Dano</span>
+                          <input value={w.damage} onChange={(e) => { const next = [...character.weapons]; next[idx].damage = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-2 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Tipo</span>
+                          <input 
+                            value={w.type || ''} 
+                            onChange={(e) => { 
+                              const next = [...character.weapons]; 
+                              next[idx].type = e.target.value; 
+                              updateCharacter({ weapons: next }); 
+                            }} 
+                            placeholder="Ex: 1 Mão"
+                            className={`bg-transparent w-full text-center font-bold outline-none cinzel text-[10px] ${isDark ? 'text-[#e8d5b5] placeholder:text-white/10' : 'text-[#3e2723] placeholder:text-black/10'}`}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div className="col-span-1 text-center p-1 rounded border">
-                      <span className="block text-[8px] cinzel font-bold">Dano</span>
-                      <input value={item.damage} onChange={(e) => {
-                        const key = combatTab === 'weapons' ? 'weapons' : 'otherAttacks';
-                        const next = [...(character[key] as any)];
-                        next[idx].damage = e.target.value;
-                        updateCharacter({ [key]: next });
-                      }} className="bg-transparent w-full text-center font-bold outline-none" />
-                    </div>
+                  ))
+                )
+              ) : (
+                character.otherAttacks.length === 0 ? (
+                  <div className="py-8 text-center opacity-30 italic cinzel text-[10px] uppercase tracking-widest">
+                    Nenhum ataque registrado
                   </div>
-                </div>
-              ))}
+                ) : (
+                  character.otherAttacks.map((a, idx) => (
+                    <div key={idx} className={`border p-3 rounded-lg relative group ${isDark ? 'bg-black/20 border-white/5' : 'bg-white/40 border-[#8b4513]/10'}`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <input 
+                          value={a.name}
+                          onChange={(e) => {
+                            const next = [...character.otherAttacks];
+                            next[idx].name = e.target.value;
+                            updateCharacter({ otherAttacks: next });
+                          }}
+                          className={`bg-transparent font-bold fantasy-title outline-none focus:border-b border-white/20 w-2/3 ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}
+                        />
+                        <button 
+                          onClick={() => updateCharacter({ otherAttacks: character.otherAttacks.filter((_, i) => i !== idx) })}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Atk</span>
+                          <input value={a.bonus} onChange={(e) => { const next = [...character.otherAttacks]; next[idx].bonus = e.target.value; updateCharacter({ otherAttacks: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Dano</span>
+                          <input value={a.damage} onChange={(e) => { const next = [...character.otherAttacks]; next[idx].damage = e.target.value; updateCharacter({ otherAttacks: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-2 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Alcance/Tipo</span>
+                          <input 
+                            value={a.range || ''} 
+                            onChange={(e) => { 
+                              const next = [...character.otherAttacks]; 
+                              next[idx].range = e.target.value; 
+                              updateCharacter({ otherAttacks: next }); 
+                            }} 
+                            placeholder="Ex: 36m"
+                            className={`bg-transparent w-full text-center font-bold outline-none cinzel text-[10px] ${isDark ? 'text-[#e8d5b5] placeholder:text-white/10' : 'text-[#3e2723] placeholder:text-black/10'}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )
+              )}
             </div>
-            <button onClick={() => {
-              const key = combatTab === 'weapons' ? 'weapons' : 'otherAttacks';
-              const newItem = combatTab === 'weapons' ? { name: 'Nova Arma', bonus: '+0', damage: '1d4', type: '' } : { name: 'Novo Ataque', bonus: '+0', damage: '1d4', range: '' };
-              updateCharacter({ [key]: [...(character[key] as any), newItem] });
-            }} className={`mt-6 w-full py-3 rounded-xl cinzel text-[11px] font-bold border-b-4 ${isDark ? 'bg-[#d4af37] text-black border-black/40' : 'bg-[#8b4513] text-[#fdf5e6] border-black/40'}`}>+ Registrar</button>
+            
+            <button 
+              onClick={() => {
+                if (combatTab === 'weapons') {
+                  updateCharacter({ weapons: [...character.weapons, { name: 'Nova Arma', bonus: '+0', damage: '1d4', type: '' }] });
+                } else {
+                  updateCharacter({ otherAttacks: [...character.otherAttacks, { name: 'Novo Ataque', bonus: '+0', damage: '1d4', range: '' }] });
+                }
+              }}
+              className={`mt-6 w-full py-3 rounded-xl cinzel text-[11px] font-bold shadow-lg uppercase tracking-[0.2em] border-b-4 active:translate-y-1 active:border-b-0 transition-all ${
+                isDark 
+                  ? 'bg-[#d4af37] text-[#1a1a1a] border-black/40 hover:bg-[#b8860b]' 
+                  : 'bg-[#8b4513] text-[#fdf5e6] border-black/40 hover:bg-[#5d4037]'
+              }`}
+            >
+              + Registrar {combatTab === 'weapons' ? 'Arma' : 'Ataque'}
+            </button>
           </div>
         </section>
       </div>
