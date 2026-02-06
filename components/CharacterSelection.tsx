@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Character } from '../types';
 
@@ -99,7 +98,7 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
           </div>
         </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 w-full px-2">
+        <div className={characters.length === 0 ? "flex flex-col items-center justify-center w-full max-w-sm px-4" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 w-full px-2"}>
           {characters.map((char) => (
             <div 
               key={char.id}
@@ -137,7 +136,7 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
             </div>
           ))}
 
-          <div className="flex flex-col gap-6">
+          <div className={characters.length === 0 ? "w-full flex flex-col gap-6" : "flex flex-col gap-6"}>
             <button 
               onClick={onCreate}
               className="group relative h-36 md:h-40 bg-[#1a0f00] border-2 border-[#8b4513]/40 rounded-2xl flex flex-col items-center justify-center transition-all duration-500 hover:border-[#d4af37] hover:bg-[#2d1b0d] hover:shadow-[0_0_30px_rgba(212,175,55,0.15)] shadow-xl overflow-hidden"

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Character, Attribute } from './types';
 import { INITIAL_CHARACTER, createNewCharacter, getLevelFromXP, getProficiencyFromLevel, XP_TABLE } from './constants';
@@ -124,8 +123,7 @@ const App: React.FC = () => {
 
   const handleDelete = (id: string) => {
     setAllCharacters(prev => {
-      const filtered = prev.filter(c => c.id !== id);
-      return filtered.length > 0 ? filtered : [INITIAL_CHARACTER];
+      return prev.filter(c => c.id !== id);
     });
     if (selectedCharId === id) setSelectedCharId(null);
   };
@@ -291,7 +289,7 @@ const App: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="h-1.5 md:h-3 w-full bg-black/60 rounded-full border border-[#8b4513]/40 overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] p-[1.5px] relative">
+                    <div className="h-1.5 md:h-3 w-full bg-black/60 rounded-full border border-[#8b4513]/40 overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.5)] p-[1.5px] relative">
                       <div 
                         className="h-full bg-gradient-to-r from-[#5d4037] via-[#d4af37] to-[#f4e4bc] transition-all duration-1000 ease-out relative rounded-full"
                         style={{ width: `${levelData?.progressPercent}%` }}
@@ -376,7 +374,7 @@ const App: React.FC = () => {
         <MobileNavButton 
           tab={Tab.Sheet} 
           label="Ficha" 
-          icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg>} 
+          icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" /><path d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg>} 
         />
         <MobileNavButton 
           tab={Tab.Inventory} 

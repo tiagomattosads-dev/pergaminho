@@ -1,4 +1,3 @@
-
 import { Attribute, Character, Skill } from './types';
 
 export const XP_TABLE = [
@@ -47,7 +46,6 @@ export const INITIAL_CHARACTER: Character = {
   alignment: "Caótico e Neutro",
   exp: 0,
   inspiration: 0,
-  // Retrato atualizado com o link definitivo fornecido pelo usuário
   portrait: "https://res.cloudinary.com/dutufef4s/image/upload/v1770315204/artifice_lwcguq.png",
   hp: { current: 16, max: 16, temp: 0 },
   ac: 15,
@@ -92,8 +90,8 @@ export const createNewCharacter = (): Character => ({
   portrait: null,
   inspiration: 0,
   stats: {
-    [Attribute.FOR]: 10, [Attribute.DES]: 10, [Attribute.CON]: 10,
-    [Attribute.INT]: 10, [Attribute.SAB]: 10, [Attribute.CAR]: 10,
+    [Attribute.FOR]: 0, [Attribute.DES]: 0, [Attribute.CON]: 0,
+    [Attribute.INT]: 0, [Attribute.SAB]: 0, [Attribute.CAR]: 0,
   },
   proficiencies: { skills: [], saves: [], languages: ['Comum'], tools: [] },
   inventory: [],
