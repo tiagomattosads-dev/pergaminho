@@ -14,11 +14,11 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
   const isDark = theme === 'dark';
 
   const totalWeight = character.inventory.reduce((sum, item) => sum + (item.weight * item.quantity), 0);
-  const carryCapacity = character.stats.FOR * 15;
+  const carryCapacity = (character.stats.FOR || 10) * 15;
   const weightPercentage = Math.min(100, (totalWeight / carryCapacity) * 100);
 
-  const isEncumbered = totalWeight > character.stats.FOR * 5;
-  const isHeavilyEncumbered = totalWeight > character.stats.FOR * 10;
+  const isEncumbered = totalWeight > (character.stats.FOR || 10) * 5;
+  const isHeavilyEncumbered = totalWeight > (character.stats.FOR || 10) * 10;
   const isOverLimit = totalWeight > carryCapacity;
 
   const addItem = () => {
@@ -51,13 +51,17 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
     });
   };
 
-  // Lógica de Reorganização
+  // Lógica de Reorganização (Drag & Drop)
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
   };
 
   const handleDrop = (index: number) => {
@@ -95,7 +99,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-50"></div>
           <h2 className={`cinzel text-[10px] font-bold mb-6 tracking-[0.4em] uppercase border-b pb-2 text-center flex items-center justify-center gap-3 ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/20'}`}>
              <span className="h-px w-8 bg-current opacity-30"></span>
-             Bolsa de Valores
+             Bolsa de Dinheiro
              <span className="h-px w-8 bg-current opacity-30"></span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -190,7 +194,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
               <textarea 
                 placeholder="Propriedades mágicas, material, história do item..."
                 rows={2}
-                className={`border-2 rounded-xl p-3 focus:border-[#d4af37] outline-none parchment-text text-base transition-all shadow-inner resize-none ${
+                className={`border-2 rounded-xl p-3 focus:border-[#d4af37] outline-none font-sans text-sm transition-all shadow-inner resize-none ${
                   isDark ? 'bg-black/40 border-white/5 text-[#f4e4bc] placeholder:text-white/10' : 'bg-white/80 border-[#8b4513]/30 text-[#3e2723] placeholder:text-[#8b4513]/30'
                 }`}
                 value={newItem.description}
@@ -200,7 +204,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
           </div>
         </div>
 
-        {/* LISTA DE ITENS COM DRAG-AND-DROP */}
+        {/* LISTA DE ITENS COM REORGANIZAÇÃO */}
         <div className="p-0 flex flex-col relative">
           <div className={`grid grid-cols-12 gap-2 p-4 border-b-2 cinzel text-[9px] font-bold uppercase tracking-[0.3em] ${
             isDark ? 'bg-black/40 border-white/5 text-[#d4af37]' : 'bg-[#8b4513]/10 border-[#8b4513]/20 text-[#8b4513]'
@@ -225,10 +229,11 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                   draggable
                   onDragStart={() => handleDragStart(idx)}
                   onDragOver={handleDragOver}
+                  onDragEnd={handleDragEnd}
                   onDrop={() => handleDrop(idx)}
                   className={`grid grid-cols-12 items-start gap-2 p-5 border-b transition-all group relative ${
                     isDark ? 'border-white/5 hover:bg-white/5' : 'border-[#8b4513]/10 hover:bg-[#8b4513]/5'
-                  } ${draggedIndex === idx ? 'opacity-40 scale-95 border-[#d4af37] border-dashed border-2' : ''} ${
+                  } ${draggedIndex === idx ? 'opacity-40 scale-[0.98] border-[#d4af37] border-dashed border-2' : ''} ${
                     item.equipped ? 'bg-[#d4af37]/5' : 'bg-transparent'
                   }`}
                 >
@@ -264,8 +269,9 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                         </span>
                       </div>
                     </div>
+                    {/* CAMPO DE DESCRIÇÃO COM FONTE MENOS ESTILIZADA */}
                     <textarea
-                      placeholder="Adicionar descrição..."
+                      placeholder="Adicionar detalhes ou anotações..."
                       value={item.description || ''}
                       onChange={(e) => updateItemDescription(item.id, e.target.value)}
                       rows={1}
@@ -274,8 +280,8 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                         target.style.height = 'auto';
                         target.style.height = target.scrollHeight + 'px';
                       }}
-                      className={`w-full bg-transparent parchment-text text-[11px] italic focus:outline-none resize-none overflow-hidden border-t border-black/5 pt-1 ${
-                        isDark ? 'text-[#e8d5b5]/50 focus:text-[#e8d5b5] border-white/5' : 'text-[#3e2723]/50 focus:text-[#3e2723]'
+                      className={`w-full bg-transparent font-sans text-[12px] leading-snug focus:outline-none resize-none overflow-hidden border-t border-black/5 pt-1 transition-all ${
+                        isDark ? 'text-[#e8d5b5]/70 focus:text-[#e8d5b5] border-white/5 focus:border-[#d4af37]/40' : 'text-[#3e2723]/70 focus:text-[#3e2723] focus:border-[#8b4513]/40'
                       }`}
                     />
                   </div>

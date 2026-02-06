@@ -184,8 +184,33 @@ const Settings: React.FC<Props> = ({ character, updateCharacter, theme, setTheme
         </section>
       </div>
 
-      {/* 4. SOBRE (INFO) */}
-      <section className="mt-6">
+      {/* 4. SUGESTÕES E BUGS */}
+      <section>
+        <SectionHeader title="Câmara de Sugestões" subtitle="Reportar Bugs e Ideias" />
+        <div className={`border-2 rounded-3xl p-6 shadow-xl relative overflow-hidden group transition-all flex flex-col md:flex-row items-center gap-6 ${theme === 'dark' ? 'bg-[#1a1a1a] border-[#d4af37]/30' : 'bg-[#fdf5e6] border-[#8b4513]/20'}`}>
+          <div className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg border-2 ${theme === 'dark' ? 'bg-black/40 border-[#d4af37]/40 text-[#d4af37]' : 'bg-white/40 border-[#8b4513]/20 text-[#8b4513]'}`}>
+            <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+          </div>
+          <div className="flex-grow text-center md:text-left">
+            <p className={`parchment-text text-sm mb-4 italic opacity-80 ${theme === 'dark' ? 'text-[#e8d5b5]' : 'text-[#5d4037]'}`}>
+              Encontrou um erro no feitiço ou tem uma ideia para o nosso tomo? Envie uma coruja mensageira aos criadores.
+            </p>
+            <a 
+              href="https://forms.gle/XKueShJSMiuRa3ud7" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={`inline-block cinzel font-bold py-3 px-10 rounded-xl transition-all shadow-md active:translate-y-1 border-b-4 uppercase tracking-widest text-[10px] ${theme === 'dark' ? 'bg-[#d4af37] text-[#1a1a1a] border-[#b8860b] hover:bg-[#b8860b]' : 'bg-[#8b4513] text-[#fdf5e6] border-[#3e2723] hover:bg-[#5d4037]'}`}
+            >
+              Enviar Mensagem por Coruja
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. SOBRE (INFO) */}
+      <section className="mt-2">
         <SectionHeader title="Sobre o Aplicativo" subtitle="Informações do Projeto" />
         <div className={`border-2 p-6 rounded-3xl transition-colors ${theme === 'dark' ? 'bg-[#1a1a1a]/60 border-[#2a2a2a]' : 'bg-[#fdf5e6]/60 border-[#8b4513]/20'}`}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

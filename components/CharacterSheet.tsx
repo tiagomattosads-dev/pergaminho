@@ -187,7 +187,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               </div>
 
               <div className={`border-2 p-4 rounded-xl shadow-md ${isDark ? 'bg-black/20 border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]/40'}`}>
-                <h3 className={`cinzel text-xs font-bold text-center mb-5 uppercase tracking-[0.2em] border-b pb-1 ${isDark ? 'text-[#d4af37] border-white/5' : 'text-[#8b4513] border-[#8b4513]/10'}`}>Salvaguardas</h3>
+                <h3 className={`cinzel text-xs font-bold text-center mb-5 uppercase tracking-[0.2em] border-b pb-1 ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/10'}`}>Salvaguardas</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {Object.keys(character.stats).map((key) => {
                     const attr = key as Attribute;
@@ -206,12 +206,10 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 </div>
               </div>
 
-              {/* BLOCO DE PONTOS DE VIDA (COM ABAS) */}
               <div className={`border-2 p-5 rounded-2xl shadow-xl flex flex-col relative transition-all duration-700 ${
                   isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'
                 }`}>
                 
-                {/* Sub-menu de Vida/Morte */}
                 <div className="flex mb-4 border-b-2 border-black/10 overflow-hidden rounded-t-lg bg-black/5">
                   <button 
                     onClick={() => setHpTab('hp')}
@@ -255,7 +253,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                     </h2>
                     
                     <div className="w-full space-y-4 px-4">
-                      {/* Sucessos */}
                       <div className="flex flex-col items-center">
                         <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Sucessos</span>
                         <div className="flex gap-4">
@@ -264,9 +261,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                               key={i}
                               onClick={() => toggleDeathSave('successes', i)}
                               className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${
-                                i <= character.deathSaves.successes 
-                                  ? 'bg-[#d4af37] border-[#fffacd] shadow-[0_0_10px_rgba(212,175,55,0.4)]' 
-                                  : 'bg-black/20 border-white/10 opacity-30'
+                                i <= character.deathSaves.successes ? 'bg-[#d4af37] border-[#fffacd] shadow-[0_0_10px_rgba(212,175,55,0.4)]' : 'bg-black/20 border-white/10 opacity-30'
                               }`}
                             >
                               {i <= character.deathSaves.successes && (
@@ -279,7 +274,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                         </div>
                       </div>
 
-                      {/* Falhas */}
                       <div className="flex flex-col items-center">
                         <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-red-400' : 'text-red-700'}`}>Falhas</span>
                         <div className="flex gap-4">
@@ -288,9 +282,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                               key={i}
                               onClick={() => toggleDeathSave('failures', i)}
                               className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${
-                                i <= character.deathSaves.failures 
-                                  ? 'bg-red-700 border-red-400 shadow-[0_0_10px_rgba(185,28,28,0.4)]' 
-                                  : 'bg-black/20 border-white/10 opacity-30'
+                                i <= character.deathSaves.failures ? 'bg-red-700 border-red-400 shadow-[0_0_10px_rgba(185,28,28,0.4)]' : 'bg-black/20 border-white/10 opacity-30'
                               }`}
                             >
                               {i <= character.deathSaves.failures && (
@@ -312,7 +304,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
 
         {/* COLUNA DIREITA: PERÍCIAS E COMBATE */}
         <section className="lg:col-span-4 flex flex-col gap-6 order-3">
-          {/* BLOCO DE PERÍCIAS */}
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
             <h2 className={`cinzel text-sm font-bold border-b mb-6 pb-2 tracking-[0.2em] uppercase text-center ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/30'}`}>Perícias</h2>
             <div className="flex flex-col gap-2">
@@ -324,7 +315,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                     isDark ? 'border-white/5 hover:bg-white/5' : 'border-[#8b4513]/5 hover:bg-[#8b4513]/5'
                   } ${isProf ? (isDark ? 'bg-white/5' : 'bg-[#8b4513]/5') : ''}`}>
                     <input type="checkbox" checked={isProf} onChange={() => toggleSkill(skill.name)} className={`w-4 h-4 cursor-pointer ${isDark ? 'accent-[#d4af37]' : 'accent-[#8b4513]'}`} />
-                    
                     <span className={`w-7 font-bold text-center text-base ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{mod >= 0 ? `+${mod}` : mod}</span>
                     <div className="flex items-center flex-grow truncate">
                       <span className={`parchment-text font-bold uppercase tracking-tighter mr-1 transition-colors ${
@@ -340,9 +330,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             </div>
           </div>
 
-          {/* BLOCO DE COMBATE (ARMAS E ATAQUES) */}
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
-            {/* Sub-menu de Navegação */}
             <div className="flex mb-5 border-b-2 border-black/10 overflow-hidden rounded-t-lg bg-black/5">
               <button 
                 onClick={() => setCombatTab('weapons')}
@@ -407,17 +395,17 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           />
                         </div>
                       </div>
-                      {/* ESPAÇO PARA DESCRIÇÃO DA ARMA */}
+                      {/* DESCRIÇÃO DE ARMA COM FONTE LIMPA */}
                       <div className="mt-2">
                         <textarea
-                          placeholder="Descrição da arma..."
+                          placeholder="Propriedades da arma (Acuidade, Versátil...)"
                           value={w.description || ''}
                           onChange={(e) => {
                             const next = [...character.weapons];
                             next[idx].description = e.target.value;
                             updateCharacter({ weapons: next });
                           }}
-                          className={`w-full bg-transparent parchment-text text-[11px] italic focus:outline-none resize-none overflow-hidden min-h-[1.5rem] border-t border-black/5 pt-1 ${isDark ? 'text-[#e8d5b5]/60 placeholder:text-white/5 border-white/5' : 'text-[#3e2723]/60 placeholder:text-black/5'}`}
+                          className={`w-full bg-transparent font-sans text-[12px] focus:outline-none resize-none overflow-hidden min-h-[1.5rem] border-t border-black/5 pt-1 ${isDark ? 'text-[#e8d5b5]/60 placeholder:text-white/5 border-white/5' : 'text-[#3e2723]/60 placeholder:text-black/5'}`}
                           rows={1}
                           onInput={(e) => {
                             const target = e.target as HTMLTextAreaElement;
@@ -492,9 +480,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 }
               }}
               className={`mt-6 w-full py-3 rounded-xl cinzel text-[11px] font-bold shadow-lg uppercase tracking-[0.2em] border-b-4 active:translate-y-1 active:border-b-0 transition-all ${
-                isDark 
-                  ? 'bg-[#d4af37] text-[#1a1a1a] border-black/40 hover:bg-[#b8860b]' 
-                  : 'bg-[#8b4513] text-[#fdf5e6] border-black/40 hover:bg-[#5d4037]'
+                isDark ? 'bg-[#d4af37] text-[#1a1a1a] border-black/40 hover:bg-[#b8860b]' : 'bg-[#8b4513] text-[#fdf5e6] border-black/40 hover:bg-[#5d4037]'
               }`}
             >
               + Registrar {combatTab === 'weapons' ? 'Arma' : 'Ataque'}
