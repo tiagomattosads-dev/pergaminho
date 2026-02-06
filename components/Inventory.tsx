@@ -269,7 +269,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                         </span>
                       </div>
                     </div>
-                    {/* CAMPO DE DESCRIÇÃO COM FONTE MENOS ESTILIZADA */}
+                    {/* CAMPO DE DESCRIÇÃO COM FONTE LIMPA (SANS-SERIF) */}
                     <textarea
                       placeholder="Adicionar detalhes ou anotações..."
                       value={item.description || ''}

@@ -92,7 +92,7 @@ export const createNewCharacter = (): Character => ({
   level: 1,
   class: "Guerreiro",
   race: "Humano",
-  portrait: null,
+  portrait: "https://res.cloudinary.com/dutufef4s/image/upload/v1770315204/artifice_lwcguq.png",
   inspiration: 0,
   hp: { current: 10, max: 10, temp: 0 },
   deathSaves: { successes: 0, failures: 0 },
