@@ -407,6 +407,25 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           />
                         </div>
                       </div>
+                      {/* ESPAÇO PARA DESCRIÇÃO DA ARMA */}
+                      <div className="mt-2">
+                        <textarea
+                          placeholder="Descrição da arma..."
+                          value={w.description || ''}
+                          onChange={(e) => {
+                            const next = [...character.weapons];
+                            next[idx].description = e.target.value;
+                            updateCharacter({ weapons: next });
+                          }}
+                          className={`w-full bg-transparent parchment-text text-[11px] italic focus:outline-none resize-none overflow-hidden min-h-[1.5rem] border-t border-black/5 pt-1 ${isDark ? 'text-[#e8d5b5]/60 placeholder:text-white/5 border-white/5' : 'text-[#3e2723]/60 placeholder:text-black/5'}`}
+                          rows={1}
+                          onInput={(e) => {
+                            const target = e.target as HTMLTextAreaElement;
+                            target.style.height = 'auto';
+                            target.style.height = target.scrollHeight + 'px';
+                          }}
+                        />
+                      </div>
                     </div>
                   ))
                 )
@@ -467,7 +486,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             <button 
               onClick={() => {
                 if (combatTab === 'weapons') {
-                  updateCharacter({ weapons: [...character.weapons, { name: 'Nova Arma', bonus: '+0', damage: '1d4', type: '' }] });
+                  updateCharacter({ weapons: [...character.weapons, { name: 'Nova Arma', bonus: '+0', damage: '1d4', type: '', description: '' }] });
                 } else {
                   updateCharacter({ otherAttacks: [...character.otherAttacks, { name: 'Novo Ataque', bonus: '+0', damage: '1d4', range: '' }] });
                 }

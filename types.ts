@@ -28,7 +28,8 @@ export interface Weapon {
   name: string;
   bonus: string;
   damage: string;
-  type: string; 
+  type: string;
+  description?: string;
 }
 
 export interface OtherAttack {

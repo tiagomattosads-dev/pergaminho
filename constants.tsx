@@ -76,7 +76,7 @@ export const INITIAL_CHARACTER: Character = {
     { id: '1', name: 'Lórica de escamas', weight: 45, quantity: 1, description: 'Armadura média.', equipped: true },
   ],
   weapons: [
-    { name: 'Bordão', bonus: '+2', damage: '1d6', type: '1 Mão' },
+    { name: 'Bordão', bonus: '+2', damage: '1d6', type: '1 Mão', description: 'Um bastão de madeira simples e resistente.' },
   ],
   otherAttacks: [
     { name: 'Raio de Fogo', bonus: '+4', damage: '1d10', range: '36m' }
