@@ -89,4 +89,5 @@ export interface Character {
   spellcastingAbility?: Attribute;
   spellSaveDC?: number;
   spellAttackBonus?: string;
+  language?: 'pt' | 'en';
 }

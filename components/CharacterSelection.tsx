@@ -1,5 +1,7 @@
+
 import React, { useState, useRef } from 'react';
 import { Character } from '../types';
+import { translations } from '../translations';
 
 interface Props {
   characters: Character[];
@@ -8,11 +10,23 @@ interface Props {
   onDelete: (id: string) => void;
   onImport: (char: Character) => void;
   onLogout: () => void;
+  onOpenSettings: () => void;
+  language?: 'pt' | 'en';
 }
 
-const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, onDelete, onImport, onLogout }) => {
+const CharacterSelection: React.FC<Props> = ({ 
+  characters, 
+  onSelect, 
+  onCreate, 
+  onDelete, 
+  onImport, 
+  onLogout, 
+  onOpenSettings,
+  language = 'pt' 
+}) => {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
+  const t = translations[language];
 
   const handleDeleteClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -32,7 +46,7 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
 
   const processFile = (file: File) => {
     if (!file.name.endsWith('.json')) {
-      alert("Apenas pergaminhos sagrados (.json) são aceitos na biblioteca.");
+      alert(language === 'pt' ? "Apenas pergaminhos sagrados (.json) são aceitos na biblioteca." : "Only sacred scrolls (.json) are accepted in the library.");
       return;
     }
 
@@ -43,10 +57,10 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
         if (char && char.name) {
           onImport(char);
         } else {
-          alert("Arquivo inválido. Formato de pergaminho não reconhecido.");
+          alert(language === 'pt' ? "Arquivo inválido. Formato de pergaminho não reconhecido." : "Invalid file. Scroll format not recognized.");
         }
       } catch (err) {
-        alert("Erro ao ler arquivo. Certifique-se de que é um JSON válido.");
+        alert(language === 'pt' ? "Erro ao ler arquivo. Certifique-se de que é um JSON válido." : "Error reading file. Ensure it is a valid JSON.");
       }
     };
     reader.readAsText(file);
@@ -64,16 +78,30 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
     <div className="min-h-screen bg-[#0d0700] flex flex-col items-center justify-start md:justify-center p-4 py-12 md:py-24 overflow-y-auto custom-scrollbar relative">
       <div className="fixed inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/old-map.png')] pointer-events-none"></div>
       
-      {/* Botão de Sair no Canto Superior Direito */}
-      <button 
-        onClick={onLogout}
-        className="fixed top-6 right-6 z-[100] cinzel font-bold text-[10px] md:text-xs text-[#d4af37] border-2 border-[#d4af37]/30 px-4 py-2 rounded-xl bg-black/40 hover:bg-[#d4af37] hover:text-[#1a0f00] transition-all uppercase tracking-widest shadow-xl flex items-center gap-2 group"
-      >
-        <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
-        Sair
-      </button>
+      {/* Botões de topo */}
+      <div className="fixed top-6 right-6 z-[100] flex items-center gap-3">
+        {/* Novo ícone de Configurações */}
+        <button 
+          onClick={onOpenSettings}
+          className="p-2.5 rounded-xl border-2 border-[#d4af37]/30 bg-black/40 text-[#d4af37] hover:bg-[#d4af37] hover:text-[#1a0f00] transition-all shadow-xl group"
+          title={t.settings}
+        >
+          <svg className="w-5 h-5 group-hover:rotate-45 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924-1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </button>
+
+        <button 
+          onClick={onLogout}
+          className="cinzel font-bold text-[10px] md:text-xs text-[#d4af37] border-2 border-[#d4af37]/30 px-4 py-2 rounded-xl bg-black/40 hover:bg-[#d4af37] hover:text-[#1a0f00] transition-all uppercase tracking-widest shadow-xl flex items-center gap-2 group"
+        >
+          <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          {t.logout}
+        </button>
+      </div>
 
       <input 
         type="file" 
@@ -86,10 +114,10 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
       <div className="relative z-10 w-full max-w-5xl flex flex-col items-center my-auto">
         <header className="text-center mb-10 md:mb-20 px-4">
           <h1 className="fantasy-title text-4xl sm:text-6xl md:text-8xl text-[#d4af37] drop-shadow-[0_2px_20px_rgba(212,175,55,0.5)] mb-3 uppercase tracking-[0.15em] leading-tight">
-            O Pergaminho
+            {language === 'pt' ? 'O Pergaminho' : 'The Scroll'}
           </h1>
           <p className="cinzel text-[#e8d5b5]/70 text-[10px] md:text-base tracking-[0.3em] uppercase italic max-w-xs mx-auto md:max-w-none">
-            Biblioteca de Lendas e Crônicas de Heróis
+            {language === 'pt' ? 'Biblioteca de Lendas e Crônicas de Heróis' : 'Library of Legends and Chronicles of Heroes'}
           </p>
           <div className="mt-6 flex justify-center opacity-40">
              <div className="h-px w-16 md:w-24 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent"></div>
@@ -130,7 +158,7 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
                   {char.name}
                 </h3>
                 <div className="cinzel text-[9px] md:text-[10px] text-[#8b4513] font-bold uppercase tracking-[0.2em] mt-1.5 opacity-70">
-                  {char.class} • NVL {char.level}
+                  {char.class} • {language === 'pt' ? 'NVL' : 'LVL'} {char.level}
                 </div>
               </div>
             </div>
@@ -147,7 +175,7 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
                 </svg>
               </div>
-              <span className="cinzel font-bold text-[#8b4513] group-hover:text-[#d4af37] tracking-[0.3em] text-[10px] md:text-[11px] uppercase">Nova Ficha</span>
+              <span className="cinzel font-bold text-[#8b4513] group-hover:text-[#d4af37] tracking-[0.3em] text-[10px] md:text-[11px] uppercase">{t.new_scroll}</span>
             </button>
 
             <button 
@@ -159,7 +187,7 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                 </svg>
               </div>
-              <span className="cinzel font-bold tracking-[0.2em] text-[9px] md:text-[10px] text-[#8b4513] group-hover:text-[#d4af37] uppercase">Importar Registro</span>
+              <span className="cinzel font-bold tracking-[0.2em] text-[9px] md:text-[10px] text-[#8b4513] group-hover:text-[#d4af37] uppercase">{t.import_record}</span>
             </button>
           </div>
         </div>
@@ -171,13 +199,13 @@ const CharacterSelection: React.FC<Props> = ({ characters, onSelect, onCreate, o
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-red-900 rounded-full border-4 border-[#8b4513] flex items-center justify-center shadow-2xl">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
             </div>
-            <h2 className="fantasy-title text-2xl text-[#3e2723] mb-6 mt-4 uppercase tracking-widest">Queimar pergaminho?</h2>
+            <h2 className="fantasy-title text-2xl text-[#3e2723] mb-6 mt-4 uppercase tracking-widest">{t.burn_scroll}</h2>
             <p className="parchment-text text-lg text-[#5d4037] mb-10 leading-relaxed italic">
-              "As cinzas não guardam memórias. Esta crônica será apagada para sempre das grandes bibliotecas."
+              {t.ashes_no_memory}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button onClick={confirmDelete} className="flex-1 bg-gradient-to-b from-red-700 to-red-900 text-white cinzel font-bold py-4 rounded-xl uppercase tracking-[0.2em] text-[10px] shadow-lg hover:brightness-110 active:scale-95 transition-all">Destruir</button>
-              <button onClick={cancelDelete} className="flex-1 bg-gradient-to-b from-[#8b4513] to-[#3e2723] text-[#fdf5e6] cinzel font-bold py-4 rounded-xl uppercase tracking-[0.2em] text-[10px] shadow-lg hover:brightness-110 active:scale-95 transition-all">Preservar</button>
+              <button onClick={confirmDelete} className="flex-1 bg-gradient-to-b from-red-700 to-red-900 text-white cinzel font-bold py-4 rounded-xl uppercase tracking-[0.2em] text-[10px] shadow-lg hover:brightness-110 active:scale-95 transition-all">{t.destroy}</button>
+              <button onClick={cancelDelete} className="flex-1 bg-gradient-to-b from-[#8b4513] to-[#3e2723] text-[#fdf5e6] cinzel font-bold py-4 rounded-xl uppercase tracking-[0.2em] text-[10px] shadow-lg hover:brightness-110 active:scale-95 transition-all">{t.preserve}</button>
             </div>
           </div>
         </div>

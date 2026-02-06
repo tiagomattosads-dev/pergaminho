@@ -2,6 +2,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Character, Attribute, Skill, Weapon, OtherAttack } from '../types';
 import { SKILLS, getLevelFromXP, getProficiencyFromLevel } from '../constants';
+import { translations, attributeTranslations, skillTranslations } from '../translations';
 
 interface Props {
   character: Character;
@@ -14,6 +15,10 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [combatTab, setCombatTab] = useState<'weapons' | 'attacks'>('weapons');
   const [hpTab, setHpTab] = useState<'hp' | 'death'>('hp');
+  
+  const lang = character.language || 'pt';
+  const t = translations[lang];
+  const attrT = attributeTranslations;
   
   const getModifier = (score: number) => Math.floor((score - 10) / 2);
 
@@ -39,7 +44,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               ? 'bg-[#d4af37] text-[#1a1a1a] border-[#fffacd]/20' 
               : 'bg-[#8b4513] text-[#fdf5e6] border-[#d4af37]/40'
           }`}>
-            {attr}
+            {attrT[attr][lang]}
           </span>
           <div className="flex items-center justify-center w-full h-full px-1">
             <input 
@@ -100,10 +105,10 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
         isDark ? 'bg-white/5 border-white/10' : 'bg-[#8b4513]/5 border-[#8b4513]/20'
       }`}>
         {[
-          { label: 'Classe', value: character.class, key: 'class' },
-          { label: 'Raça', value: character.race, key: 'race' },
-          { label: 'Antecedente', value: character.background, key: 'background' },
-          { label: 'Tendência', value: character.alignment, key: 'alignment' }
+          { label: t.class, value: character.class, key: 'class' },
+          { label: t.race, value: character.race, key: 'race' },
+          { label: t.background, value: character.background, key: 'background' },
+          { label: t.alignment, value: character.alignment, key: 'alignment' }
         ].map((field) => (
           <div key={field.key} className="flex flex-col">
             <label className={`cinzel text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{field.label}</label>
@@ -124,7 +129,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
         {/* COLUNA ESQUERDA: ATRIBUTOS */}
         <section className="lg:col-span-2 flex flex-col gap-6 order-2 lg:order-1">
            <div className={`border-2 p-4 rounded-2xl shadow-inner ${isDark ? 'bg-black/20 border-white/5' : 'bg-[#fdf5e6]/70 border-[#8b4513]/20'}`}>
-              <h3 className={`cinzel text-xs font-bold text-center mb-10 uppercase tracking-[0.2em] border-b pb-2 ${isDark ? 'text-[#d4af37] border-white/5' : 'text-[#8b4513] border-[#8b4513]/10'}`}>Atributos</h3>
+              <h3 className={`cinzel text-xs font-bold text-center mb-10 uppercase tracking-[0.2em] border-b pb-2 ${isDark ? 'text-[#d4af37] border-white/5' : 'text-[#8b4513] border-[#8b4513]/10'}`}>{t.attributes}</h3>
               <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-1 gap-y-12 gap-x-4">
                 {(Object.entries(character.stats) as [Attribute, number][]).map(([attr, score]) => (
                   <StatBoxMedallion key={attr} attr={attr} score={score} />
@@ -140,11 +145,11 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             <div className={`border-2 p-3 rounded-2xl shadow-xl flex flex-col items-center gap-4 relative ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
               <div className="w-full flex justify-between items-center z-10">
                 <div className={`flex flex-col items-center backdrop-blur-sm border p-1.5 rounded-lg w-16 shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
-                  <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Prof.</span>
+                  <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.prof_bonus}</span>
                   <span className={`text-lg font-bold fantasy-title ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>+{profBonus}</span>
                 </div>
                 <div className={`flex flex-col items-center backdrop-blur-sm border p-1.5 rounded-lg w-16 shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
-                  <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Insp.</span>
+                  <span className={`text-[8px] cinzel font-bold uppercase tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.inspiration}</span>
                   <input 
                     type="number" 
                     value={character.inspiration} 
@@ -161,7 +166,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 {character.portrait ? (
                   <img src={character.portrait} alt="Portrait" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center italic p-6 text-center text-xs cinzel uppercase tracking-widest opacity-20">Clique para Carregar Retrato</div>
+                  <div className="w-full h-full flex flex-col items-center justify-center italic p-6 text-center text-xs cinzel uppercase tracking-widest opacity-20">{t.click_to_upload}</div>
                 )}
               </div>
             </div>
@@ -170,9 +175,9 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             <div className="w-full md:w-1/2 lg:w-full space-y-6">
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: 'Armadura', value: character.ac, key: 'ac', type: 'number' },
-                  { label: 'Iniciativa', value: character.initiativeBonus, key: 'initiativeBonus', type: 'number' },
-                  { label: 'Desloc.', value: character.speed, key: 'speed', type: 'text' }
+                  { label: t.armor, value: character.ac, key: 'ac', type: 'number' },
+                  { label: t.initiative, value: character.initiativeBonus, key: 'initiativeBonus', type: 'number' },
+                  { label: t.speed, value: character.speed, key: 'speed', type: 'text' }
                 ].map((stat) => (
                   <div key={stat.key} className={`border-2 rounded-xl p-3 text-center shadow-lg flex flex-col items-center ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-white border-[#8b4513]'}`}>
                     <span className={`block text-[9px] cinzel font-bold uppercase mb-1 tracking-wider ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{stat.label}</span>
@@ -187,7 +192,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               </div>
 
               <div className={`border-2 p-4 rounded-xl shadow-md ${isDark ? 'bg-black/20 border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]/40'}`}>
-                <h3 className={`cinzel text-xs font-bold text-center mb-5 uppercase tracking-[0.2em] border-b pb-1 ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/10'}`}>Salvaguardas</h3>
+                <h3 className={`cinzel text-xs font-bold text-center mb-5 uppercase tracking-[0.2em] border-b pb-1 ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/10'}`}>{t.saves}</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {Object.keys(character.stats).map((key) => {
                     const attr = key as Attribute;
@@ -215,33 +220,33 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                     onClick={() => setHpTab('hp')}
                     className={`flex-1 py-1.5 cinzel text-[9px] font-bold uppercase tracking-widest transition-all ${hpTab === 'hp' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
                   >
-                    Vida
+                    {t.hp}
                   </button>
                   <button 
                     onClick={() => setHpTab('death')}
                     className={`flex-1 py-1.5 cinzel text-[9px] font-bold uppercase tracking-widest transition-all ${hpTab === 'death' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
                   >
-                    Morte
+                    {t.death}
                   </button>
                 </div>
 
                 {hpTab === 'hp' ? (
                   <>
                     <div className={`flex justify-between items-center mb-4 border-b pb-2 ${isDark ? 'border-white/10' : 'border-[#8b4513]/20'}`}>
-                      <h2 className={`cinzel font-bold text-xs tracking-[0.15em] uppercase ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Pontos de Vida</h2>
+                      <h2 className={`cinzel font-bold text-xs tracking-[0.15em] uppercase ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.hp}</h2>
                       <div className="flex items-center gap-2">
-                        <span className="text-[9px] cinzel font-bold opacity-50 uppercase tracking-widest">Máx</span>
+                        <span className="text-[9px] cinzel font-bold opacity-50 uppercase tracking-widest">{t.hp_max}</span>
                         <input type="number" value={character.hp.max} onChange={(e) => updateCharacter({ hp: { ...character.hp, max: parseInt(e.target.value) || 0 } })} className={`bg-transparent font-bold w-12 text-center focus:outline-none border-b text-lg ${isDark ? 'border-white/10' : 'border-[#8b4513]/40'}`} />
                       </div>
                     </div>
                     <input type="number" value={character.hp.current} onChange={(e) => updateCharacter({ hp: { ...character.hp, current: parseInt(e.target.value) || 0 } })} className={`w-full text-center text-6xl font-bold bg-transparent focus:outline-none drop-shadow-md p-0 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`} />
                     <div className={`flex gap-4 text-center mt-6 pt-4 border-t ${isDark ? 'border-white/10' : 'border-[#8b4513]/10'}`}>
                       <div className="flex-1">
-                        <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">Temporários</span>
+                        <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">{t.temp_hp}</span>
                         <input type="number" value={character.hp.temp} onChange={(e) => updateCharacter({ hp: { ...character.hp, temp: parseInt(e.target.value) || 0 } })} className="w-full text-center font-bold bg-transparent outline-none text-xl" />
                       </div>
                       <div className="flex-1">
-                        <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">Dados de Vida</span>
+                        <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">{t.hit_dice}</span>
                         <span className="font-bold text-xl block mt-1 tracking-tighter">1d8</span>
                       </div>
                     </div>
@@ -249,12 +254,12 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 ) : (
                   <div className="flex flex-col items-center justify-center py-4 space-y-6">
                     <h2 className={`cinzel font-bold text-xs tracking-[0.15em] uppercase border-b w-full text-center pb-2 mb-2 ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/20'}`}>
-                      Salvaguardas Contra Morte
+                      {t.death_saves_title}
                     </h2>
                     
                     <div className="w-full space-y-4 px-4">
                       <div className="flex flex-col items-center">
-                        <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Sucessos</span>
+                        <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.successes}</span>
                         <div className="flex gap-4">
                           {[1, 2, 3].map(i => (
                             <button 
@@ -275,7 +280,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                       </div>
 
                       <div className="flex flex-col items-center">
-                        <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-red-400' : 'text-red-700'}`}>Falhas</span>
+                        <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-red-400' : 'text-red-700'}`}>{t.failures}</span>
                         <div className="flex gap-4">
                           {[1, 2, 3].map(i => (
                             <button 
@@ -305,11 +310,12 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
         {/* COLUNA DIREITA: PERÍCIAS E COMBATE */}
         <section className="lg:col-span-4 flex flex-col gap-6 order-3">
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
-            <h2 className={`cinzel text-sm font-bold border-b mb-6 pb-2 tracking-[0.2em] uppercase text-center ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/30'}`}>Perícias</h2>
+            <h2 className={`cinzel text-sm font-bold border-b mb-6 pb-2 tracking-[0.2em] uppercase text-center ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/30'}`}>{t.skills}</h2>
             <div className="flex flex-col gap-2">
               {SKILLS.map(skill => {
                 const isProf = character.proficiencies.skills.includes(skill.name);
                 const mod = getModifier(character.stats[skill.attribute]) + (isProf ? profBonus : 0);
+                const skillName = skillTranslations[skill.name] ? skillTranslations[skill.name][lang] : skill.name;
                 return (
                   <div key={skill.name} className={`flex items-center gap-3 text-[13px] p-1.5 border-b group/skill transition-all rounded-sm ${
                     isDark ? 'border-white/5 hover:bg-white/5' : 'border-[#8b4513]/5 hover:bg-[#8b4513]/5'
@@ -320,7 +326,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                       <span className={`parchment-text font-bold uppercase tracking-tighter mr-1 transition-colors ${
                         isProf ? (isDark ? 'text-[#d4af37]' : 'text-[#8b4513]') : (isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]')
                       }`}>
-                        {skill.name}
+                        {skillName}
                       </span>
                       <span className={`text-[9px] cinzel opacity-40 font-bold ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>({skill.attribute})</span>
                     </div>
@@ -336,13 +342,13 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 onClick={() => setCombatTab('weapons')}
                 className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'weapons' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
               >
-                Armas
+                {t.weapons}
               </button>
               <button 
                 onClick={() => setCombatTab('attacks')}
                 className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'attacks' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
               >
-                Ataques
+                {t.attacks}
               </button>
             </div>
 
@@ -350,7 +356,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               {combatTab === 'weapons' ? (
                 character.weapons.length === 0 ? (
                   <div className="py-8 text-center opacity-30 italic cinzel text-[10px] uppercase tracking-widest">
-                    Nenhuma arma registrada
+                    {lang === 'pt' ? 'Nenhuma arma registrada' : 'No weapons recorded'}
                   </div>
                 ) : (
                   character.weapons.map((w, idx) => (
@@ -374,15 +380,15 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                       </div>
                       <div className="grid grid-cols-4 gap-2">
                         <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
-                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Bônus</span>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>{t.bonus}</span>
                           <input value={w.bonus} onChange={(e) => { const next = [...character.weapons]; next[idx].bonus = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
                         </div>
                         <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
-                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Dano</span>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>{lang === 'pt' ? 'Dano' : 'Damage'}</span>
                           <input value={w.damage} onChange={(e) => { const next = [...character.weapons]; next[idx].damage = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
                         </div>
                         <div className={`col-span-2 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
-                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Tipo</span>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>{lang === 'pt' ? 'Tipo' : 'Type'}</span>
                           <input 
                             value={w.type || ''} 
                             onChange={(e) => { 
@@ -390,7 +396,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                               next[idx].type = e.target.value; 
                               updateCharacter({ weapons: next }); 
                             }} 
-                            placeholder="Ex: 1 Mão"
+                            placeholder={lang === 'pt' ? "Ex: 1 Mão" : "Ex: 1 Hand"}
                             className={`bg-transparent w-full text-center font-bold outline-none cinzel text-[10px] ${isDark ? 'text-[#e8d5b5] placeholder:text-white/10' : 'text-[#3e2723] placeholder:text-black/10'}`}
                           />
                         </div>
@@ -398,7 +404,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                       {/* DESCRIÇÃO DE ARMA COM FONTE LIMPA */}
                       <div className="mt-2">
                         <textarea
-                          placeholder="Propriedades da arma (Acuidade, Versátil...)"
+                          placeholder={lang === 'pt' ? "Propriedades da arma (Acuidade, Versátil...)" : "Weapon properties (Finesse, Versatile...)"}
                           value={w.description || ''}
                           onChange={(e) => {
                             const next = [...character.weapons];
@@ -420,7 +426,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               ) : (
                 character.otherAttacks.length === 0 ? (
                   <div className="py-8 text-center opacity-30 italic cinzel text-[10px] uppercase tracking-widest">
-                    Nenhum ataque registrado
+                    {lang === 'pt' ? 'Nenhum ataque registrado' : 'No attacks recorded'}
                   </div>
                 ) : (
                   character.otherAttacks.map((a, idx) => (
@@ -448,43 +454,35 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           <input value={a.bonus} onChange={(e) => { const next = [...character.otherAttacks]; next[idx].bonus = e.target.value; updateCharacter({ otherAttacks: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
                         </div>
                         <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
-                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Dano</span>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>{lang === 'pt' ? 'Dano' : 'Damage'}</span>
                           <input value={a.damage} onChange={(e) => { const next = [...character.otherAttacks]; next[idx].damage = e.target.value; updateCharacter({ otherAttacks: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
                         </div>
                         <div className={`col-span-2 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
-                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Alcance/Tipo</span>
-                          <input 
-                            value={a.range || ''} 
-                            onChange={(e) => { 
-                              const next = [...character.otherAttacks]; 
-                              next[idx].range = e.target.value; 
-                              updateCharacter({ otherAttacks: next }); 
-                            }} 
-                            placeholder="Ex: 36m"
-                            className={`bg-transparent w-full text-center font-bold outline-none cinzel text-[10px] ${isDark ? 'text-[#e8d5b5] placeholder:text-white/10' : 'text-[#3e2723] placeholder:text-black/10'}`}
-                          />
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>{lang === 'pt' ? 'Alcance' : 'Range'}</span>
+                          <input value={a.range} onChange={(e) => { const next = [...character.otherAttacks]; next[idx].range = e.target.value; updateCharacter({ otherAttacks: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
                         </div>
                       </div>
                     </div>
                   ))
                 )
               )}
+
+              <button 
+                onClick={() => {
+                  if (combatTab === 'weapons') {
+                    updateCharacter({ weapons: [...character.weapons, { name: t.new_weapon, bonus: '+0', damage: '1d6', type: '1 Mão' }] });
+                  } else {
+                    updateCharacter({ otherAttacks: [...character.otherAttacks, { name: t.new_attack, bonus: '+0', damage: '1d6', range: '1.5m' }] });
+                  }
+                }}
+                className={`mt-4 w-full py-2.5 rounded-xl border-2 border-dashed cinzel text-[10px] font-bold uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${
+                  isDark ? 'border-white/10 text-white/20 hover:text-[#d4af37] hover:border-[#d4af37]/40' : 'border-[#8b4513]/20 text-[#8b4513]/40 hover:text-[#8b4513] hover:border-[#8b4513]/60'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                {combatTab === 'weapons' ? t.new_weapon : t.new_attack}
+              </button>
             </div>
-            
-            <button 
-              onClick={() => {
-                if (combatTab === 'weapons') {
-                  updateCharacter({ weapons: [...character.weapons, { name: 'Nova Arma', bonus: '+0', damage: '1d4', type: '', description: '' }] });
-                } else {
-                  updateCharacter({ otherAttacks: [...character.otherAttacks, { name: 'Novo Ataque', bonus: '+0', damage: '1d4', range: '' }] });
-                }
-              }}
-              className={`mt-6 w-full py-3 rounded-xl cinzel text-[11px] font-bold shadow-lg uppercase tracking-[0.2em] border-b-4 active:translate-y-1 active:border-b-0 transition-all ${
-                isDark ? 'bg-[#d4af37] text-[#1a1a1a] border-black/40 hover:bg-[#b8860b]' : 'bg-[#8b4513] text-[#fdf5e6] border-black/40 hover:bg-[#5d4037]'
-              }`}
-            >
-              + Registrar {combatTab === 'weapons' ? 'Arma' : 'Ataque'}
-            </button>
           </div>
         </section>
       </div>

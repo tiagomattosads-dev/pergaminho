@@ -83,6 +83,7 @@ export const INITIAL_CHARACTER: Character = {
   ],
   spells: [],
   spellSlots: { 1: { total: 2, used: 0 } },
+  language: 'pt',
 };
 
 export const createNewCharacter = (): Character => ({
@@ -110,4 +111,5 @@ export const createNewCharacter = (): Character => ({
   ideals: "",
   bonds: "",
   flaws: "",
+  language: 'pt',
 });

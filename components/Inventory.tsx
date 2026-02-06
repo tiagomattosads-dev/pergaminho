@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Character, Item } from '../types';
+import { translations } from '../translations';
 
 interface Props {
   character: Character;
@@ -12,6 +13,8 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
   const [newItem, setNewItem] = useState({ name: '', weight: 0, quantity: 1, description: '' });
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const isDark = theme === 'dark';
+  const lang = character.language || 'pt';
+  const t = translations[lang];
 
   const totalWeight = character.inventory.reduce((sum, item) => sum + (item.weight * item.quantity), 0);
   const carryCapacity = (character.stats.FOR || 10) * 15;
@@ -99,23 +102,23 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-50"></div>
           <h2 className={`cinzel text-[10px] font-bold mb-6 tracking-[0.4em] uppercase border-b pb-2 text-center flex items-center justify-center gap-3 ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/20'}`}>
              <span className="h-px w-8 bg-current opacity-30"></span>
-             Bolsa de Dinheiro
+             {t.money_pouch}
              <span className="h-px w-8 bg-current opacity-30"></span>
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <CoinSlot label="Platina" short="PL" bg="from-[#4a5568] via-[#e2e8f0] to-[#ffffff]" borderColor="#718096" textColor="#2d3748" />
-            <CoinSlot label="Ouro" short="PO" bg="from-[#b8860b] via-[#ffd700] to-[#fffacd]" borderColor="#8b4513" textColor="#5d4037" />
-            <CoinSlot label="Prata" short="PP" bg="from-[#2d3748] via-[#cbd5e0] to-[#ffffff]" borderColor="#4a5568" textColor="#2d3748" />
-            <CoinSlot label="Cobre" short="PC" bg="from-[#5d4037] via-[#a16207] to-[#fef3c7]" borderColor="#5d4037" textColor="#3e2723" />
+            <CoinSlot label={t.platinum} short="PL" bg="from-[#4a5568] via-[#e2e8f0] to-[#ffffff]" borderColor="#718096" textColor="#2d3748" />
+            <CoinSlot label={t.gold} short="PO" bg="from-[#b8860b] via-[#ffd700] to-[#fffacd]" borderColor="#8b4513" textColor="#5d4037" />
+            <CoinSlot label={t.silver} short="PP" bg="from-[#2d3748] via-[#cbd5e0] to-[#ffffff]" borderColor="#4a5568" textColor="#2d3748" />
+            <CoinSlot label={t.copper} short="PC" bg="from-[#5d4037] via-[#a16207] to-[#fef3c7]" borderColor="#5d4037" textColor="#3e2723" />
           </div>
         </div>
 
         <div className={`lg:col-span-5 border-4 p-5 rounded-3xl shadow-2xl flex flex-col justify-between relative overflow-hidden ${isDark ? 'bg-[#1a1a1a] border-[#333]' : 'bg-[#fdf5e6] border-[#8b4513]/80'}`}>
           <div className="flex justify-between items-center mb-3">
              <div className="flex flex-col">
-               <h2 className={`cinzel text-[10px] font-bold tracking-[0.2em] uppercase ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Capacidade de Carga</h2>
+               <h2 className={`cinzel text-[10px] font-bold tracking-[0.2em] uppercase ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.carry_capacity}</h2>
                <span className={`text-[8px] cinzel font-bold uppercase opacity-50 ${isOverLimit ? 'text-red-500' : ''}`}>
-                 {isOverLimit ? 'Sobrecarregado!' : isHeavilyEncumbered ? 'Carga Pesada' : isEncumbered ? 'Carga Leve' : 'Carga Normal'}
+                 {isOverLimit ? t.encumbered : isHeavilyEncumbered ? t.heavily_encumbered : isEncumbered ? t.lightly_encumbered : t.normal_load}
                </span>
              </div>
              <div className="text-right">
@@ -135,7 +138,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
             </div>
           </div>
           <p className={`text-[9px] parchment-text italic mt-4 text-center opacity-60 leading-tight ${isDark ? 'text-[#e8d5b5]' : 'text-[#8b4513]'}`}>
-             "Um passo leve poupa mil léguas de cansaço."
+             {lang === 'pt' ? '"Um passo leve poupa mil léguas de cansaço."' : '"A light step saves a thousand leagues of fatigue."'}
           </p>
         </div>
       </div>
@@ -146,9 +149,9 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
         <div className={`border-b-4 p-6 ${isDark ? 'bg-white/5 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
             <div className="md:col-span-6 flex flex-col">
-              <label className={`cinzel text-[9px] font-bold uppercase mb-2 tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Novo Item no Registro</label>
+              <label className={`cinzel text-[9px] font-bold uppercase mb-2 tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.new_item}</label>
               <input 
-                placeholder="Ex: Espada Longa, Ração de Viagem..."
+                placeholder={lang === 'pt' ? "Ex: Espada Longa, Ração de Viagem..." : "Ex: Longsword, Rations..."}
                 className={`border-2 rounded-xl p-3 focus:border-[#d4af37] outline-none parchment-text text-lg transition-all shadow-inner ${
                   isDark ? 'bg-black/40 border-white/5 text-[#f4e4bc] placeholder:text-white/10' : 'bg-white/80 border-[#8b4513]/30 text-[#3e2723] placeholder:text-[#8b4513]/30'
                 }`}
@@ -157,7 +160,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
               />
             </div>
             <div className="md:col-span-2 flex flex-col">
-              <label className={`cinzel text-[9px] font-bold uppercase mb-2 text-center tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Peso (kg)</label>
+              <label className={`cinzel text-[9px] font-bold uppercase mb-2 text-center tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.weight}</label>
               <input 
                 type="number"
                 step="0.1"
@@ -169,7 +172,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
               />
             </div>
             <div className="md:col-span-2 flex flex-col">
-              <label className={`cinzel text-[9px] font-bold uppercase mb-2 text-center tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Qtd.</label>
+              <label className={`cinzel text-[9px] font-bold uppercase mb-2 text-center tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.quantity}</label>
               <input 
                 type="number"
                 className={`border-2 rounded-xl p-3 text-center outline-none font-bold fantasy-title text-xl transition-all shadow-inner ${
@@ -186,13 +189,13 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                   isDark ? 'bg-gradient-to-b from-[#d4af37] to-[#8b4513] text-[#1a0f00] hover:brightness-110' : 'bg-gradient-to-b from-[#8b4513] to-[#3e2723] text-[#fdf5e6] hover:brightness-110'
                 }`}
               >
-                Registrar
+                {t.register}
               </button>
             </div>
             <div className="md:col-span-12 flex flex-col mt-2">
-              <label className={`cinzel text-[9px] font-bold uppercase mb-2 tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Descrição / Propriedades</label>
+              <label className={`cinzel text-[9px] font-bold uppercase mb-2 tracking-[0.2em] opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.description}</label>
               <textarea 
-                placeholder="Propriedades mágicas, material, história do item..."
+                placeholder={lang === 'pt' ? "Propriedades mágicas, material, história do item..." : "Magic properties, material, item lore..."}
                 rows={2}
                 className={`border-2 rounded-xl p-3 focus:border-[#d4af37] outline-none font-sans text-sm transition-all shadow-inner resize-none ${
                   isDark ? 'bg-black/40 border-white/5 text-[#f4e4bc] placeholder:text-white/10' : 'bg-white/80 border-[#8b4513]/30 text-[#3e2723] placeholder:text-[#8b4513]/30'
@@ -209,18 +212,18 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
           <div className={`grid grid-cols-12 gap-2 p-4 border-b-2 cinzel text-[9px] font-bold uppercase tracking-[0.3em] ${
             isDark ? 'bg-black/40 border-white/5 text-[#d4af37]' : 'bg-[#8b4513]/10 border-[#8b4513]/20 text-[#8b4513]'
           }`}>
-            <div className="col-span-1 text-center">Ordem</div>
-            <div className="col-span-1 text-center">Qtd</div>
-            <div className="col-span-6 pl-6">Descrição do Item</div>
-            <div className="col-span-2 text-center">Peso Tot.</div>
-            <div className="col-span-2 text-right pr-6">Ações</div>
+            <div className="col-span-1 text-center">{t.order}</div>
+            <div className="col-span-1 text-center">{t.quantity}</div>
+            <div className="col-span-6 pl-6">{t.description}</div>
+            <div className="col-span-2 text-center">{t.total_weight}</div>
+            <div className="col-span-2 text-right pr-6">{t.actions}</div>
           </div>
 
           <div className="flex flex-col max-h-[500px] overflow-y-auto custom-scrollbar">
             {character.inventory.length === 0 ? (
               <div className="py-24 text-center flex flex-col items-center opacity-10">
                  <svg className="w-24 h-24 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                 <span className="cinzel text-base font-bold uppercase tracking-[0.4em]">Baú de Viagem Vazio</span>
+                 <span className="cinzel text-base font-bold uppercase tracking-[0.4em]">{t.empty_chest}</span>
               </div>
             ) : (
               character.inventory.map((item, idx) => (
@@ -241,7 +244,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                   <div className="col-span-1 flex justify-center pt-2">
                     <div 
                       className={`cursor-grab active:cursor-grabbing p-1 rounded transition-colors ${isDark ? 'text-[#d4af37]/40 hover:text-[#d4af37]' : 'text-[#8b4513]/40 hover:text-[#8b4513]'}`}
-                      title="Arraste para reorganizar"
+                      title={lang === 'pt' ? "Arraste para reorganizar" : "Drag to reorder"}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -271,7 +274,7 @@ const Inventory: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                     </div>
                     {/* CAMPO DE DESCRIÇÃO COM FONTE LIMPA (SANS-SERIF) */}
                     <textarea
-                      placeholder="Adicionar detalhes ou anotações..."
+                      placeholder={lang === 'pt' ? "Adicionar detalhes ou anotações..." : "Add details or notes..."}
                       value={item.description || ''}
                       onChange={(e) => updateItemDescription(item.id, e.target.value)}
                       rows={1}

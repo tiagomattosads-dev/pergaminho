@@ -1,17 +1,21 @@
+
 import React, { useState, useEffect, useRef } from 'react';
+import { translations } from '../translations';
 
 interface Props {
   onLogin: () => void;
   theme: 'light' | 'dark';
+  language: 'pt' | 'en';
 }
 
-const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
+const AuthScreen: React.FC<Props> = ({ onLogin, theme, language }) => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isDark = theme === 'dark';
+  const t = translations[language];
 
   useEffect(() => {
     // Garantir que o vídeo comece a tocar em navegadores com restrições de autoplay
@@ -75,7 +79,7 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
               <h1 className={`fantasy-title text-2xl sm:text-4xl text-center leading-tight uppercase tracking-normal drop-shadow-sm ${
                 isDark ? 'text-[#d4af37]' : 'text-[#3e2723]'
               }`}>
-                {isRegistering ? 'Inscrição de Herói' : 'Acesso aos Pergaminhos'}
+                {isRegistering ? t.auth_title_register : t.auth_title_login}
               </h1>
               <div className={`h-0.5 w-24 mt-2 rounded-full opacity-20 ${isDark ? 'bg-[#d4af37]' : 'bg-[#8b4513]'}`}></div>
             </div>
@@ -86,7 +90,7 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
                 <label className={`cinzel text-[10px] font-bold uppercase tracking-[0.2em] ml-1 opacity-70 ${
                   isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'
                 }`}>
-                  Correio Arcano
+                  {t.email}
                 </label>
                 <div className="relative">
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-10 ${focusedField === 'email' ? 'text-[#d4af37]' : 'text-gray-400 opacity-40'}`}>
@@ -113,7 +117,7 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
                 <label className={`cinzel text-[10px] font-bold uppercase tracking-[0.2em] ml-1 opacity-70 ${
                   isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'
                 }`}>
-                  Senha
+                  {t.password}
                 </label>
                 <div className="relative">
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 z-10 ${focusedField === 'password' ? 'text-[#d4af37]' : 'text-gray-400 opacity-40'}`}>
@@ -145,7 +149,7 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
                 }`}
               >
                 <span className="relative z-10 drop-shadow-md pointer-events-none">
-                  {isRegistering ? 'Registrar-se' : 'Selar Contrato'}
+                  {isRegistering ? t.register_btn : t.seal_contract}
                 </span>
               </button>
             </form>
@@ -160,7 +164,7 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
                   isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'
                 }`}
               >
-                {isRegistering ? 'Já possuo registro na biblioteca' : 'Desejo iniciar minha jornada agora'}
+                {isRegistering ? t.has_record : t.start_journey}
               </button>
             </div>
           </div>
@@ -169,7 +173,7 @@ const AuthScreen: React.FC<Props> = ({ onLogin, theme }) => {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="cinzel text-[9px] uppercase tracking-[0.5em] text-[#d4af37]/60 drop-shadow-lg">
-            Magia de Criptografia Rúnica
+            {t.runic_encryption}
           </p>
         </div>
       </div>

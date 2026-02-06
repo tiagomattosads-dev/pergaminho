@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Character, Attribute, Spell } from '../types';
 import { getProficiencyFromLevel, getLevelFromXP } from '../constants';
+import { translations, attributeTranslations } from '../translations';
 
 interface Props {
   character: Character;
@@ -9,18 +10,12 @@ interface Props {
   theme?: 'light' | 'dark';
 }
 
-const ATTRIBUTE_LABELS: Record<Attribute, string> = {
-  [Attribute.FOR]: 'Força',
-  [Attribute.DES]: 'Destreza',
-  [Attribute.CON]: 'Constituição',
-  [Attribute.INT]: 'Inteligência',
-  [Attribute.SAB]: 'Sabedoria',
-  [Attribute.CAR]: 'Carisma',
-};
-
 const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light' }) => {
   const [newSpell, setNewSpell] = useState({ name: '', level: 0, description: '' });
   const isDark = theme === 'dark';
+  const lang = character.language || 'pt';
+  const t = translations[lang];
+  const attrT = attributeTranslations;
 
   const currentLevel = getLevelFromXP(character.exp);
   const profBonus = getProficiencyFromLevel(currentLevel);
@@ -114,7 +109,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
       <div className="flex flex-wrap justify-center gap-8 sm:gap-20 py-8 relative">
         <div className={`absolute top-1/2 left-20 right-20 h-0.5 -translate-y-1/2 hidden lg:block ${isDark ? 'bg-gradient-to-r from-transparent via-white/5 to-transparent' : 'bg-gradient-to-r from-transparent via-[#8b4513]/10 to-transparent'}`}></div>
         
-        <SpellSeal label="Atributo de Poder" sub={ATTRIBUTE_LABELS[castingAbility]}>
+        <SpellSeal label={t.casting_ability} sub={attrT[castingAbility][lang]}>
           <select 
             value={castingAbility}
             onChange={(e) => updateCharacter({ spellcastingAbility: e.target.value as Attribute })}
@@ -126,7 +121,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
           </select>
         </SpellSeal>
 
-        <SpellSeal label="CD de Resistência" sub="Dificuldade">
+        <SpellSeal label={t.spell_save_dc} sub={t.difficulty}>
           <input 
             type="number"
             value={displayDC}
@@ -135,7 +130,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
           />
         </SpellSeal>
 
-        <SpellSeal label="Ataque Mágico" sub="Bônus">
+        <SpellSeal label={t.spell_attack_mod} sub={t.bonus}>
           <input 
             type="text"
             value={displayAttack}
@@ -152,22 +147,22 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
         </div>
         
         <div className="relative z-10">
-          <h2 className="cinzel text-xs font-bold text-[#d4af37] mb-6 uppercase tracking-[0.3em] border-b border-[#d4af37]/20 pb-2 inline-block">Insculpir Novo Feitiço</h2>
+          <h2 className="cinzel text-xs font-bold text-[#d4af37] mb-6 uppercase tracking-[0.3em] border-b border-[#d4af37]/20 pb-2 inline-block">{t.new_spell_title}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
             <div className="md:col-span-6">
-              <label className="cinzel text-[8px] font-bold text-[#e8d5b5]/40 uppercase mb-2 block tracking-widest">Nome da Magia</label>
+              <label className="cinzel text-[8px] font-bold text-[#e8d5b5]/40 uppercase mb-2 block tracking-widest">{t.spell_name}</label>
               <input 
                 className={`w-full border-2 rounded-xl p-3 fantasy-title outline-none focus:border-[#d4af37] transition-all placeholder:italic ${
                   isDark ? 'bg-black/40 border-white/5 text-[#f4e4bc]' : 'bg-black/40 border-[#8b4513]/50 text-[#f4e4bc] placeholder:text-[#8b4513]/40'
                 }`}
-                placeholder="Ex: Bola de Fogo, Mãos Flamejantes..."
+                placeholder={lang === 'pt' ? "Ex: Bola de Fogo, Mãos Flamejantes..." : "Ex: Fireball, Burning Hands..."}
                 value={newSpell.name}
                 onChange={e => setNewSpell({...newSpell, name: e.target.value})}
               />
             </div>
             <div className="md:col-span-2">
-              <label className="cinzel text-[8px] font-bold text-[#e8d5b5]/40 uppercase mb-2 block text-center tracking-widest">Círculo</label>
+              <label className="cinzel text-[8px] font-bold text-[#e8d5b5]/40 uppercase mb-2 block text-center tracking-widest">{t.circle}</label>
               <select 
                 className={`w-full border-2 rounded-xl p-3 cinzel font-bold text-center outline-none focus:border-[#d4af37] transition-all ${
                   isDark ? 'bg-black/40 border-white/5 text-[#f4e4bc]' : 'bg-black/40 border-[#8b4513]/50 text-[#f4e4bc]'
@@ -175,7 +170,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                 value={newSpell.level}
                 onChange={e => setNewSpell({...newSpell, level: parseInt(e.target.value)})}
               >
-                {[0,1,2,3,4,5,6,7,8,9].map(n => <option key={n} value={n} className={isDark ? "bg-[#121212]" : "bg-[#2d1b0d]"}>{n === 0 ? 'Truque' : `${n}º`}</option>)}
+                {[0,1,2,3,4,5,6,7,8,9].map(n => <option key={n} value={n} className={isDark ? "bg-[#121212]" : "bg-[#2d1b0d]"}>{n === 0 ? (lang === 'pt' ? 'Truque' : 'Cantrip') : `${n}º`}</option>)}
               </select>
             </div>
             <div className="md:col-span-4">
@@ -187,17 +182,17 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                     : 'bg-gradient-to-b from-[#8b4513] to-[#5d4037] text-[#fdf5e6] hover:from-[#d4af37] hover:to-[#b8860b] hover:text-[#1a0f00] border-black/60'
                 }`}
               >
-                Adicionar ao Grimório
+                {t.add_to_grimoire}
               </button>
             </div>
             <div className="md:col-span-12">
-               <label className="cinzel text-[8px] font-bold text-[#e8d5b5]/40 uppercase mb-2 block tracking-widest">Efeito / Descrição Arcana</label>
+               <label className="cinzel text-[8px] font-bold text-[#e8d5b5]/40 uppercase mb-2 block tracking-widest">{t.spell_desc}</label>
                <textarea 
                  className={`w-full border-2 rounded-xl p-4 parchment-text text-base focus:border-[#d4af37] outline-none resize-none transition-all ${
                    isDark ? 'bg-black/40 border-white/5 text-[#f4e4bc]' : 'bg-black/40 border-[#8b4513]/50 text-[#f4e4bc]'
                  }`}
                  rows={2}
-                 placeholder="Descreva as propriedades e componentes..."
+                 placeholder={lang === 'pt' ? "Descreva as propriedades e componentes..." : "Describe properties and components..."}
                  value={newSpell.description}
                  onChange={e => setNewSpell({...newSpell, description: e.target.value})}
                />
@@ -221,13 +216,13 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                     <span className="fantasy-title text-2xl text-[#d4af37]">{level}</span>
                   </div>
                   <h3 className={`cinzel text-sm font-bold tracking-[0.25em] uppercase ${isDark ? 'text-[#d4af37]' : 'text-[#fdf5e6]'}`}>
-                    {level === 0 ? 'Truques de Aprendiz' : `${level}º Círculo Arcano`}
+                    {level === 0 ? t.cantrips : `${level}º ${t.arcane_circle}`}
                   </h3>
                 </div>
 
                 {level > 0 && character.spellSlots[level] && (
                   <div className={`flex gap-3 items-center px-5 py-2.5 rounded-full border shadow-inner ${isDark ? 'bg-white/5 border-white/5' : 'bg-black/30 border-white/10'}`}>
-                    <span className="cinzel text-[8px] font-bold opacity-40 uppercase mr-1 tracking-widest">Espaços:</span>
+                    <span className="cinzel text-[8px] font-bold opacity-40 uppercase mr-1 tracking-widest">{t.spell_slots}</span>
                     {[...Array(character.spellSlots[level].total)].map((_, i) => (
                       <button
                         key={i}
@@ -237,7 +232,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                             ? 'bg-[#1a0f00] border-[#8b4513]/20 opacity-40' 
                             : 'bg-gradient-to-tr from-[#d4af37] to-[#fffacd] border-[#fffacd] animate-pulse shadow-[0_0_15px_rgba(212,175,55,0.7)]'
                         }`}
-                        title={i < character.spellSlots[level].used ? "Espaço Consumido" : "Canalizar Poder"}
+                        title={i < character.spellSlots[level].used ? (lang === 'pt' ? "Espaço Consumido" : "Slot Consumed") : (lang === 'pt' ? "Canalizar Poder" : "Channel Power")}
                       />
                     ))}
                   </div>
@@ -247,7 +242,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
               <div className="p-0">
                 {circleSpells.length === 0 ? (
                   <div className="p-12 text-center opacity-30 italic cinzel text-xs py-16">
-                    Nenhum feitiço inscrito neste nível de poder.
+                    {lang === 'pt' ? 'Nenhum feitiço inscrito neste nível de poder.' : 'No spells inscribed at this power level.'}
                   </div>
                 ) : (
                   <div className={`grid grid-cols-1 divide-y-2 ${isDark ? 'divide-white/5' : 'divide-[#8b4513]/5'}`}>
@@ -264,7 +259,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                                 ? (isDark ? 'bg-[#d4af37] border-[#d4af37] text-[#121212]' : 'bg-[#8b4513] border-[#8b4513] text-[#d4af37]') + ' shadow-[0_5px_15px_rgba(212,175,55,0.4)] scale-110' 
                                 : 'border-white/10 text-white/10 hover:border-[#d4af37]/40 hover:scale-105'
                               }`}
-                              title={spell.prepared ? "Magia Preparada" : "Preparar Magia"}
+                              title={spell.prepared ? (lang === 'pt' ? "Magia Preparada" : "Spell Prepared") : (lang === 'pt' ? "Preparar Magia" : "Prepare Spell")}
                             >
                               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" /></svg>
                             </button>
@@ -274,7 +269,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                               {spell.name}
                             </span>
                             <p className={`parchment-text text-sm leading-relaxed mt-2 italic border-l-2 pl-4 ${isDark ? 'text-[#e8d5b5]/70 border-white/10' : 'text-[#5d4037]/80 border-[#8b4513]/10'}`}>
-                              {spell.description || "Nenhuma anotação rúnica encontrada."}
+                              {spell.description || (lang === 'pt' ? "Nenhuma anotação rúnica encontrada." : "No runic notes found.")}
                             </p>
                           </div>
                         </div>
@@ -283,7 +278,7 @@ const Spellbook: React.FC<Props> = ({ character, updateCharacter, theme = 'light
                            <button 
                              onClick={() => removeSpell(spell.name)}
                              className={`p-3 transition-all rounded-xl ${isDark ? 'text-red-400 hover:bg-white/5' : 'text-red-900/50 hover:text-red-700 hover:bg-red-100'}`}
-                             title="Remover do Grimório"
+                             title={lang === 'pt' ? "Remover do Grimório" : "Remove from Grimoire"}
                            >
                               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
                            </button>
