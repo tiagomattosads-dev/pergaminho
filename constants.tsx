@@ -89,9 +89,10 @@ export const createNewCharacter = (): Character => ({
   race: "Humano",
   portrait: null,
   inspiration: 0,
+  hp: { current: 10, max: 10, temp: 0 },
   stats: {
-    [Attribute.FOR]: 0, [Attribute.DES]: 0, [Attribute.CON]: 0,
-    [Attribute.INT]: 0, [Attribute.SAB]: 0, [Attribute.CAR]: 0,
+    [Attribute.FOR]: 10, [Attribute.DES]: 10, [Attribute.CON]: 10,
+    [Attribute.INT]: 10, [Attribute.SAB]: 10, [Attribute.CAR]: 10,
   },
   proficiencies: { skills: [], saves: [], languages: ['Comum'], tools: [] },
   inventory: [],
