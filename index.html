@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
 <head>
@@ -16,21 +17,12 @@
             --p-gold: #d4af37;
         }
 
-        /* CURSOR PERSONALIZADO GLOBAL - PADRÃO (Ajustado para 35px com hotspot na ponta 0 0) */
+        /* CURSOR PERSONALIZADO GLOBAL */
         * {
             cursor: url('https://res.cloudinary.com/dutufef4s/image/upload/w_35,h_35,c_scale/v1770333154/81040f0935a24bc6ae56784a930540bdbKy0vHIUKJqNYP3D-2_riywsm.png') 0 0, auto;
         }
 
-        /* CURSOR DE INTERAÇÃO - HOVER E CLICK (Ajustado para 35px com hotspot na ponta 0 0 para precisão total) */
-        a, 
-        button, 
-        [role="button"], 
-        input,
-        select, 
-        textarea,
-        label, 
-        .cursor-pointer,
-        *:active {
+        a, button, [role="button"], input, select, textarea, label, .cursor-pointer, *:active {
             cursor: url('https://res.cloudinary.com/dutufef4s/image/upload/w_35,h_35,c_scale/v1770333136/07e60ce0ca344686dc46781e6e782e27NhbelZMZLXMAeyVb-2_zwwaue.png') 0 0, pointer !important;
         }
 
@@ -49,7 +41,6 @@
         .fantasy-title { font-family: 'MedievalSharp', cursive; }
         .cinzel { font-family: 'Cinzel', serif; }
         
-        /* Ocultar Spinners Numéricos Globalmente para evitar desalinhamento */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -59,7 +50,6 @@
             -moz-appearance: textfield;
         }
 
-        /* Scrollbar Dinâmica Refinada - Mais fina e temática */
         .custom-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: #5d4037 transparent;
@@ -71,9 +61,7 @@
             border-radius: 4px;
             border: 1px solid rgba(212, 175, 55, 0.1);
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8b4513; }
 
-        /* REFINAMENTO DARK MODE (MASMORRA) */
         .dark-mode {
             --p-bg: #0f0f0f;
             --p-text: #e8d5b5;
@@ -81,43 +69,19 @@
             background-color: #0f0f0f !important;
         }
 
-        .dark-mode .custom-scrollbar {
-            scrollbar-color: #d4af37 transparent;
+        /* ANIMAÇÕES DE MORTE */
+        @keyframes pulse-grayscale {
+            0%, 100% { filter: grayscale(0%); }
+            50% { filter: grayscale(100%); }
         }
-        .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb { 
-            background: #333; 
-            border-color: rgba(212, 175, 55, 0.3);
+        .animate-pulse-gray {
+            animation: pulse-grayscale 5s ease-in-out infinite;
         }
-        .dark-mode .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #d4af37; }
-
-        .dark-mode .bg-parchment-card {
-            background-color: #1a1a1a !important;
-            border-color: #333 !important;
-            color: #e8d5b5 !important;
+        .is-fully-gray {
+            filter: grayscale(100%) !important;
         }
-
-        .dark-mode input, .dark-mode textarea, .dark-mode select {
-            color: #f4e4bc !important;
-            background-color: rgba(255, 255, 255, 0.03);
-            border-color: rgba(212, 175, 55, 0.2);
-        }
-
-        .dark-mode input:focus, .dark-mode textarea:focus {
-            border-color: #d4af37 !important;
-            background-color: rgba(255, 255, 255, 0.07);
-        }
-
-        .dark-mode .text-medieval-primary { color: #d4af37 !important; }
-        .dark-mode .opacity-overlay { opacity: 0.15; filter: invert(1); }
-        
-        /* Efeito de brilho em itens ativos no dark mode */
-        .dark-mode .active-glow {
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
-        }
-
-        /* Ajuste de contraste para placeholders */
-        .dark-mode ::placeholder {
-            color: rgba(232, 213, 181, 0.3) !important;
+        .no-borders, .no-borders * {
+            border-color: transparent !important;
         }
     </style>
 <script type="importmap">
