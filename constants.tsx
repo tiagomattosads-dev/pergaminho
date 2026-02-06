@@ -1,3 +1,4 @@
+
 import { Attribute, Character, Skill } from './types';
 
 export const XP_TABLE = [
@@ -48,6 +49,7 @@ export const INITIAL_CHARACTER: Character = {
   inspiration: 0,
   portrait: "https://res.cloudinary.com/dutufef4s/image/upload/v1770315204/artifice_lwcguq.png",
   hp: { current: 16, max: 16, temp: 0 },
+  deathSaves: { successes: 0, failures: 0 },
   ac: 15,
   initiativeBonus: 0,
   speed: "9m",
@@ -74,7 +76,10 @@ export const INITIAL_CHARACTER: Character = {
     { id: '1', name: 'Lórica de escamas', weight: 45, quantity: 1, description: 'Armadura média.', equipped: true },
   ],
   weapons: [
-    { name: 'Bordão', bonus: '+2', damage: '1d6' },
+    { name: 'Bordão', bonus: '+2', damage: '1d6', type: '1 Mão' },
+  ],
+  otherAttacks: [
+    { name: 'Raio de Fogo', bonus: '+4', damage: '1d10', range: '36m' }
   ],
   spells: [],
   spellSlots: { 1: { total: 2, used: 0 } },
@@ -90,6 +95,7 @@ export const createNewCharacter = (): Character => ({
   portrait: null,
   inspiration: 0,
   hp: { current: 10, max: 10, temp: 0 },
+  deathSaves: { successes: 0, failures: 0 },
   stats: {
     [Attribute.FOR]: 10, [Attribute.DES]: 10, [Attribute.CON]: 10,
     [Attribute.INT]: 10, [Attribute.SAB]: 10, [Attribute.CAR]: 10,
@@ -97,6 +103,7 @@ export const createNewCharacter = (): Character => ({
   proficiencies: { skills: [], saves: [], languages: ['Comum'], tools: [] },
   inventory: [],
   weapons: [],
+  otherAttacks: [],
   spells: [],
   backstory: "",
   personality: "",

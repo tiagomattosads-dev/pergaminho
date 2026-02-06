@@ -28,6 +28,14 @@ export interface Weapon {
   name: string;
   bonus: string;
   damage: string;
+  type: string; 
+}
+
+export interface OtherAttack {
+  name: string;
+  bonus: string;
+  damage: string;
+  range: string;
 }
 
 export interface Spell {
@@ -38,7 +46,7 @@ export interface Spell {
 }
 
 export interface Character {
-  id: string; // Identificador único
+  id: string; 
   name: string;
   level: number;
   class: string;
@@ -46,12 +54,16 @@ export interface Character {
   background: string;
   alignment: string;
   exp: number;
-  inspiration: number; // Alterado para number
+  inspiration: number; 
   portrait: string | null;
   hp: {
     current: number;
     max: number;
     temp: number;
+  };
+  deathSaves: {
+    successes: number;
+    failures: number;
   };
   ac: number;
   initiativeBonus: number;
@@ -70,9 +82,9 @@ export interface Character {
   backstory: string;
   inventory: Item[];
   weapons: Weapon[];
+  otherAttacks: OtherAttack[];
   spells: Spell[];
   spellSlots: Record<number, { total: number; used: number }>;
-  // Campos de override para conjuração
   spellcastingAbility?: Attribute;
   spellSaveDC?: number;
   spellAttackBonus?: string;

@@ -1,6 +1,6 @@
 
-import React, { useMemo, useRef } from 'react';
-import { Character, Attribute, Skill } from '../types';
+import React, { useMemo, useRef, useState } from 'react';
+import { Character, Attribute, Skill, Weapon, OtherAttack } from '../types';
 import { SKILLS, getLevelFromXP, getProficiencyFromLevel } from '../constants';
 
 interface Props {
@@ -12,6 +12,9 @@ interface Props {
 
 const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUpload, theme = 'light' }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [combatTab, setCombatTab] = useState<'weapons' | 'attacks'>('weapons');
+  const [hpTab, setHpTab] = useState<'hp' | 'death'>('hp');
+  
   const getModifier = (score: number) => Math.floor((score - 10) / 2);
 
   const isDark = theme === 'dark';
@@ -21,7 +24,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
     return getProficiencyFromLevel(currentLevel);
   }, [character.exp]);
 
-  const StatBoxMedallion: React.FC<{ attr: Attribute; score: number }> = ({ attr, score }) => {
+  const StatBoxMedallion: React.FC<{ attr: Attribute, score: number }> = ({ attr, score }) => {
     const mod = getModifier(score);
     const modDisplay = mod >= 0 ? `+${mod}` : mod;
     return (
@@ -80,6 +83,12 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
     if (index > -1) currentSaves.splice(index, 1);
     else currentSaves.push(attr);
     updateCharacter({ proficiencies: { ...character.proficiencies, saves: currentSaves } });
+  };
+
+  const toggleDeathSave = (type: 'successes' | 'failures', index: number) => {
+    const currentVal = character.deathSaves[type];
+    const newVal = index === currentVal ? index - 1 : index;
+    updateCharacter({ deathSaves: { ...character.deathSaves, [type]: Math.max(0, newVal) } });
   };
 
   return (
@@ -197,31 +206,138 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 </div>
               </div>
 
-              <div className={`border-2 p-5 rounded-2xl shadow-xl flex flex-col ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
-                <div className={`flex justify-between items-center mb-4 border-b pb-2 ${isDark ? 'border-white/10' : 'border-[#8b4513]/20'}`}>
-                  <h2 className={`cinzel font-bold text-xs tracking-[0.15em] uppercase ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Pontos de Vida</h2>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] cinzel font-bold opacity-50 uppercase tracking-widest">Máx</span>
-                    <input type="number" value={character.hp.max} onChange={(e) => updateCharacter({ hp: { ...character.hp, max: parseInt(e.target.value) || 0 } })} className={`bg-transparent font-bold w-12 text-center focus:outline-none border-b text-lg ${isDark ? 'border-white/10' : 'border-[#8b4513]/40'}`} />
+              {/* BLOCO DE PONTOS DE VIDA (COM ABAS) */}
+              <div className={`border-2 p-5 rounded-2xl shadow-xl flex flex-col relative transition-all duration-700 ${
+                  character.deathSaves.failures >= 3 
+                    ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.6)]' 
+                    : (isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]')
+                }`}>
+                
+                {/* AVISO DE MORTE */}
+                {character.deathSaves.failures >= 3 && (
+                  <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-md rounded-[1.3rem] p-6 text-center animate-in fade-in duration-1000">
+                    <div className="flex flex-col items-center">
+                      <div className="w-20 h-20 mb-4 text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.7)]">
+                        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 2C7.03125 2 3 6.03125 3 11C3 13.9062 4.40625 16.5 6.59375 18.0938L6.28125 21.0312C6.21875 21.5625 6.625 22 7.15625 22H16.8438C17.375 22 17.7812 21.5625 17.7188 21.0312L17.4062 18.0938C19.5938 16.5 21 13.9062 21 11C21 6.03125 16.9688 2 12 2ZM9 12C8.4375 12 8 11.5625 8 11C8 10.4375 8.4375 10 9 10C9.5625 10 10 10.4375 10 11C10 11.5625 9.5625 12 9 12ZM15 12C14.4375 12 14 11.5625 14 11C14 10.4375 14.4375 10 15 10C15.5625 10 16 10.4375 16 11C16 11.5625 15.5625 12 15 12Z"/>
+                        </svg>
+                      </div>
+                      <h3 className="fantasy-title text-3xl text-red-600 mb-2 drop-shadow-sm uppercase tracking-widest">
+                        {character.name}, morreu...
+                      </h3>
+                      <p className={`fantasy-title text-xl italic mb-8 leading-relaxed ${isDark ? 'text-[#e8d5b5]/80' : 'text-red-200/80'}`}>
+                        suas crônicas serão contadas por eras.
+                      </p>
+                      <button 
+                        onClick={() => updateCharacter({ deathSaves: { successes: 0, failures: 0 }, hp: { ...character.hp, current: 1 } })}
+                        className="cinzel text-[10px] font-bold uppercase tracking-[0.3em] text-[#d4af37] border-2 border-[#d4af37]/40 px-8 py-3 rounded-lg hover:bg-[#d4af37] hover:text-black transition-all shadow-lg active:scale-95 bg-black/50"
+                      >
+                        voltar a vida
+                      </button>
+                    </div>
                   </div>
+                )}
+
+                {/* Sub-menu de Vida/Morte */}
+                <div className="flex mb-4 border-b-2 border-black/10 overflow-hidden rounded-t-lg bg-black/5">
+                  <button 
+                    onClick={() => setHpTab('hp')}
+                    className={`flex-1 py-1.5 cinzel text-[9px] font-bold uppercase tracking-widest transition-all ${hpTab === 'hp' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
+                  >
+                    Vida
+                  </button>
+                  <button 
+                    onClick={() => setHpTab('death')}
+                    className={`flex-1 py-1.5 cinzel text-[9px] font-bold uppercase tracking-widest transition-all ${hpTab === 'death' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
+                  >
+                    Morte
+                  </button>
                 </div>
-                <input type="number" value={character.hp.current} onChange={(e) => updateCharacter({ hp: { ...character.hp, current: parseInt(e.target.value) || 0 } })} className={`w-full text-center text-6xl font-bold bg-transparent focus:outline-none drop-shadow-md p-0 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`} />
-                <div className={`flex gap-4 text-center mt-6 pt-4 border-t ${isDark ? 'border-white/10' : 'border-[#8b4513]/10'}`}>
-                  <div className="flex-1">
-                    <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">Temporários</span>
-                    <input type="number" value={character.hp.temp} onChange={(e) => updateCharacter({ hp: { ...character.hp, temp: parseInt(e.target.value) || 0 } })} className="w-full text-center font-bold bg-transparent outline-none text-xl" />
+
+                {hpTab === 'hp' ? (
+                  <>
+                    <div className={`flex justify-between items-center mb-4 border-b pb-2 ${isDark ? 'border-white/10' : 'border-[#8b4513]/20'}`}>
+                      <h2 className={`cinzel font-bold text-xs tracking-[0.15em] uppercase ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Pontos de Vida</h2>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9px] cinzel font-bold opacity-50 uppercase tracking-widest">Máx</span>
+                        <input type="number" value={character.hp.max} onChange={(e) => updateCharacter({ hp: { ...character.hp, max: parseInt(e.target.value) || 0 } })} className={`bg-transparent font-bold w-12 text-center focus:outline-none border-b text-lg ${isDark ? 'border-white/10' : 'border-[#8b4513]/40'}`} />
+                      </div>
+                    </div>
+                    <input type="number" value={character.hp.current} onChange={(e) => updateCharacter({ hp: { ...character.hp, current: parseInt(e.target.value) || 0 } })} className={`w-full text-center text-6xl font-bold bg-transparent focus:outline-none drop-shadow-md p-0 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`} />
+                    <div className={`flex gap-4 text-center mt-6 pt-4 border-t ${isDark ? 'border-white/10' : 'border-[#8b4513]/10'}`}>
+                      <div className="flex-1">
+                        <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">Temporários</span>
+                        <input type="number" value={character.hp.temp} onChange={(e) => updateCharacter({ hp: { ...character.hp, temp: parseInt(e.target.value) || 0 } })} className="w-full text-center font-bold bg-transparent outline-none text-xl" />
+                      </div>
+                      <div className="flex-1">
+                        <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">Dados de Vida</span>
+                        <span className="font-bold text-xl block mt-1 tracking-tighter">1d8</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-4 space-y-6">
+                    <h2 className={`cinzel font-bold text-xs tracking-[0.15em] uppercase border-b w-full text-center pb-2 mb-2 ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/20'}`}>
+                      Salvaguardas Contra Morte
+                    </h2>
+                    
+                    <div className="w-full space-y-4 px-4">
+                      {/* Sucessos */}
+                      <div className="flex flex-col items-center">
+                        <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>Sucessos</span>
+                        <div className="flex gap-4">
+                          {[1, 2, 3].map(i => (
+                            <button 
+                              key={i}
+                              onClick={() => toggleDeathSave('successes', i)}
+                              className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${
+                                i <= character.deathSaves.successes 
+                                  ? 'bg-[#d4af37] border-[#fffacd] shadow-[0_0_10px_rgba(212,175,55,0.4)]' 
+                                  : 'bg-black/20 border-white/10 opacity-30'
+                              }`}
+                            >
+                              {i <= character.deathSaves.successes && (
+                                <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Falhas */}
+                      <div className="flex flex-col items-center">
+                        <span className={`text-[8px] cinzel font-bold uppercase tracking-widest mb-2 opacity-60 ${isDark ? 'text-red-400' : 'text-red-700'}`}>Falhas</span>
+                        <div className="flex gap-4">
+                          {[1, 2, 3].map(i => (
+                            <button 
+                              key={i}
+                              onClick={() => toggleDeathSave('failures', i)}
+                              className={`w-8 h-8 rounded-full border-2 transition-all shadow-md flex items-center justify-center ${
+                                i <= character.deathSaves.failures 
+                                  ? 'bg-red-700 border-red-400 shadow-[0_0_10px_rgba(185,28,28,0.4)]' 
+                                  : 'bg-black/20 border-white/10 opacity-30'
+                              }`}
+                            >
+                              {i <= character.deathSaves.failures && (
+                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">Dados de Vida</span>
-                    <span className="font-bold text-xl block mt-1 tracking-tighter">1d8</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
         </section>
 
-        {/* COLUNA DIREITA: PERÍCIAS E ARMAS */}
+        {/* COLUNA DIREITA: PERÍCIAS E COMBATE */}
         <section className="lg:col-span-4 flex flex-col gap-6 order-3">
           {/* BLOCO DE PERÍCIAS */}
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
@@ -251,59 +367,145 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             </div>
           </div>
 
-          {/* BLOCO DE ARMAS */}
+          {/* BLOCO DE COMBATE (ARMAS E ATAQUES) */}
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
-            <h2 className={`cinzel font-bold text-xs mb-5 tracking-[0.2em] uppercase border-b pb-2 text-center ${
-              isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/30'
-            }`}>Armas</h2>
+            {/* Sub-menu de Navegação */}
+            <div className="flex mb-5 border-b-2 border-black/10 overflow-hidden rounded-t-lg bg-black/5">
+              <button 
+                onClick={() => setCombatTab('weapons')}
+                className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'weapons' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
+              >
+                Armas
+              </button>
+              <button 
+                onClick={() => setCombatTab('attacks')}
+                className={`flex-1 py-2 cinzel text-[10px] font-bold uppercase tracking-widest transition-all ${combatTab === 'attacks' ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]') : 'opacity-40 hover:opacity-100'}`}
+              >
+                Ataques
+              </button>
+            </div>
+
             <div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-              {character.weapons.length === 0 ? (
-                <div className="py-8 text-center opacity-30 italic cinzel text-[10px] uppercase tracking-widest">
-                  Nenhuma arma registrada
-                </div>
-              ) : (
-                character.weapons.map((w, idx) => (
-                  <div key={idx} className={`border p-3 rounded-lg relative group ${isDark ? 'bg-black/20 border-white/5' : 'bg-white/40 border-[#8b4513]/10'}`}>
-                    <div className="flex justify-between items-start mb-2">
-                      <input 
-                        value={w.name}
-                        onChange={(e) => {
-                          const next = [...character.weapons];
-                          next[idx].name = e.target.value;
-                          updateCharacter({ weapons: next });
-                        }}
-                        className={`bg-transparent font-bold fantasy-title outline-none focus:border-b border-white/20 w-2/3 ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}
-                      />
-                      <button 
-                        onClick={() => updateCharacter({ weapons: character.weapons.filter((_, i) => i !== idx) })}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
-                      >
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
-                        <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Bônus</span>
-                        <input value={w.bonus} onChange={(e) => { const next = [...character.weapons]; next[idx].bonus = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
-                      </div>
-                      <div className={`col-span-2 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
-                        <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Dano</span>
-                        <input value={w.damage} onChange={(e) => { const next = [...character.weapons]; next[idx].damage = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
-                      </div>
-                    </div>
+              {combatTab === 'weapons' ? (
+                character.weapons.length === 0 ? (
+                  <div className="py-8 text-center opacity-30 italic cinzel text-[10px] uppercase tracking-widest">
+                    Nenhuma arma registrada
                   </div>
-                ))
+                ) : (
+                  character.weapons.map((w, idx) => (
+                    <div key={idx} className={`border p-3 rounded-lg relative group ${isDark ? 'bg-black/20 border-white/5' : 'bg-white/40 border-[#8b4513]/10'}`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <input 
+                          value={w.name}
+                          onChange={(e) => {
+                            const next = [...character.weapons];
+                            next[idx].name = e.target.value;
+                            updateCharacter({ weapons: next });
+                          }}
+                          className={`bg-transparent font-bold fantasy-title outline-none focus:border-b border-white/20 w-2/3 ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}
+                        />
+                        <button 
+                          onClick={() => updateCharacter({ weapons: character.weapons.filter((_, i) => i !== idx) })}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Bônus</span>
+                          <input value={w.bonus} onChange={(e) => { const next = [...character.weapons]; next[idx].bonus = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Dano</span>
+                          <input value={w.damage} onChange={(e) => { const next = [...character.weapons]; next[idx].damage = e.target.value; updateCharacter({ weapons: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-2 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Tipo</span>
+                          <input 
+                            value={w.type || ''} 
+                            onChange={(e) => { 
+                              const next = [...character.weapons]; 
+                              next[idx].type = e.target.value; 
+                              updateCharacter({ weapons: next }); 
+                            }} 
+                            placeholder="Ex: 1 Mão"
+                            className={`bg-transparent w-full text-center font-bold outline-none cinzel text-[10px] ${isDark ? 'text-[#e8d5b5] placeholder:text-white/10' : 'text-[#3e2723] placeholder:text-black/10'}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )
+              ) : (
+                character.otherAttacks.length === 0 ? (
+                  <div className="py-8 text-center opacity-30 italic cinzel text-[10px] uppercase tracking-widest">
+                    Nenhum ataque registrado
+                  </div>
+                ) : (
+                  character.otherAttacks.map((a, idx) => (
+                    <div key={idx} className={`border p-3 rounded-lg relative group ${isDark ? 'bg-black/20 border-white/5' : 'bg-white/40 border-[#8b4513]/10'}`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <input 
+                          value={a.name}
+                          onChange={(e) => {
+                            const next = [...character.otherAttacks];
+                            next[idx].name = e.target.value;
+                            updateCharacter({ otherAttacks: next });
+                          }}
+                          className={`bg-transparent font-bold fantasy-title outline-none focus:border-b border-white/20 w-2/3 ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}
+                        />
+                        <button 
+                          onClick={() => updateCharacter({ otherAttacks: character.otherAttacks.filter((_, i) => i !== idx) })}
+                          className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Atk</span>
+                          <input value={a.bonus} onChange={(e) => { const next = [...character.otherAttacks]; next[idx].bonus = e.target.value; updateCharacter({ otherAttacks: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-1 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Dano</span>
+                          <input value={a.damage} onChange={(e) => { const next = [...character.otherAttacks]; next[idx].damage = e.target.value; updateCharacter({ otherAttacks: next }); }} className={`bg-transparent w-full text-center font-bold outline-none ${isDark ? 'text-[#e8d5b5]' : ''}`} />
+                        </div>
+                        <div className={`col-span-2 text-center p-1 rounded border ${isDark ? 'bg-black/40 border-white/5' : 'bg-[#8b4513]/5 border-[#8b4513]/10'}`}>
+                          <span className={`block text-[8px] cinzel font-bold uppercase tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : ''}`}>Alcance/Tipo</span>
+                          <input 
+                            value={a.range || ''} 
+                            onChange={(e) => { 
+                              const next = [...character.otherAttacks]; 
+                              next[idx].range = e.target.value; 
+                              updateCharacter({ otherAttacks: next }); 
+                            }} 
+                            placeholder="Ex: 36m"
+                            className={`bg-transparent w-full text-center font-bold outline-none cinzel text-[10px] ${isDark ? 'text-[#e8d5b5] placeholder:text-white/10' : 'text-[#3e2723] placeholder:text-black/10'}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )
               )}
             </div>
+            
             <button 
-              onClick={() => updateCharacter({ weapons: [...character.weapons, { name: 'Nova Arma', bonus: '+0', damage: '1d4' }] })}
+              onClick={() => {
+                if (combatTab === 'weapons') {
+                  updateCharacter({ weapons: [...character.weapons, { name: 'Nova Arma', bonus: '+0', damage: '1d4', type: '' }] });
+                } else {
+                  updateCharacter({ otherAttacks: [...character.otherAttacks, { name: 'Novo Ataque', bonus: '+0', damage: '1d4', range: '' }] });
+                }
+              }}
               className={`mt-6 w-full py-3 rounded-xl cinzel text-[11px] font-bold shadow-lg uppercase tracking-[0.2em] border-b-4 active:translate-y-1 active:border-b-0 transition-all ${
                 isDark 
                   ? 'bg-[#d4af37] text-[#1a1a1a] border-black/40 hover:bg-[#b8860b]' 
                   : 'bg-[#8b4513] text-[#fdf5e6] border-black/40 hover:bg-[#5d4037]'
               }`}
             >
-              + Registrar Arma
+              + Registrar {combatTab === 'weapons' ? 'Arma' : 'Ataque'}
             </button>
           </div>
         </section>
