@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Character } from '../types';
-import { translations } from '../translations';
+import { translations, classTranslations, raceTranslations } from '../translations';
 
 interface Props {
   characters: Character[];
@@ -26,6 +26,11 @@ const CharacterSelection: React.FC<Props> = ({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
   const t = translations[language];
+
+  // Helper para traduzir valores técnicos
+  const translateValue = (val: string, dictionary: Record<string, { pt: string, en: string }>) => {
+    return dictionary[val] ? dictionary[val][language] : val;
+  };
 
   const handleDeleteClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -160,7 +165,7 @@ const CharacterSelection: React.FC<Props> = ({
                 <div className="absolute bottom-4 left-4 right-4 z-20">
                    <div className="flex items-center gap-2">
                       <div className="h-[1px] flex-grow bg-[#d4af37]/30"></div>
-                      <span className="cinzel text-[8px] font-bold text-[#d4af37] uppercase tracking-[0.2em]">{char.race}</span>
+                      <span className="cinzel text-[8px] font-bold text-[#d4af37] uppercase tracking-[0.2em]">{translateValue(char.race, raceTranslations)}</span>
                       <div className="h-[1px] flex-grow bg-[#d4af37]/30"></div>
                    </div>
                 </div>
@@ -172,7 +177,7 @@ const CharacterSelection: React.FC<Props> = ({
                 </h3>
                 <div className="flex items-center gap-3 mt-2">
                   <span className="cinzel text-[10px] text-[#8b4513] font-bold uppercase tracking-[0.1em] px-2 py-0.5 border border-[#8b4513]/20 rounded-md">
-                    {char.class}
+                    {translateValue(char.class, classTranslations)}
                   </span>
                   <span className="cinzel text-[10px] text-[#d4af37] bg-black/80 font-bold px-2 py-0.5 rounded-md shadow-sm">
                     {language === 'pt' ? 'NVL' : 'LVL'} {char.level}

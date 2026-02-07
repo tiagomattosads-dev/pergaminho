@@ -51,6 +51,7 @@ export interface ClassMetadata {
   casterType: "full" | "half" | "third" | "pact" | "none";
   spellAbility: Attribute | null;
   spellsModel: "prepared" | "known" | "none";
+  hitDie: string;
 }
 
 export interface Character {

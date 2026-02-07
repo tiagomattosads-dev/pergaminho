@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Character, Attribute } from './types';
 import { INITIAL_CHARACTER, createNewCharacter, getLevelFromXP, getProficiencyFromLevel, XP_TABLE, SUBCLASS_LEVELS, SUBCLASSES_PHB, CLASSES_PHB } from './constants';
-import { translations } from './translations';
+import { translations, classTranslations, subclassTranslations, raceTranslations } from './translations';
 import CharacterSheet from './components/CharacterSheet';
 import Inventory from './components/Inventory';
 import ClassFeatures from './components/ClassFeatures';
@@ -65,6 +65,12 @@ const App: React.FC = () => {
 
   const t = translations[appLanguage];
   const isDark = theme === 'dark';
+
+  // Helper para traduzir valores técnicos (Classe, Raça, etc)
+  const translateValue = (val: string | null | undefined, dictionary: Record<string, { pt: string, en: string }>) => {
+    if (!val) return null;
+    return dictionary[val] ? dictionary[val][appLanguage] : val;
+  };
 
   // Regra de disparo da Subclasse (Auto-disparo uma única vez por personagem/nível atingido)
   useEffect(() => {
@@ -362,7 +368,7 @@ const App: React.FC = () => {
                       setIsGlobalSettingsOpen(false);
                     }}
                     className="flex-none w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-b from-[#3d2511] to-[#1a0f00] border border-[#8b4513]/50 flex items-center justify-center hover:border-[#d4af37] transition-all group/back active:scale-95 shadow-lg"
-                    title={appLanguage === 'pt' ? "Trocar Herói" : "Change Hero"}
+                    title={t.change_hero}
                   >
                     <svg className="w-4 h-4 md:w-6 md:h-6 text-[#d4af37] group-hover/back:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" />
@@ -382,15 +388,15 @@ const App: React.FC = () => {
                     
                     <div className="flex items-center mt-1.5 md:mt-2">
                       <div className={`px-2 md:px-3 py-0.5 md:py-1 rounded-md bg-[#3d2511]/80 border border-[#8b4513]/30 flex items-center gap-2 shadow-inner`}>
-                        <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5] whitespace-nowrap">{character?.class || 'D&D 5e'}</span>
+                        <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5] whitespace-nowrap">{translateValue(character?.class, classTranslations) || 'D&D 5e'}</span>
                         {character?.subclass && (
                           <>
                             <span className="w-1 h-1 rounded-full bg-[#d4af37] opacity-40"></span>
-                            <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#d4af37] whitespace-nowrap">{character.subclass}</span>
+                            <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#d4af37] whitespace-nowrap">{translateValue(character.subclass, subclassTranslations)}</span>
                           </>
                         )}
                         <span className="w-1 h-1 rounded-full bg-[#d4af37] opacity-40"></span>
-                        <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5]/70 whitespace-nowrap">{character?.race || 'APP'}</span>
+                        <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5]/70 whitespace-nowrap">{translateValue(character?.race, raceTranslations) || 'APP'}</span>
                       </div>
                     </div>
                   </div>
@@ -417,7 +423,7 @@ const App: React.FC = () => {
                       <div className="relative flex-none">
                         <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-gradient-to-b from-[#d4af37] via-[#8b4513] to-[#3d2511] p-[2px] shadow-[0_0_15px_rgba(212,175,55,0.3)] border border-[#d4af37]/20">
                           <div className="w-full h-full rounded-full bg-[#2d1b0d] flex flex-col items-center justify-center border border-black/50 shadow-inner">
-                            <span className="text-[5px] md:text-[7px] cinzel font-extrabold text-[#d4af37] uppercase tracking-widest leading-none">Nvl</span>
+                            <span className="text-[5px] md:text-[7px] cinzel font-extrabold text-[#d4af37] uppercase tracking-widest leading-none">{t.level_short}</span>
                             <span className="text-lg md:text-2xl font-bold fantasy-title text-[#e8d5b5] leading-none mt-0.5">{levelData?.level || 1}</span>
                           </div>
                         </div>
@@ -528,7 +534,7 @@ const App: React.FC = () => {
           {showClassFeaturesTab && (
             <MobileNavButton 
               tab={Tab.ClassFeatures} 
-              label={appLanguage === 'pt' ? "Talentos" : "Features"} 
+              label={appLanguage === 'pt' ? "Habilidades" : "Features"} 
               icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>} 
             />
           )}
@@ -581,7 +587,7 @@ const App: React.FC = () => {
                           : (isDark ? 'bg-white/5 border-white/10 text-[#e8d5b5] hover:border-[#d4af37]/40' : 'bg-white border-[#8b4513]/20 text-[#3e2723] hover:border-[#8b4513]')
                         }`}
                       >
-                         <span className="fantasy-title text-xl sm:text-2xl">{sub}</span>
+                         <span className="fantasy-title text-xl sm:text-2xl">{translateValue(sub, subclassTranslations)}</span>
                       </button>
                     ))}
                  </div>

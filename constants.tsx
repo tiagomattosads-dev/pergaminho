@@ -1,3 +1,4 @@
+
 import { Attribute, Character, Skill, ClassMetadata } from './types';
 
 export const XP_TABLE = [
@@ -16,18 +17,18 @@ export const getProficiencyFromLevel = (level: number): number => {
 };
 
 export const CLASSES_PHB: Record<string, ClassMetadata> = {
-  "Bárbaro": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
-  "Bardo": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.CAR, spellsModel: "known" },
-  "Clérigo": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.SAB, spellsModel: "prepared" },
-  "Druida": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.SAB, spellsModel: "prepared" },
-  "Guerreiro": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
-  "Monge": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
-  "Paladino": { isSpellcaster: true, casterType: "half", spellAbility: Attribute.CAR, spellsModel: "prepared" },
-  "Patrulheiro": { isSpellcaster: true, casterType: "half", spellAbility: Attribute.SAB, spellsModel: "known" },
-  "Ladino": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
-  "Feiticeiro": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.CAR, spellsModel: "known" },
-  "Bruxo": { isSpellcaster: true, casterType: "pact", spellAbility: Attribute.CAR, spellsModel: "known" },
-  "Mago": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.INT, spellsModel: "prepared" },
+  "Bárbaro": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none", hitDie: "1d12" },
+  "Bardo": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.CAR, spellsModel: "known", hitDie: "1d8" },
+  "Clérigo": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.SAB, spellsModel: "prepared", hitDie: "1d8" },
+  "Druida": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.SAB, spellsModel: "prepared", hitDie: "1d8" },
+  "Guerreiro": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none", hitDie: "1d10" },
+  "Monge": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none", hitDie: "1d8" },
+  "Paladino": { isSpellcaster: true, casterType: "half", spellAbility: Attribute.CAR, spellsModel: "prepared", hitDie: "1d10" },
+  "Patrulheiro": { isSpellcaster: true, casterType: "half", spellAbility: Attribute.SAB, spellsModel: "known", hitDie: "1d10" },
+  "Ladino": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none", hitDie: "1d8" },
+  "Feiticeiro": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.CAR, spellsModel: "known", hitDie: "1d6" },
+  "Bruxo": { isSpellcaster: true, casterType: "pact", spellAbility: Attribute.CAR, spellsModel: "known", hitDie: "1d8" },
+  "Mago": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.INT, spellsModel: "prepared", hitDie: "1d6" },
 };
 
 export const SUBCLASS_LEVELS: Record<string, number> = {

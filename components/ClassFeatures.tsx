@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Character } from '../types';
-import { translations } from '../translations';
+import { translations, classTranslations, subclassTranslations } from '../translations';
 import { SUBCLASS_LEVELS } from '../constants';
 
 interface Props {
@@ -14,6 +13,11 @@ const ClassFeatures: React.FC<Props> = ({ character, onSelectSubclass, theme = '
   const isDark = theme === 'dark';
   const lang = character.language || 'pt';
   const t = translations[lang];
+
+  // Helper para traduzir valores técnicos
+  const translateValue = (val: string, dictionary: Record<string, { pt: string, en: string }>) => {
+    return dictionary[val] ? dictionary[val][lang] : val;
+  };
 
   if (!character.class) {
     return (
@@ -36,7 +40,7 @@ const ClassFeatures: React.FC<Props> = ({ character, onSelectSubclass, theme = '
         </div>
         <div className="flex flex-col text-center sm:text-left">
           <h2 className={`fantasy-title text-3xl sm:text-5xl drop-shadow-sm ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>
-            {character.class}
+            {translateValue(character.class, classTranslations)}
           </h2>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-1">
              <span className={`cinzel text-[10px] font-bold uppercase tracking-[0.2em] opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>
@@ -46,7 +50,7 @@ const ClassFeatures: React.FC<Props> = ({ character, onSelectSubclass, theme = '
                <>
                 <span className="w-1 h-1 rounded-full bg-[#d4af37] opacity-40"></span>
                 <span className={`fantasy-title text-xl ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>
-                  {character.subclass}
+                  {translateValue(character.subclass, subclassTranslations)}
                 </span>
                </>
              )}
@@ -114,7 +118,7 @@ const ClassFeatures: React.FC<Props> = ({ character, onSelectSubclass, theme = '
                   <div className="flex items-center justify-between mb-2">
                     <h4 className={`cinzel font-bold text-sm tracking-[0.2em] uppercase ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>
                       {isUnlocked 
-                        ? (isSubclassFeature && character.subclass ? character.subclass : `${t.feature} de Nível ${level}`) 
+                        ? (isSubclassFeature && character.subclass ? translateValue(character.subclass, subclassTranslations) : `${t.feature} de Nível ${level}`) 
                         : `???`}
                     </h4>
                   </div>

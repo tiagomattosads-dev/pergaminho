@@ -1,7 +1,8 @@
+
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { Character, Attribute, Skill, Weapon, OtherAttack } from '../types';
 import { SKILLS, CLASSES_PHB, getLevelFromXP, getProficiencyFromLevel, SUBCLASSES_PHB } from '../constants';
-import { translations, attributeTranslations, attributeAbbreviations, skillTranslations } from '../translations';
+import { translations, attributeTranslations, attributeAbbreviations, skillTranslations, classTranslations, raceTranslations, alignmentTranslations } from '../translations';
 
 interface Props {
   character: Character;
@@ -26,6 +27,11 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
   
   const getModifier = (score: number) => Math.floor((score - 10) / 2);
   const isDark = theme === 'dark';
+
+  // Helper para traduzir valores técnicos
+  const translateValue = (val: string, dictionary: Record<string, { pt: string, en: string }>) => {
+    return dictionary[val] ? dictionary[val][lang] : val;
+  };
 
   // Resetar erro do retrato quando o personagem mudar ou o link mudar
   useEffect(() => {
@@ -153,7 +159,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               isDark ? 'border-white/10 focus:border-[#d4af37] text-[#e8d5b5]' : 'border-[#8b4513]/20 focus:border-[#8b4513] text-[#3e2723]'
             }`}
           >
-            <span className="truncate">{character.class}</span>
+            <span className="truncate">{translateValue(character.class, classTranslations)}</span>
             <svg 
               className={`w-3 h-3 transition-transform duration-300 opacity-40 group-hover:opacity-100 ${isClassDropdownOpen ? 'rotate-180' : ''}`} 
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -178,7 +184,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                         : (isDark ? 'text-[#e8d5b5] border-white/5 hover:bg-white/5' : 'text-[#3e2723] border-[#8b4513]/10 hover:bg-[#8b4513]/5')
                     }`}
                   >
-                    {cls}
+                    {translateValue(cls, classTranslations)}
                   </button>
                 ))}
               </div>
@@ -188,14 +194,14 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
 
         {/* Outros campos de Perfil */}
         {[
-          { label: t.race, value: character.race, key: 'race' },
-          { label: t.background, value: character.background, key: 'background' },
-          { label: t.alignment, value: character.alignment, key: 'alignment' }
+          { label: t.race, value: character.race, key: 'race', dict: raceTranslations },
+          { label: t.background, value: character.background, key: 'background', dict: null },
+          { label: t.alignment, value: character.alignment, key: 'alignment', dict: alignmentTranslations }
         ].map((field) => (
           <div key={field.key} className="flex flex-col">
             <label className={`cinzel text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{field.label}</label>
             <input 
-              value={field.value} 
+              value={field.dict ? translateValue(field.value, field.dict) : field.value} 
               onChange={(e) => updateCharacter({ [field.key]: e.target.value })}
               className={`bg-transparent border-b outline-none fantasy-title text-base sm:text-lg px-1 transition-colors h-[28px] sm:h-[32px] ${
                 isDark ? 'border-white/10 focus:border-[#d4af37] text-[#e8d5b5]' : 'border-[#8b4513]/20 focus:border-[#8b4513] text-[#3e2723]'
@@ -335,7 +341,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                       </div>
                       <div className="flex-1">
                         <span className="block text-[9px] cinzel font-bold uppercase tracking-widest opacity-70">{t.hit_dice}</span>
-                        <span className="font-bold text-xl block mt-1 tracking-tighter">1d8</span>
+                        <span className="font-bold text-xl block mt-1 tracking-tighter">{character.classMetadata?.hitDie || '—'}</span>
                       </div>
                     </div>
                   </>
@@ -534,7 +540,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           onClick={() => updateCharacter({ otherAttacks: character.otherAttacks.filter((_, i) => i !== idx) })}
                           className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
                         >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 11-1.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                         </button>
                       </div>
                       <div className="grid grid-cols-4 gap-2">
