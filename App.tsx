@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Character, Attribute } from './types';
 import { INITIAL_CHARACTER, createNewCharacter, getLevelFromXP, getProficiencyFromLevel, XP_TABLE, SUBCLASS_LEVELS, SUBCLASSES_PHB, CLASSES_PHB } from './constants';
@@ -47,6 +46,11 @@ const App: React.FC = () => {
   const [showClassFeaturesTab, setShowClassFeaturesTab] = useState<boolean>(() => {
     const saved = localStorage.getItem('dnd_app_show_features_tab');
     return saved !== null ? saved === 'true' : true;
+  });
+
+  const [abbreviateAttributes, setAbbreviateAttributes] = useState<boolean>(() => {
+    const saved = localStorage.getItem('dnd_app_abbreviate_attrs');
+    return saved !== null ? saved === 'true' : false;
   });
 
   const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
@@ -129,6 +133,10 @@ const App: React.FC = () => {
       setActiveTab(Tab.Sheet);
     }
   }, [showClassFeaturesTab, activeTab]);
+
+  useEffect(() => {
+    localStorage.setItem('dnd_app_abbreviate_attrs', String(abbreviateAttributes));
+  }, [abbreviateAttributes]);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
@@ -213,6 +221,8 @@ const App: React.FC = () => {
           setAppLanguage={setAppLanguage}
           showClassFeaturesTab={showClassFeaturesTab}
           setShowClassFeaturesTab={setShowClassFeaturesTab}
+          abbreviateAttributes={abbreviateAttributes}
+          setAbbreviateAttributes={setAbbreviateAttributes}
         />
       );
     }
@@ -220,7 +230,7 @@ const App: React.FC = () => {
     if (!character) return null;
     switch (activeTab) {
       case Tab.Sheet: 
-        return <CharacterSheet character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} theme={theme} />;
+        return <CharacterSheet character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} theme={theme} abbreviateAttributes={abbreviateAttributes} />;
       case Tab.Inventory: 
         return <Inventory character={character} updateCharacter={updateCharacter} theme={theme} />;
       case Tab.ClassFeatures:
@@ -242,6 +252,8 @@ const App: React.FC = () => {
             setAppLanguage={setAppLanguage}
             showClassFeaturesTab={showClassFeaturesTab}
             setShowClassFeaturesTab={setShowClassFeaturesTab}
+            abbreviateAttributes={abbreviateAttributes}
+            setAbbreviateAttributes={setAbbreviateAttributes}
           />
         );
       case Tab.Subscription:
@@ -434,18 +446,7 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2 relative z-10 pt-1.5 border-t border-[#8b4513]/20">
-                      <div className="flex-1 relative group/input">
-                        <input 
-                          type="number"
-                          min="0"
-                          value={character?.exp || 0}
-                          onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
-                          className="bg-black/40 border border-[#8b4513]/50 text-[#e8d5b5] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-0 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all group-hover/input:border-[#8b4513] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">{t.accumulation}</span>
-                      </div>
-
-                      <div className="flex-[1.5] flex items-center gap-1.5 md:gap-2">
+                      <div className="flex-1 flex items-center gap-1.5 md:gap-2">
                         <div className="relative flex-grow">
                           <input 
                             type="number"

@@ -140,7 +140,9 @@ export const translations = {
     cancel: "Cancelar",
     show_features_tab: "Exibir Talentos de Classe",
     features_tab_desc: "Ativar aba de talentos na navegação",
-    manage: "gerenciar"
+    manage: "gerenciar",
+    abbreviate_attributes: "Abreviar Atributos",
+    abbreviate_attributes_desc: "Usar siglas (ex: FOR, DES) na ficha"
   },
   en: {
     sheet: "Sheet",
@@ -283,7 +285,9 @@ export const translations = {
     cancel: "Cancel",
     show_features_tab: "Show Class Features",
     features_tab_desc: "Enable features tab in navigation",
-    manage: "manage"
+    manage: "manage",
+    abbreviate_attributes: "Abbreviate Attributes",
+    abbreviate_attributes_desc: "Use siglas (eg: STR, DEX) on the sheet"
   }
 };
 
@@ -294,6 +298,15 @@ export const attributeTranslations: Record<string, { pt: string, en: string }> =
   INT: { pt: 'Inteligência', en: 'Intelligence' },
   SAB: { pt: 'Sabedoria', en: 'Wisdom' },
   CAR: { pt: 'Carisma', en: 'Charisma' }
+};
+
+export const attributeAbbreviations: Record<string, { pt: string, en: string }> = {
+  FOR: { pt: 'FOR', en: 'STR' },
+  DES: { pt: 'DES', en: 'DEX' },
+  CON: { pt: 'CON', en: 'CON' },
+  INT: { pt: 'INT', en: 'INT' },
+  SAB: { pt: 'SAB', en: 'WIS' },
+  CAR: { pt: 'CAR', en: 'CHA' }
 };
 
 export const skillTranslations: Record<string, { pt: string, en: string }> = {

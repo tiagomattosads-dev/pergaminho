@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
 <head>
@@ -73,6 +72,19 @@
             border: 1px solid rgba(212, 175, 55, 0.1);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #8b4513; }
+
+        /* OCULTAR SCROLLBAR NO MOBILE (Obrigatório para estética de app medieval) */
+        @media (max-width: 1024px) {
+            .custom-scrollbar {
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+            }
+            .custom-scrollbar::-webkit-scrollbar {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+            }
+        }
 
         /* REFINAMENTO DARK MODE (MASMORRA) */
         .dark-mode {

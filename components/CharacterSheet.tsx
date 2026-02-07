@@ -1,16 +1,17 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { Character, Attribute, Skill, Weapon, OtherAttack } from '../types';
 import { SKILLS, CLASSES_PHB, getLevelFromXP, getProficiencyFromLevel, SUBCLASSES_PHB } from '../constants';
-import { translations, attributeTranslations, skillTranslations } from '../translations';
+import { translations, attributeTranslations, attributeAbbreviations, skillTranslations } from '../translations';
 
 interface Props {
   character: Character;
   updateCharacter: (updates: Partial<Character>) => void;
   onImageUpload: (file: File) => void;
   theme?: 'light' | 'dark';
+  abbreviateAttributes?: boolean;
 }
 
-const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUpload, theme = 'light' }) => {
+const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUpload, theme = 'light', abbreviateAttributes = false }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [combatTab, setCombatTab] = useState<'weapons' | 'attacks'>('weapons');
@@ -21,6 +22,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
   const lang = character.language || 'pt';
   const t = translations[lang];
   const attrT = attributeTranslations;
+  const attrAbbrT = attributeAbbreviations;
   
   const getModifier = (score: number) => Math.floor((score - 10) / 2);
   const isDark = theme === 'dark';
@@ -49,6 +51,8 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
   const StatBoxMedallion: React.FC<{ attr: Attribute, score: number }> = ({ attr, score }) => {
     const mod = getModifier(score);
     const modDisplay = mod >= 0 ? `+${mod}` : mod;
+    const displayName = abbreviateAttributes ? attrAbbrT[attr][lang] : attrT[attr][lang];
+    
     return (
       <div className="flex flex-col items-center group relative w-full max-w-[110px] mx-auto">
         <div className={`relative w-full aspect-square border-2 rounded-lg shadow-md flex flex-col items-center justify-center transition-all bg-[url('https://www.transparenttextures.com/patterns/p6.png')] ${
@@ -61,7 +65,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               ? 'bg-[#d4af37] text-[#1a1a1a] border-[#fffacd]/20' 
               : 'bg-[#8b4513] text-[#fdf5e6] border-[#d4af37]/40'
           }`}>
-            {attrT[attr][lang]}
+            {displayName}
           </span>
           <div className="flex items-center justify-center w-full h-full px-1">
             <input 
@@ -281,13 +285,14 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                     const attr = key as Attribute;
                     const isProf = character.proficiencies.saves.includes(attr);
                     const mod = getModifier(character.stats[attr]) + (isProf ? profBonus : 0);
+                    const attrDisplayName = abbreviateAttributes ? attrAbbrT[attr][lang] : attr;
                     return (
                       <div key={attr} className={`flex items-center gap-2 p-2 rounded border transition-colors ${
                         isDark ? 'bg-white/5 border-white/5 hover:border-white/20' : 'bg-white/60 border-[#8b4513]/10 hover:border-[#8b4513]/40'
                       }`}>
                         <input type="checkbox" checked={isProf} onChange={() => toggleSave(attr)} className={`w-3.5 h-3.5 cursor-pointer ${isDark ? 'accent-[#d4af37]' : 'accent-[#8b4513]'}`} />
                         <span className={`w-6 font-bold text-center text-sm ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{mod >= 0 ? `+${mod}` : mod}</span>
-                        <span className={`parchment-text uppercase font-bold text-[10px] truncate tracking-tighter ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>{attr}</span>
+                        <span className={`parchment-text uppercase font-bold text-[10px] truncate tracking-tighter ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>{attrDisplayName}</span>
                       </div>
                     );
                   })}
@@ -399,6 +404,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 const isProf = character.proficiencies.skills.includes(skill.name);
                 const mod = getModifier(character.stats[skill.attribute]) + (isProf ? profBonus : 0);
                 const skillName = skillTranslations[skill.name] ? skillTranslations[skill.name][lang] : skill.name;
+                const attrDisplayName = abbreviateAttributes ? attrAbbrT[skill.attribute][lang] : skill.attribute;
                 return (
                   <div key={skill.name} className={`flex items-center gap-3 text-[13px] p-1.5 border-b group/skill transition-all rounded-sm ${
                     isDark ? 'border-white/5 hover:bg-white/5' : 'border-[#8b4513]/5 hover:bg-[#8b4513]/5'
@@ -411,7 +417,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                       }`}>
                         {skillName}
                       </span>
-                      <span className={`text-[9px] cinzel opacity-40 font-bold ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>({skill.attribute})</span>
+                      <span className={`text-[9px] cinzel opacity-40 font-bold ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>({attrDisplayName})</span>
                     </div>
                   </div>
                 );
@@ -528,7 +534,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           onClick={() => updateCharacter({ otherAttacks: character.otherAttacks.filter((_, i) => i !== idx) })}
                           className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
                         >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 11-1.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                         </button>
                       </div>
                       <div className="grid grid-cols-4 gap-2">
