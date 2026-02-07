@@ -15,6 +15,8 @@ interface Props {
   setShowClassFeaturesTab: (show: boolean) => void;
   abbreviateAttributes: boolean;
   setAbbreviateAttributes: (abbr: boolean) => void;
+  showAccumulatedXp: boolean;
+  setShowAccumulatedXp: (show: boolean) => void;
 }
 
 const Settings: React.FC<Props> = ({ 
@@ -29,7 +31,9 @@ const Settings: React.FC<Props> = ({
   showClassFeaturesTab,
   setShowClassFeaturesTab,
   abbreviateAttributes,
-  setAbbreviateAttributes
+  setAbbreviateAttributes,
+  showAccumulatedXp,
+  setShowAccumulatedXp
 }) => {
   const isDark = theme === 'dark';
   const t = translations[appLanguage];
@@ -184,6 +188,16 @@ const Settings: React.FC<Props> = ({
           action={
             <div className={`w-12 h-6 rounded-full relative transition-colors cursor-pointer ${abbreviateAttributes ? 'bg-[#d4af37]' : 'bg-gray-300'}`} onClick={() => setAbbreviateAttributes(!abbreviateAttributes)}>
               <div className={`absolute top-1 w-4 h-4 rounded-full transition-all shadow-md bg-white ${abbreviateAttributes ? 'left-7' : 'left-1'}`}></div>
+            </div>
+          }
+        />
+        <SettingsItem 
+          icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+          title={t.show_accumulated_xp}
+          description={t.show_accumulated_xp_desc}
+          action={
+            <div className={`w-12 h-6 rounded-full relative transition-colors cursor-pointer ${showAccumulatedXp ? 'bg-[#d4af37]' : 'bg-gray-300'}`} onClick={() => setShowAccumulatedXp(!showAccumulatedXp)}>
+              <div className={`absolute top-1 w-4 h-4 rounded-full transition-all shadow-md bg-white ${showAccumulatedXp ? 'left-7' : 'left-1'}`}></div>
             </div>
           }
         />

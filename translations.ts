@@ -142,7 +142,9 @@ export const translations = {
     features_tab_desc: "Ativar aba de habilidades na navegação",
     manage: "gerenciar",
     abbreviate_attributes: "Abreviar Atributos",
-    abbreviate_attributes_desc: "Usar siglas (ex: FOR, DES) na ficha"
+    abbreviate_attributes_desc: "Usar siglas (ex: FOR, DES) na ficha",
+    show_accumulated_xp: "Exibir Bloco de Acúmulo de XP",
+    show_accumulated_xp_desc: "Mostrar campo para edição direta do XP total no cabeçalho"
   },
   en: {
     sheet: "Sheet",
@@ -287,7 +289,9 @@ export const translations = {
     features_tab_desc: "Enable features tab in navigation",
     manage: "manage",
     abbreviate_attributes: "Abbreviate Attributes",
-    abbreviate_attributes_desc: "Use siglas (eg: STR, DEX) on the sheet"
+    abbreviate_attributes_desc: "Use siglas (eg: STR, DEX) on the sheet",
+    show_accumulated_xp: "Show Accumulated XP Block",
+    show_accumulated_xp_desc: "Show input field for direct total XP editing in the header"
   }
 };
 
@@ -317,6 +321,7 @@ export const classTranslations: Record<string, { pt: string, en: string }> = {
   "Guerreiro": { pt: "Guerreiro", en: "Warrior" },
   "Monge": { pt: "Monge", en: "Monk" },
   "Paladino": { pt: "Paladino", en: "Paladin" },
+  "Paladin": { pt: "Paladino", en: "Paladin" },
   "Patrulheiro": { pt: "Patrulheiro", en: "Ranger" },
   "Ladino": { pt: "Ladino", en: "Rogue" },
   "Feiticeiro": { pt: "Feiticeiro", en: "Sorcerer" },
@@ -349,8 +354,8 @@ export const alignmentTranslations: Record<string, { pt: string, en: string }> =
 };
 
 export const subclassTranslations: Record<string, { pt: string, en: string }> = {
-  "Caminho do Berserker": { pt: "Caminho do Berserker", en: "Path of the Berserker" },
-  "Caminho do Totem": { pt: "Caminho do Totem", en: "Path of the Totem" },
+  "Caminho do Furioso": { pt: "Caminho do Furioso", en: "Path of the Berserker" },
+  "Caminho do Guerreiro Totêmico": { pt: "Caminho do Guerreiro Totêmico", en: "Path of the Totem Warrior" },
   "Colégio do Conhecimento": { pt: "Colégio do Conhecimento", en: "College of Lore" },
   "Colégio da Bravura": { pt: "Colégio da Bravura", en: "College of Valor" },
   "Domínio do Conhecimento": { pt: "Domínio do Conhecimento", en: "Knowledge Domain" },

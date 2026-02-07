@@ -53,6 +53,11 @@ const App: React.FC = () => {
     return saved !== null ? saved === 'true' : false;
   });
 
+  const [showAccumulatedXp, setShowAccumulatedXp] = useState<boolean>(() => {
+    const saved = localStorage.getItem('dnd_app_show_accumulated_xp');
+    return saved !== null ? saved === 'true' : true;
+  });
+
   const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
   const [showDeathOverlay, setShowDeathOverlay] = useState(true);
   const [showSubclassModal, setShowSubclassModal] = useState(false);
@@ -144,6 +149,10 @@ const App: React.FC = () => {
     localStorage.setItem('dnd_app_abbreviate_attrs', String(abbreviateAttributes));
   }, [abbreviateAttributes]);
 
+  useEffect(() => {
+    localStorage.setItem('dnd_app_show_accumulated_xp', String(showAccumulatedXp));
+  }, [showAccumulatedXp]);
+
   const handleLogin = () => {
     setIsAuthenticated(true);
     sessionStorage.setItem('dnd_session_active', 'true');
@@ -229,6 +238,8 @@ const App: React.FC = () => {
           setShowClassFeaturesTab={setShowClassFeaturesTab}
           abbreviateAttributes={abbreviateAttributes}
           setAbbreviateAttributes={setAbbreviateAttributes}
+          showAccumulatedXp={showAccumulatedXp}
+          setShowAccumulatedXp={setShowAccumulatedXp}
         />
       );
     }
@@ -260,6 +271,8 @@ const App: React.FC = () => {
             setShowClassFeaturesTab={setShowClassFeaturesTab}
             abbreviateAttributes={abbreviateAttributes}
             setAbbreviateAttributes={setAbbreviateAttributes}
+            showAccumulatedXp={showAccumulatedXp}
+            setShowAccumulatedXp={setShowAccumulatedXp}
           />
         );
       case Tab.Subscription:
@@ -454,16 +467,18 @@ const App: React.FC = () => {
                     <div className="flex items-center gap-2 relative z-10 pt-1.5 border-t border-[#8b4513]/20">
                       <div className="flex-1 flex items-center gap-1.5 md:gap-2">
                         {/* NOVO: BLOCO ACÚMULO (TOTAL XP) */}
-                        <div className="relative flex-1">
-                          <input 
-                            type="number"
-                            min="0"
-                            value={character?.exp || 0}
-                            onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
-                            className="bg-black/50 border border-[#d4af37]/30 text-[#d4af37] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-0 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                          />
-                          <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">{t.accumulation}</span>
-                        </div>
+                        {showAccumulatedXp && (
+                          <div className="relative flex-1">
+                            <input 
+                              type="number"
+                              min="0"
+                              value={character?.exp || 0}
+                              onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
+                              className="bg-black/50 border border-[#d4af37]/30 text-[#d4af37] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-0 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            />
+                            <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">{t.accumulation}</span>
+                          </div>
+                        )}
 
                         {/* BLOCO DÁDIVA (ADD XP) */}
                         <div className="relative flex-1">
