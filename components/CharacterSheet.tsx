@@ -1,7 +1,6 @@
-
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { Character, Attribute, Skill, Weapon, OtherAttack } from '../types';
-import { SKILLS, getLevelFromXP, getProficiencyFromLevel } from '../constants';
+import { SKILLS, CLASSES_PHB, getLevelFromXP, getProficiencyFromLevel, SUBCLASSES_PHB } from '../constants';
 import { translations, attributeTranslations, skillTranslations } from '../translations';
 
 interface Props {
@@ -13,16 +12,34 @@ interface Props {
 
 const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUpload, theme = 'light' }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [combatTab, setCombatTab] = useState<'weapons' | 'attacks'>('weapons');
   const [hpTab, setHpTab] = useState<'hp' | 'death'>('hp');
+  const [isClassDropdownOpen, setIsClassDropdownOpen] = useState(false);
+  const [portraitError, setPortraitError] = useState(false);
   
   const lang = character.language || 'pt';
   const t = translations[lang];
   const attrT = attributeTranslations;
   
   const getModifier = (score: number) => Math.floor((score - 10) / 2);
-
   const isDark = theme === 'dark';
+
+  // Resetar erro do retrato quando o personagem mudar ou o link mudar
+  useEffect(() => {
+    setPortraitError(false);
+  }, [character.id, character.portrait]);
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsClassDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const profBonus = useMemo(() => {
     const currentLevel = getLevelFromXP(character.exp);
@@ -49,12 +66,13 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
           <div className="flex items-center justify-center w-full h-full px-1">
             <input 
               type="number"
-              max="20"
+              max={character.level === 1 ? 15 : 20}
               min="0"
               value={score}
               onChange={(e) => {
                 let val = parseInt(e.target.value) || 0;
-                if (val > 20) val = 20;
+                const maxAllowed = character.level === 1 ? 15 : 20;
+                if (val > maxAllowed) val = maxAllowed;
                 updateCharacter({ stats: { ...character.stats, [attr]: val } });
               }}
               className={`text-4xl sm:text-5xl font-bold fantasy-title bg-transparent w-full text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
@@ -96,6 +114,24 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
     updateCharacter({ deathSaves: { ...character.deathSaves, [type]: Math.max(0, newVal) } });
   };
 
+  const handleClassChange = (selectedClass: string) => {
+    const allowedSubclasses = SUBCLASSES_PHB[selectedClass] || [];
+    const currentSubclass = character.subclass;
+    
+    const updates: Partial<Character> = { 
+      class: selectedClass, 
+      classMetadata: CLASSES_PHB[selectedClass] 
+    };
+
+    // Reset de subclasse se não pertencer à nova classe
+    if (currentSubclass && !allowedSubclasses.includes(currentSubclass)) {
+      updates.subclass = null;
+    }
+
+    updateCharacter(updates);
+    setIsClassDropdownOpen(false);
+  };
+
   return (
     <div className="flex flex-col p-2 sm:p-4 lg:p-6 pb-12 gap-6">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && onImageUpload(e.target.files[0])} />
@@ -104,8 +140,50 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
       <section className={`grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-xl border shadow-inner ${
         isDark ? 'bg-white/5 border-white/10' : 'bg-[#8b4513]/5 border-[#8b4513]/20'
       }`}>
+        {/* Campo de Classe Customizado */}
+        <div className="flex flex-col relative" ref={dropdownRef}>
+          <label className={`cinzel text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.class}</label>
+          <button 
+            onClick={() => setIsClassDropdownOpen(!isClassDropdownOpen)}
+            className={`flex items-center justify-between w-full bg-transparent border-b outline-none fantasy-title text-base sm:text-lg px-1 transition-colors h-[28px] sm:h-[32px] text-left group ${
+              isDark ? 'border-white/10 focus:border-[#d4af37] text-[#e8d5b5]' : 'border-[#8b4513]/20 focus:border-[#8b4513] text-[#3e2723]'
+            }`}
+          >
+            <span className="truncate">{character.class}</span>
+            <svg 
+              className={`w-3 h-3 transition-transform duration-300 opacity-40 group-hover:opacity-100 ${isClassDropdownOpen ? 'rotate-180' : ''}`} 
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Menu Dropdown Suspenso */}
+          {isClassDropdownOpen && (
+            <div className={`absolute top-full left-0 right-0 mt-2 z-[200] border-2 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 ${
+              isDark ? 'bg-[#1a1a1a] border-[#333]' : 'bg-[#fdf5e6] border-[#8b4513]'
+            }`}>
+              <div className="max-h-60 overflow-y-auto custom-scrollbar">
+                {Object.keys(CLASSES_PHB).map(cls => (
+                  <button
+                    key={cls}
+                    onClick={() => handleClassChange(cls)}
+                    className={`w-full text-left px-4 py-3 fantasy-title text-base sm:text-lg transition-all border-b last:border-b-0 ${
+                      character.class === cls 
+                        ? (isDark ? 'bg-[#d4af37] text-black' : 'bg-[#8b4513] text-[#fdf5e6]')
+                        : (isDark ? 'text-[#e8d5b5] border-white/5 hover:bg-white/5' : 'text-[#3e2723] border-[#8b4513]/10 hover:bg-[#8b4513]/5')
+                    }`}
+                  >
+                    {cls}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Outros campos de Perfil */}
         {[
-          { label: t.class, value: character.class, key: 'class' },
           { label: t.race, value: character.race, key: 'race' },
           { label: t.background, value: character.background, key: 'background' },
           { label: t.alignment, value: character.alignment, key: 'alignment' }
@@ -115,7 +193,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             <input 
               value={field.value} 
               onChange={(e) => updateCharacter({ [field.key]: e.target.value })}
-              className={`bg-transparent border-b outline-none fantasy-title text-base sm:text-lg px-1 transition-colors ${
+              className={`bg-transparent border-b outline-none fantasy-title text-base sm:text-lg px-1 transition-colors h-[28px] sm:h-[32px] ${
                 isDark ? 'border-white/10 focus:border-[#d4af37] text-[#e8d5b5]' : 'border-[#8b4513]/20 focus:border-[#8b4513] text-[#3e2723]'
               }`}
             />
@@ -163,8 +241,13 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                 className={`w-full aspect-square rounded-xl border overflow-hidden shadow-2xl relative group cursor-pointer ${isDark ? 'bg-black border-white/10' : 'bg-[#1a0f00] border-[#8b4513]'}`} 
                 onClick={() => fileInputRef.current?.click()}
               >
-                {character.portrait ? (
-                  <img src={character.portrait} alt="Portrait" className="w-full h-full object-cover" />
+                {character.portrait && !portraitError ? (
+                  <img 
+                    src={character.portrait} 
+                    alt="Portrait" 
+                    className="w-full h-full object-cover" 
+                    onError={() => setPortraitError(true)}
+                  />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center italic p-6 text-center text-xs cinzel uppercase tracking-widest opacity-20">{t.click_to_upload}</div>
                 )}
@@ -375,7 +458,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           onClick={() => updateCharacter({ weapons: character.weapons.filter((_, i) => i !== idx) })}
                           className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
                         >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                         </button>
                       </div>
                       <div className="grid grid-cols-4 gap-2">
@@ -445,7 +528,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           onClick={() => updateCharacter({ otherAttacks: character.otherAttacks.filter((_, i) => i !== idx) })}
                           className="opacity-0 group-hover:opacity-100 p-1 text-red-500 transition-opacity"
                         >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                         </button>
                       </div>
                       <div className="grid grid-cols-4 gap-2">

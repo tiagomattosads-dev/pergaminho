@@ -1,5 +1,4 @@
-
-import { Attribute, Character, Skill } from './types';
+import { Attribute, Character, Skill, ClassMetadata } from './types';
 
 export const XP_TABLE = [
   0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
@@ -14,6 +13,51 @@ export const getLevelFromXP = (xp: number): number => {
 
 export const getProficiencyFromLevel = (level: number): number => {
   return Math.floor((level - 1) / 4) + 2;
+};
+
+export const CLASSES_PHB: Record<string, ClassMetadata> = {
+  "Bárbaro": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
+  "Bardo": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.CAR, spellsModel: "known" },
+  "Clérigo": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.SAB, spellsModel: "prepared" },
+  "Druida": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.SAB, spellsModel: "prepared" },
+  "Guerreiro": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
+  "Monge": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
+  "Paladino": { isSpellcaster: true, casterType: "half", spellAbility: Attribute.CAR, spellsModel: "prepared" },
+  "Patrulheiro": { isSpellcaster: true, casterType: "half", spellAbility: Attribute.SAB, spellsModel: "known" },
+  "Ladino": { isSpellcaster: false, casterType: "none", spellAbility: null, spellsModel: "none" },
+  "Feiticeiro": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.CAR, spellsModel: "known" },
+  "Bruxo": { isSpellcaster: true, casterType: "pact", spellAbility: Attribute.CAR, spellsModel: "known" },
+  "Mago": { isSpellcaster: true, casterType: "full", spellAbility: Attribute.INT, spellsModel: "prepared" },
+};
+
+export const SUBCLASS_LEVELS: Record<string, number> = {
+  "Clérigo": 1,
+  "Feiticeiro": 1,
+  "Bruxo": 1,
+  "Mago": 2,
+  "Druida": 2,
+  "Bárbaro": 3,
+  "Bardo": 3,
+  "Guerreiro": 3,
+  "Monge": 3,
+  "Paladino": 3,
+  "Patrulheiro": 3,
+  "Ladino": 3,
+};
+
+export const SUBCLASSES_PHB: Record<string, string[]> = {
+  "Bárbaro": ["Caminho do Berserker", "Caminho do Totem"],
+  "Bardo": ["Colégio do Conhecimento", "Colégio da Bravura"],
+  "Clérigo": ["Domínio do Conhecimento", "Domínio da Vida", "Domínio da Luz", "Domínio da Natureza", "Domínio da Tempestade", "Domínio da Trapaça", "Domínio da Guerra"],
+  "Druida": ["Círculo da Terra", "Círculo da Lua"],
+  "Guerreiro": ["Campeão", "Mestre de Batalha", "Cavaleiro Arcano"],
+  "Monge": ["Caminho da Mão Aberta", "Caminho da Sombra", "Caminho dos Quatro Elementos"],
+  "Paladino": ["Juramento de Devoção", "Juramento dos Anciões", "Juramento de Vingança"],
+  "Patrulheiro": ["Caçador", "Mestre das Bestas"],
+  "Ladino": ["Ladrão", "Assassino", "Trapaceiro Arcano"],
+  "Feiticeiro": ["Linhagem Dracônica", "Magia Selvagem"],
+  "Bruxo": ["A Arquifada", "O Corruptor", "O Grande Antigo"],
+  "Mago": ["Escola de Abjuração", "Escola de Adivinhação", "Escola de Conjuração", "Escola de Encantamento", "Escola de Evocação", "Escola de Ilusão", "Escola de Necromancia", "Escola de Transmutação"],
 };
 
 export const SKILLS: Skill[] = [
@@ -38,51 +82,51 @@ export const SKILLS: Skill[] = [
 ];
 
 export const INITIAL_CHARACTER: Character = {
-  id: "kaiden-default",
+  id: "hero-default",
   name: "Kaiden Arvek",
   level: 1,
-  class: "Artífice",
+  class: "Guerreiro",
+  subclass: null,
+  classMetadata: CLASSES_PHB["Guerreiro"],
   race: "Humano",
-  background: "Artesão de Guilda",
-  alignment: "Caótico e Neutro",
+  background: "Soldado",
+  alignment: "Leal e Neutro",
   exp: 0,
   inspiration: 0,
   portrait: "https://res.cloudinary.com/dutufef4s/image/upload/v1770315204/artifice_lwcguq.png",
-  hp: { current: 16, max: 16, temp: 0 },
+  hp: { current: 12, max: 12, temp: 0 },
   deathSaves: { successes: 0, failures: 0 },
-  ac: 15,
+  ac: 16,
   initiativeBonus: 0,
   speed: "9m",
   stats: {
-    [Attribute.FOR]: 10,
+    [Attribute.FOR]: 15,
     [Attribute.DES]: 12,
-    [Attribute.CON]: 12,
-    [Attribute.INT]: 15,
+    [Attribute.CON]: 14,
+    [Attribute.INT]: 10,
     [Attribute.SAB]: 12,
-    [Attribute.CAR]: 10,
+    [Attribute.CAR]: 8,
   },
   proficiencies: {
-    skills: ['Arcanismo', 'Investigação', 'Percepção', 'Persuasão'],
-    saves: [Attribute.CON, Attribute.INT],
-    languages: ['Comum', 'Dracônico', 'Anão'],
-    tools: ['Ferramentas de ladrão', 'Ferramentas de funileiro', 'Ferramentas de cartógrafo', 'Ferramentas de ferreiro'],
+    skills: ['Atletismo', 'Intimidação', 'Percepção', 'Sobrevivência'],
+    saves: [Attribute.FOR, Attribute.CON],
+    languages: ['Comum'],
+    tools: ['Um jogo de cartas'],
   },
-  personality: "Eu acredito que tudo que valha a pena fazer, vale a pena ser feito direito. Eu não posso evitar — Eu sou perfeccionista.",
-  ideals: "Povo. Eu sou cometido com o povo com quem me importo, não com ideias.",
-  bonds: "Eu criei um trabalho incrível para alguém, mas descobri que ele não era merecedor de recebê-lo. Ainda estou à procura de alguém que seja merecedor.",
-  flaws: "Eu nunca estou satisfeito com o que tenho — eu sempre quero mais.",
-  backstory: "Kaiden Arvek nasceu no 'barulho bom' de oficina...",
+  personality: "Eu sou direto e espero o mesmo dos outros. O campo de batalha não tem lugar para sutilezas.",
+  ideals: "Honra. Se eu perder minha honra, eu perco a mim mesmo.",
+  bonds: "Aqueles que lutam ao meu lado valem mais do que qualquer tesouro.",
+  flaws: "Minha confiança cega em ordens militares às vezes me impede de ver a justiça óbvia.",
+  backstory: "Kaiden serviu na guarda royal por anos, até que uma conspiração o forçou ao exílio. Agora ele busca limpar seu nome.",
   inventory: [
-    { id: '1', name: 'Lórica de escamas', weight: 45, quantity: 1, description: 'Armadura média.', equipped: true },
+    { id: '1', name: 'Cota de Malha', weight: 25, quantity: 1, description: 'Armadura pesada.', equipped: true },
   ],
   weapons: [
-    { name: 'Bordão', bonus: '+2', damage: '1d6', type: '1 Mão', description: 'Um bastão de madeira simples e resistente.' },
+    { name: 'Espada Longa', bonus: '+5', damage: '1d8+3', type: '1 Mão', description: 'Uma lâmina de aço bem forjada.' },
   ],
-  otherAttacks: [
-    { name: 'Raio de Fogo', bonus: '+4', damage: '1d10', range: '36m' }
-  ],
+  otherAttacks: [],
   spells: [],
-  spellSlots: { 1: { total: 2, used: 0 } },
+  spellSlots: {},
   language: 'pt',
 };
 
@@ -92,6 +136,8 @@ export const createNewCharacter = (): Character => ({
   name: "Novo Aventureiro",
   level: 1,
   class: "Guerreiro",
+  subclass: null,
+  classMetadata: CLASSES_PHB["Guerreiro"],
   race: "Humano",
   portrait: "https://res.cloudinary.com/dutufef4s/image/upload/v1770315204/artifice_lwcguq.png",
   inspiration: 0,

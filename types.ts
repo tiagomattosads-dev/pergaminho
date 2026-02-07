@@ -46,11 +46,20 @@ export interface Spell {
   description: string;
 }
 
+export interface ClassMetadata {
+  isSpellcaster: boolean;
+  casterType: "full" | "half" | "third" | "pact" | "none";
+  spellAbility: Attribute | null;
+  spellsModel: "prepared" | "known" | "none";
+}
+
 export interface Character {
   id: string; 
   name: string;
   level: number;
   class: string;
+  subclass?: string | null;
+  classMetadata?: ClassMetadata;
   race: string;
   background: string;
   alignment: string;

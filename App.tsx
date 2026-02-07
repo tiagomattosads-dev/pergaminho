@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Character, Attribute } from './types';
-import { INITIAL_CHARACTER, createNewCharacter, getLevelFromXP, getProficiencyFromLevel, XP_TABLE } from './constants';
+import { INITIAL_CHARACTER, createNewCharacter, getLevelFromXP, getProficiencyFromLevel, XP_TABLE, SUBCLASS_LEVELS, SUBCLASSES_PHB, CLASSES_PHB } from './constants';
 import { translations } from './translations';
 import CharacterSheet from './components/CharacterSheet';
 import Inventory from './components/Inventory';
+import ClassFeatures from './components/ClassFeatures';
 import Spellbook from './components/Spellbook';
 import Backstory from './components/Backstory';
 import Settings from './components/Settings';
@@ -15,6 +16,7 @@ import AuthScreen from './components/AuthScreen';
 enum Tab {
   Sheet = 'SHEET',
   Inventory = 'INVENTORY',
+  ClassFeatures = 'CLASS_FEATURES',
   Magic = 'MAGIC',
   History = 'HISTORY',
   Settings = 'SETTINGS',
@@ -42,14 +44,36 @@ const App: React.FC = () => {
     return (localStorage.getItem('dnd_app_language') as 'pt' | 'en') || 'pt';
   });
 
+  const [showClassFeaturesTab, setShowClassFeaturesTab] = useState<boolean>(() => {
+    const saved = localStorage.getItem('dnd_app_show_features_tab');
+    return saved !== null ? saved === 'true' : true;
+  });
+
   const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
   const [showDeathOverlay, setShowDeathOverlay] = useState(true);
+  const [showSubclassModal, setShowSubclassModal] = useState(false);
+  const [tempSubclass, setTempSubclass] = useState<string | null>(null);
+  const [hasAutomaticallyShownSubclassModal, setHasAutomaticallyShownSubclassModal] = useState<Record<string, boolean>>({});
 
   const character = useMemo(() => {
     return allCharacters.find(c => c.id === selectedCharId) || null;
   }, [allCharacters, selectedCharId]);
 
   const t = translations[appLanguage];
+  const isDark = theme === 'dark';
+
+  // Regra de disparo da Subclasse (Auto-disparo uma única vez por personagem/nível atingido)
+  useEffect(() => {
+    if (character && character.class) {
+      const choiceLevel = SUBCLASS_LEVELS[character.class] || 3;
+      const autoKey = `${character.id}_${character.level}`;
+      
+      if (character.level >= choiceLevel && !character.subclass && !hasAutomaticallyShownSubclassModal[autoKey]) {
+        setShowSubclassModal(true);
+        setHasAutomaticallyShownSubclassModal(prev => ({ ...prev, [autoKey]: true }));
+      }
+    }
+  }, [character?.level, character?.class, character?.subclass, character?.id, hasAutomaticallyShownSubclassModal]);
 
   // Sincronizar o idioma do personagem selecionado com o idioma global do app
   useEffect(() => {
@@ -99,6 +123,13 @@ const App: React.FC = () => {
     localStorage.setItem('dnd_app_language', appLanguage);
   }, [appLanguage]);
 
+  useEffect(() => {
+    localStorage.setItem('dnd_app_show_features_tab', String(showClassFeaturesTab));
+    if (!showClassFeaturesTab && activeTab === Tab.ClassFeatures) {
+      setActiveTab(Tab.Sheet);
+    }
+  }, [showClassFeaturesTab, activeTab]);
+
   const handleLogin = () => {
     setIsAuthenticated(true);
     sessionStorage.setItem('dnd_session_active', 'true');
@@ -142,7 +173,6 @@ const App: React.FC = () => {
 
   const handleCreateNew = () => {
     const newChar = createNewCharacter();
-    // Iniciar o novo personagem com o idioma atual do app
     newChar.language = appLanguage;
     setAllCharacters(prev => [...prev, newChar]);
     setSelectedCharId(newChar.id);
@@ -181,6 +211,8 @@ const App: React.FC = () => {
           onLogout={handleLogout}
           appLanguage={appLanguage}
           setAppLanguage={setAppLanguage}
+          showClassFeaturesTab={showClassFeaturesTab}
+          setShowClassFeaturesTab={setShowClassFeaturesTab}
         />
       );
     }
@@ -191,6 +223,8 @@ const App: React.FC = () => {
         return <CharacterSheet character={character} updateCharacter={updateCharacter} onImageUpload={handleImageUpload} theme={theme} />;
       case Tab.Inventory: 
         return <Inventory character={character} updateCharacter={updateCharacter} theme={theme} />;
+      case Tab.ClassFeatures:
+        return <ClassFeatures character={character} onSelectSubclass={() => setShowSubclassModal(true)} theme={theme} />;
       case Tab.Magic: 
         return <Spellbook character={character} updateCharacter={updateCharacter} theme={theme} />;
       case Tab.History: 
@@ -206,6 +240,8 @@ const App: React.FC = () => {
             onLogout={handleLogout} 
             appLanguage={appLanguage}
             setAppLanguage={setAppLanguage}
+            showClassFeaturesTab={showClassFeaturesTab}
+            setShowClassFeaturesTab={setShowClassFeaturesTab}
           />
         );
       case Tab.Subscription:
@@ -335,6 +371,12 @@ const App: React.FC = () => {
                     <div className="flex items-center mt-1.5 md:mt-2">
                       <div className={`px-2 md:px-3 py-0.5 md:py-1 rounded-md bg-[#3d2511]/80 border border-[#8b4513]/30 flex items-center gap-2 shadow-inner`}>
                         <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5] whitespace-nowrap">{character?.class || 'D&D 5e'}</span>
+                        {character?.subclass && (
+                          <>
+                            <span className="w-1 h-1 rounded-full bg-[#d4af37] opacity-40"></span>
+                            <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#d4af37] whitespace-nowrap">{character.subclass}</span>
+                          </>
+                        )}
                         <span className="w-1 h-1 rounded-full bg-[#d4af37] opacity-40"></span>
                         <span className="text-[7px] md:text-[10px] uppercase tracking-[0.2em] cinzel font-bold text-[#e8d5b5]/70 whitespace-nowrap">{character?.race || 'APP'}</span>
                       </div>
@@ -450,6 +492,7 @@ const App: React.FC = () => {
               <div className="flex bg-[#1a0f00]/40 overflow-hidden rounded-t-lg mt-4">
                 <NavButton tab={Tab.Sheet} label={t.character_sheet_tab} />
                 <NavButton tab={Tab.Inventory} label={t.inventory_tab} />
+                {showClassFeaturesTab && <NavButton tab={Tab.ClassFeatures} label={t.class_features_tab} />}
                 <NavButton tab={Tab.Magic} label={t.magic_tab} />
                 <NavButton tab={Tab.History} label={t.history_tab} />
               </div>
@@ -481,6 +524,13 @@ const App: React.FC = () => {
               </svg>
             } 
           />
+          {showClassFeaturesTab && (
+            <MobileNavButton 
+              tab={Tab.ClassFeatures} 
+              label={appLanguage === 'pt' ? "Talentos" : "Features"} 
+              icon={<svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>} 
+            />
+          )}
           <MobileNavButton 
             tab={Tab.Magic} 
             label={t.magic} 
@@ -493,6 +543,79 @@ const App: React.FC = () => {
           />
         </nav>
       </div>
+
+      {/* MODAL DE ESCOLHA DE SUBCLASSE */}
+      {showSubclassModal && character && character.class && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+           <div className={`relative max-w-2xl w-full border-4 rounded-[2.5rem] shadow-[0_30px_80px_rgba(0,0,0,1)] overflow-hidden flex flex-col ${isDark ? 'bg-[#1a1a1a] border-[#333]' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
+              <div className={`absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]`}></div>
+              
+              <div className={`p-8 sm:p-12 relative z-10 flex flex-col items-center`}>
+                 <button 
+                   onClick={() => setShowSubclassModal(false)}
+                   className="absolute top-8 right-8 text-[#d4af37] opacity-40 hover:opacity-100 transition-opacity"
+                 >
+                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                 </button>
+
+                 <div className={`w-16 h-16 rounded-full border-2 flex items-center justify-center mb-6 shadow-lg ${isDark ? 'bg-black border-[#d4af37] text-[#d4af37]' : 'bg-[#2d1b0d] border-[#d4af37] text-[#d4af37]'}`}>
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                 </div>
+                 
+                 <h2 className={`fantasy-title text-3xl sm:text-5xl mb-4 text-center ${isDark ? 'text-[#d4af37]' : 'text-[#3e2723]'}`}>
+                   {t.choose_subclass}
+                 </h2>
+                 <p className={`parchment-text text-lg italic opacity-70 text-center mb-10 max-w-md ${isDark ? 'text-[#e8d5b5]' : 'text-[#5d4037]'}`}>
+                   {t.subclass_selection_desc}
+                 </p>
+
+                 <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[300px] overflow-y-auto custom-scrollbar p-2">
+                    {(SUBCLASSES_PHB[character.class] || []).map(sub => (
+                      <button 
+                        key={sub}
+                        onClick={() => setTempSubclass(sub)}
+                        className={`p-4 rounded-2xl border-2 transition-all duration-300 text-left group ${
+                          tempSubclass === sub
+                          ? (isDark ? 'bg-[#d4af37] border-white text-black' : 'bg-[#8b4513] border-[#d4af37] text-[#fdf5e6]')
+                          : (isDark ? 'bg-white/5 border-white/10 text-[#e8d5b5] hover:border-[#d4af37]/40' : 'bg-white border-[#8b4513]/20 text-[#3e2723] hover:border-[#8b4513]')
+                        }`}
+                      >
+                         <span className="fantasy-title text-xl sm:text-2xl">{sub}</span>
+                      </button>
+                    ))}
+                 </div>
+
+                 <div className="flex gap-4 w-full mt-10">
+                    <button 
+                      onClick={() => setShowSubclassModal(false)}
+                      className={`flex-1 py-4 rounded-2xl cinzel text-xs font-bold uppercase tracking-[0.2em] border-2 transition-all ${
+                        isDark ? 'border-white/10 text-white/40 hover:bg-white/5' : 'border-[#8b4513]/20 text-[#8b4513]/60 hover:bg-black/5'
+                      }`}
+                    >
+                      {t.cancel}
+                    </button>
+                    <button 
+                      disabled={!tempSubclass}
+                      onClick={() => {
+                        if (tempSubclass) {
+                           updateCharacter({ subclass: tempSubclass });
+                           setShowSubclassModal(false);
+                           setTempSubclass(null);
+                        }
+                      }}
+                      className={`flex-[2] py-5 rounded-2xl cinzel text-sm font-bold uppercase tracking-[0.4em] transition-all border-b-8 active:translate-y-2 active:border-b-0 shadow-2xl ${
+                        !tempSubclass 
+                        ? 'bg-gray-800 text-gray-500 border-black/40 opacity-50' 
+                        : (isDark ? 'bg-[#d4af37] text-black border-black/60 hover:brightness-110 shadow-[0_0_30px_rgba(212,175,55,0.4)]' : 'bg-gradient-to-b from-[#8b4513] to-[#5d4037] text-[#fdf5e6] border-black/60 hover:brightness-110')
+                      }`}
+                    >
+                      {t.confirm_selection}
+                    </button>
+                 </div>
+              </div>
+           </div>
+        </div>
+      )}
 
       {/* NOVO AVISO DE MORTE */}
       {character && isDead && showDeathOverlay && (
