@@ -133,6 +133,11 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
       classMetadata: CLASSES_PHB[selectedClass] 
     };
 
+    // Reset de campos específicos se não for mais Bárbaro
+    if (selectedClass !== "Bárbaro") {
+      updates.totemAnimal = null;
+    }
+
     // Reset de subclasse se não pertencer à nova classe
     if (currentSubclass && !allowedSubclasses.includes(currentSubclass)) {
       updates.subclass = null;

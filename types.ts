@@ -100,4 +100,5 @@ export interface Character {
   spellSaveDC?: number;
   spellAttackBonus?: string;
   language?: 'pt' | 'en';
+  totemAnimal?: string | null;
 }

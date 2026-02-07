@@ -240,7 +240,7 @@ const App: React.FC = () => {
       case Tab.Inventory: 
         return <Inventory character={character} updateCharacter={updateCharacter} theme={theme} />;
       case Tab.ClassFeatures:
-        return <ClassFeatures character={character} onSelectSubclass={() => setShowSubclassModal(true)} theme={theme} />;
+        return <ClassFeatures character={character} updateCharacter={updateCharacter} onSelectSubclass={() => setShowSubclassModal(true)} theme={theme} />;
       case Tab.Magic: 
         return <Spellbook character={character} updateCharacter={updateCharacter} theme={theme} />;
       case Tab.History: 
@@ -453,7 +453,20 @@ const App: React.FC = () => {
 
                     <div className="flex items-center gap-2 relative z-10 pt-1.5 border-t border-[#8b4513]/20">
                       <div className="flex-1 flex items-center gap-1.5 md:gap-2">
-                        <div className="relative flex-grow">
+                        {/* NOVO: BLOCO ACÚMULO (TOTAL XP) */}
+                        <div className="relative flex-1">
+                          <input 
+                            type="number"
+                            min="0"
+                            value={character?.exp || 0}
+                            onChange={(e) => updateCharacter({ exp: Math.max(0, parseInt(e.target.value) || 0) })}
+                            className="bg-black/50 border border-[#d4af37]/30 text-[#d4af37] text-center text-[9px] md:text-xs cinzel font-bold py-1.5 md:py-2 px-0 rounded-lg md:rounded-xl focus:outline-none focus:border-[#d4af37] w-full transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                          <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">{t.accumulation}</span>
+                        </div>
+
+                        {/* BLOCO DÁDIVA (ADD XP) */}
+                        <div className="relative flex-1">
                           <input 
                             type="number"
                             min="0"
@@ -465,6 +478,7 @@ const App: React.FC = () => {
                           />
                           <span className="absolute -top-1.5 left-2 px-1 bg-[#2d1b0d] text-[5px] md:text-[6px] cinzel font-bold text-[#d4af37]/50 uppercase tracking-tighter">{t.boon}</span>
                         </div>
+
                         <button 
                           onClick={handleAddXp} 
                           className="flex-none h-7 md:h-9 px-3 md:px-5 bg-gradient-to-b from-[#8b4513] to-[#3d2511] border border-[#d4af37]/50 rounded-lg md:rounded-xl cinzel text-[8px] md:text-[10px] font-bold text-[#d4af37] hover:from-[#d4af37] hover:to-[#8b4513] hover:text-[#1a0f00] transition-all shadow-lg active:scale-95 uppercase whitespace-nowrap border-b-2"

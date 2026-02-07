@@ -47,7 +47,7 @@ export const SUBCLASS_LEVELS: Record<string, number> = {
 };
 
 export const SUBCLASSES_PHB: Record<string, string[]> = {
-  "Bárbaro": ["Caminho do Berserker", "Caminho do Totem"],
+  "Bárbaro": ["Caminho do Furioso", "Caminho do Guerreiro Totêmico"],
   "Bardo": ["Colégio do Conhecimento", "Colégio da Bravura"],
   "Clérigo": ["Domínio do Conhecimento", "Domínio da Vida", "Domínio da Luz", "Domínio da Natureza", "Domínio da Tempestade", "Domínio da Trapaça", "Domínio da Guerra"],
   "Druida": ["Círculo da Terra", "Círculo da Lua"],
