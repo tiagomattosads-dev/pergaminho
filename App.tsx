@@ -634,7 +634,12 @@ const App: React.FC = () => {
                       disabled={!tempSubclass}
                       onClick={() => {
                         if (tempSubclass) {
-                           updateCharacter({ subclass: tempSubclass });
+                           const updates: Partial<Character> = { subclass: tempSubclass };
+                           // Reset totem animal if switching subclasses for Barbarian
+                           if (tempSubclass !== "Caminho do Guerreiro Totêmico") {
+                             updates.totemAnimal = null;
+                           }
+                           updateCharacter(updates);
                            setShowSubclassModal(false);
                            setTempSubclass(null);
                         }
@@ -705,7 +710,7 @@ const App: React.FC = () => {
           onClick={() => setShowDeathOverlay(true)}
           className="fixed bottom-6 right-6 z-[1000] bg-red-900 text-white p-4 rounded-full shadow-2xl animate-pulse flex items-center gap-2 border-2 border-[#d4af37]"
         >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" /></svg>
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 1 1.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" /></svg>
           <span className="cinzel text-[10px] font-bold uppercase tracking-widest">{t.open_verdict}</span>
         </button>
       )}

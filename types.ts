@@ -1,4 +1,3 @@
-
 export enum Attribute {
   FOR = 'FOR',
   DES = 'DES',
@@ -101,4 +100,5 @@ export interface Character {
   spellAttackBonus?: string;
   language?: 'pt' | 'en';
   totemAnimal?: string | null;
+  fightingStyles?: string[];
 }

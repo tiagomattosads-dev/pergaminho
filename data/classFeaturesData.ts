@@ -3,7 +3,7 @@ export interface FeatureInfo {
   description: string;
   level: number;
   subclass?: string;
-  actionType?: 'Ativa' | 'Passiva' | 'Upgrade' | 'Estrutural' | 'Ação' | 'Ação Bônus' | 'Reação';
+  actionType?: 'Ativa' | 'Passiva' | 'Upgrade' | 'Estrutural' | 'Ação' | 'Ação Bônus' | 'Reação' | 'Upgrade Final';
   summary?: string;
   isKey?: boolean;
 }
@@ -133,8 +133,6 @@ export const BARBARIAN_FEATURES: FeatureInfo[] = [
     description: "O número de dados extras de dano ao realizar um acerto crítico com ataque corpo a corpo aumenta para dois." 
   },
 
-  // Level 14 - Subclass placeholder
-  
   // Level 15
   { 
     name: "Fúria Persistente", 
@@ -264,5 +262,304 @@ export const BARBARIAN_FEATURES: FeatureInfo[] = [
     actionType: 'Estrutural',
     summary: 'Poder animal supremo durante a fúria.',
     description: "Você escolhe uma sintonia animal que concede um benefício poderoso durante a fúria." 
+  },
+];
+
+export const WARRIOR_FEATURES: FeatureInfo[] = [
+  // Base Class - Level 1
+  { 
+    name: "Estilo de Luta", 
+    level: 1, 
+    actionType: 'Estrutural', 
+    summary: 'Bônus permanente de combate.',
+    description: "Você escolhe um estilo de combate que concede um bônus permanente, como aumento de defesa, precisão ou dano, dependendo da opção escolhida." 
+  },
+  { 
+    name: "Recuperar o Fôlego", 
+    level: 1, 
+    actionType: 'Ativa', 
+    summary: 'Curar 1d10 + nível como ação bônus.',
+    description: "Você pode usar uma ação bônus para recuperar pontos de vida iguais a 1d10 + seu nível de guerreiro. Você pode usar esta característica uma vez por descanso curto ou longo." 
+  },
+  
+  // Level 2
+  { 
+    name: "Surto de Ação", 
+    level: 2, 
+    actionType: 'Ativa', 
+    summary: 'Uma ação adicional no turno.',
+    isKey: true,
+    description: "No seu turno, você pode realizar uma ação adicional além da sua ação normal e possível ação bônus. Você pode usar esta característica uma vez por descanso curto ou longo." 
+  },
+  
+  // Level 3
+  { 
+    name: "Arquétipo Marcial", 
+    level: 3, 
+    actionType: 'Estrutural', 
+    summary: 'Escolha de especialização de combate.',
+    description: "Você escolhe um arquétipo marcial que define seu estilo de combate especializado, concedendo habilidades adicionais nos níveis 3, 7, 10, 15 e 18." 
+  },
+
+  // Level 4
+  { 
+    name: "Incremento no Valor de Habilidade", 
+    level: 4, 
+    actionType: 'Estrutural', 
+    description: "Você pode aumentar um atributo em +2, ou dois atributos em +1 cada. Alternativamente, pode escolher um talento, se essa regra estiver em uso." 
+  },
+
+  // Level 5
+  { 
+    name: "Ataque Extra", 
+    level: 5, 
+    actionType: 'Upgrade', 
+    summary: 'Dois ataques por ação de Ataque.',
+    isKey: true,
+    description: "Quando você realiza a ação de Ataque no seu turno, pode atacar duas vezes em vez de uma." 
+  },
+
+  // Level 6
+  { 
+    name: "Incremento no Valor de Habilidade", 
+    level: 6, 
+    actionType: 'Estrutural', 
+    description: "Você pode aumentar um atributo em +2, ou dois atributos em +1 cada. Alternativamente, pode escolher um talento, se essa regra estiver em uso." 
+  },
+
+  // Level 8
+  { 
+    name: "Incremento no Valor de Habilidade", 
+    level: 8, 
+    actionType: 'Estrutural', 
+    description: "Você recebe um novo aumento de atributos conforme as regras do sistema." 
+  },
+
+  // Level 9
+  { 
+    name: "Indomável", 
+    level: 9, 
+    actionType: 'Passiva', 
+    summary: 'Rerrolar teste de resistência falho.',
+    description: "Quando você falhar em um teste de resistência, pode optar por rerrolar o teste. Você deve usar o novo resultado. Esta característica pode ser usada uma vez por descanso longo." 
+  },
+
+  // Level 11
+  { 
+    name: "Ataque Extra (2)", 
+    level: 11, 
+    actionType: 'Upgrade', 
+    summary: 'Três ataques por ação de Ataque.',
+    description: "Quando você realiza a ação de Ataque no seu turno, pode atacar três vezes." 
+  },
+
+  // Level 12
+  { 
+    name: "Incremento no Valor de Habilidade", 
+    level: 12, 
+    actionType: 'Estrutural', 
+    description: "Você recebe um novo aumento de atributos conforme as regras do sistema." 
+  },
+
+  // Level 13
+  { 
+    name: "Indomável (2 usos)", 
+    level: 13, 
+    actionType: 'Upgrade', 
+    summary: 'Dois usos de Indomável por descanso.',
+    description: "Você pode usar Indomável duas vezes entre descansos longos." 
+  },
+
+  // Level 14
+  { 
+    name: "Incremento no Valor de Habilidade", 
+    level: 14, 
+    actionType: 'Estrutural', 
+    description: "Você recebe um novo aumento de atributos conforme as regras do sistema." 
+  },
+
+  // Level 16
+  { 
+    name: "Incremento no Valor de Habilidade", 
+    level: 16, 
+    actionType: 'Estrutural', 
+    description: "Você recebe um novo aumento de atributos conforme as regras do sistema." 
+  },
+
+  // Level 17
+  { 
+    name: "Surto de Ação (2 usos)", 
+    level: 17, 
+    actionType: 'Upgrade', 
+    summary: 'Dois usos de Surto de Ação por descanso.',
+    description: "Você pode usar Surto de Ação duas vezes entre descansos, mas apenas uma vez no mesmo turno." 
+  },
+
+  // Level 19
+  { 
+    name: "Incremento no Valor de Habilidade", 
+    level: 19, 
+    actionType: 'Estrutural', 
+    description: "Você recebe um novo aumento de atributos conforme as regras do sistema." 
+  },
+
+  // Level 20
+  { 
+    name: "Ataque Extra (3)", 
+    level: 20, 
+    actionType: 'Upgrade Final', 
+    summary: 'Quatro ataques por ação de Ataque.',
+    isKey: true,
+    description: "Quando você realiza a ação de Ataque no seu turno, pode atacar quatro vezes." 
+  },
+
+  // --- SUBCLASSES: CAMPEÃO ---
+  { 
+    name: "Crítico Aprimorado", 
+    level: 3, 
+    subclass: "Campeão", 
+    actionType: 'Passiva', 
+    summary: 'Crítico com 19 ou 20.',
+    description: "Seus ataques com armas marcam um acerto crítico com um resultado de 19 ou 20 no d20." 
+  },
+  { 
+    name: "Atleta Excepcional", 
+    level: 7, 
+    subclass: "Campeão", 
+    actionType: 'Passiva', 
+    summary: 'Bônus em testes físicos e salto.',
+    description: "Você adiciona metade do seu bônus de proficiência (arredondado para cima) em testes de Força, Destreza ou Constituição que não usem proficiência. Além disso, seu salto aumenta." 
+  },
+  { 
+    name: "Estilo de Combate Adicional", 
+    level: 10, 
+    subclass: "Campeão", 
+    actionType: 'Estrutural', 
+    summary: 'Escolha um segundo estilo de luta.',
+    description: "Você escolhe um segundo Estilo de Luta." 
+  },
+  { 
+    name: "Crítico Superior", 
+    level: 15, 
+    subclass: "Campeão", 
+    actionType: 'Upgrade', 
+    summary: 'Crítico com 18, 19 ou 20.',
+    description: "Seus ataques com armas marcam acerto crítico com um resultado de 18–20 no d20." 
+  },
+  { 
+    name: "Sobrevivente", 
+    level: 18, 
+    subclass: "Campeão", 
+    actionType: 'Passiva', 
+    summary: 'Regeneração automática com pouca vida.',
+    description: "No início de cada turno, se tiver menos da metade dos seus pontos de vida e não estiver incapacitado, você recupera pontos de vida automaticamente." 
+  },
+
+  // --- SUBCLASSES: MESTRE DE BATALHA ---
+  { 
+    name: "Superioridade de Combate", 
+    level: 3, 
+    subclass: "Mestre de Batalha", 
+    actionType: 'Estrutural', 
+    summary: 'Dados de Superioridade (4 x d8).',
+    description: "Você aprende manobras que usam Dados de Superioridade para efeitos táticos. Você começa com quatro dados de superioridade (d8), recuperados após descanso curto ou longo." 
+  },
+  { 
+    name: "Manobras", 
+    level: 3, 
+    subclass: "Mestre de Batalha", 
+    actionType: 'Ativa', 
+    summary: 'Efeitos táticos em ataques/reações.',
+    description: "Você aprende manobras que gastam dados de superioridade para causar efeitos adicionais aos seus ataques ou reações." 
+  },
+  { 
+    name: "Estudante da Guerra", 
+    level: 3, 
+    subclass: "Mestre de Batalha", 
+    actionType: 'Passiva', 
+    summary: 'Proficiência em ferramentas de artesão.',
+    description: "Você adquire proficiência em uma ferramenta de artesão à sua escolha." 
+  },
+  { 
+    name: "Conhecer o Inimigo", 
+    level: 7, 
+    subclass: "Mestre de Batalha", 
+    actionType: 'Passiva', 
+    summary: 'Analisar capacidades de criaturas.',
+    description: "Após observar uma criatura por 1 minuto fora de combate, você pode aprender informações comparativas sobre suas capacidades." 
+  },
+  { 
+    name: "Aprimoramento de Superioridade", 
+    level: 10, 
+    subclass: "Mestre de Batalha", 
+    actionType: 'Upgrade', 
+    summary: 'Dados de Superioridade tornam-se d10.',
+    description: "Seus dados de superioridade aumentam para d10." 
+  },
+  { 
+    name: "Aprender Manobras Adicionais", 
+    level: 15, 
+    subclass: "Mestre de Batalha", 
+    actionType: 'Upgrade', 
+    summary: 'Aprende duas manobras extras.',
+    description: "Você aprende duas manobras adicionais." 
+  },
+  { 
+    name: "Aprimoramento de Superioridade (Final)", 
+    level: 18, 
+    subclass: "Mestre de Batalha", 
+    actionType: 'Upgrade', 
+    summary: 'Dados de Superioridade tornam-se d12.',
+    description: "Seus dados de superioridade aumentam para d12." 
+  },
+
+  // --- SUBCLASSES: CAVALEIRO ARCANO ---
+  { 
+    name: "Conjuração", 
+    level: 3, 
+    subclass: "Cavaleiro Arcano", 
+    actionType: 'Estrutural', 
+    summary: 'Conjuração arcana baseada em Inteligência.',
+    description: "Você aprende a conjurar magias arcanas, usando Inteligência como atributo de conjuração. Seu progresso mágico segue a tabela específica do Cavaleiro Arcano." 
+  },
+  { 
+    name: "Vínculo com Arma", 
+    level: 3, 
+    subclass: "Cavaleiro Arcano", 
+    actionType: 'Passiva', 
+    summary: 'Arma inseparável e invocável.',
+    description: "Você pode vincular-se a uma arma, não podendo ser desarmado dela, e pode invocá-la para sua mão como ação bônus." 
+  },
+  { 
+    name: "Magia de Guerra", 
+    level: 7, 
+    subclass: "Cavaleiro Arcano", 
+    actionType: 'Passiva', 
+    summary: 'Ataque bônus após truque.',
+    description: "Ao conjurar um truque, você pode realizar um ataque com arma como ação bônus." 
+  },
+  { 
+    name: "Magia de Guerra Aprimorada", 
+    level: 10, 
+    subclass: "Cavaleiro Arcano", 
+    actionType: 'Passiva', 
+    summary: 'Magia durante Surto de Ação.',
+    description: "Quando usar Surto de Ação, você pode conjurar uma magia em vez de apenas um ataque." 
+  },
+  { 
+    name: "Golpe Arcano", 
+    level: 15, 
+    subclass: "Cavaleiro Arcano", 
+    actionType: 'Ativa', 
+    summary: 'Gastar magia para dano extra/condições.',
+    description: "Quando acerta um ataque, você pode gastar um espaço de magia para causar dano adicional e possivelmente aplicar condições ao alvo." 
+  },
+  { 
+    name: "Cavaleiro Arcano Aprimorado", 
+    level: 18, 
+    subclass: "Cavaleiro Arcano", 
+    actionType: 'Passiva', 
+    summary: 'Ataque adicional com Magia de Guerra.',
+    description: "Ao usar Magia de Guerra, você pode realizar um ataque adicional." 
   },
 ];

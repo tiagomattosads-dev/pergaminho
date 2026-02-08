@@ -63,7 +63,7 @@ export const translations = {
     spell_desc: "Efeito / Descrição Arcana",
     cantrips: "Truques de Aprendiz",
     arcane_circle: "Círculo Arcano",
-    spell_slots: "Espaços:",
+    spell_slots: "Espacos:",
     personality: "Personalidade",
     ideals: "Ideais",
     bonds: "Vínculos",
@@ -144,7 +144,14 @@ export const translations = {
     abbreviate_attributes: "Abreviar Atributos",
     abbreviate_attributes_desc: "Usar siglas (ex: FOR, DES) na ficha",
     show_accumulated_xp: "Exibir Bloco de Acúmulo de XP",
-    show_accumulated_xp_desc: "Mostrar campo para edição direta do XP total no cabeçalho"
+    show_accumulated_xp_desc: "Mostrar campo para edição direta do XP total no cabeçalho",
+    change_subclass: "Mudar Especialização",
+    fighting_style: "Estilo de Luta",
+    choose_fighting_style: "Escolher Estilo",
+    already_selected: "Já selecionado",
+    change_fighting_style: "Alterar Escolha",
+    fighting_style_modal_desc: "Você escolhe um estilo de combate que define seu treinamento marcial.",
+    select_btn: "Selecionar"
   },
   en: {
     sheet: "Sheet",
@@ -291,7 +298,14 @@ export const translations = {
     abbreviate_attributes: "Abbreviate Attributes",
     abbreviate_attributes_desc: "Use siglas (eg: STR, DEX) on the sheet",
     show_accumulated_xp: "Show Accumulated XP Block",
-    show_accumulated_xp_desc: "Show input field for direct total XP editing in the header"
+    show_accumulated_xp_desc: "Show input field for direct total XP editing in the header",
+    change_subclass: "Change Specialization",
+    fighting_style: "Fighting Style",
+    choose_fighting_style: "Choose Style",
+    already_selected: "Already selected",
+    change_fighting_style: "Change Choice",
+    fighting_style_modal_desc: "You choose a style of combat that defines your martial training.",
+    select_btn: "Select"
   }
 };
 

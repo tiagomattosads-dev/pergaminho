@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Character } from '../types';
 import { translations, classTranslations, subclassTranslations } from '../translations';
 import { SUBCLASS_LEVELS } from '../constants';
-import { BARBARIAN_FEATURES, FeatureInfo } from '../data/classFeaturesData';
+import { BARBARIAN_FEATURES, WARRIOR_FEATURES, FeatureInfo } from '../data/classFeaturesData';
 
 interface Props {
   character: Character;
@@ -11,10 +11,40 @@ interface Props {
   theme?: 'light' | 'dark';
 }
 
+const FIGHTING_STYLES_PHB = [
+  { 
+    name: 'DEFESA', 
+    description: 'Enquanto estiver usando armadura, você recebe +1 na Classe de Armadura.' 
+  },
+  { 
+    name: 'ARQUEARIA', 
+    description: 'Você recebe +2 nas jogadas de ataque feitas com armas à distância.' 
+  },
+  { 
+    name: 'DUELO', 
+    description: 'Quando empunha uma arma corpo a corpo em uma mão e nenhuma outra arma, você recebe +2 nas jogadas de dano com essa arma.' 
+  },
+  { 
+    name: 'COMBATE COM DUAS ARMAS', 
+    description: 'Quando estiver lutando com duas armas, você pode adicionar seu modificador de atributo ao dano do ataque feito como ação bônus.' 
+  },
+  { 
+    name: 'PROTEÇÃO', 
+    description: 'Quando uma criatura que você possa ver ataca um alvo que não seja você, a até 1,5 metro, você pode usar sua reação para impor desvantagem na jogada de ataque, desde que esteja usando um escudo.' 
+  },
+  { 
+    name: 'GRANDE ARMA', 
+    description: 'Quando rolar 1 ou 2 no dado de dano de uma arma corpo a corpo empunhada com duas mãos, você pode rerrolar o dado e deve usar o novo resultado.' 
+  },
+];
+
 const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSubclass, theme = 'light' }) => {
   const isDark = theme === 'dark';
   const lang = character.language || 'pt';
   const t = translations[lang];
+
+  const [showStyleModal, setShowStyleModal] = useState(false);
+  const [styleSlotTarget, setStyleSlotTarget] = useState<number>(0);
 
   const translateValue = (val: string, dictionary: Record<string, { pt: string, en: string }>) => {
     return dictionary[val] ? dictionary[val][lang] : val;
@@ -34,15 +64,24 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
   const needsSubclass = isLevelForSubclass && !character.subclass;
 
   const getFeaturesForLevel = (level: number): FeatureInfo[] => {
-    if (character.class !== "Bárbaro") return [];
-    return BARBARIAN_FEATURES.filter(f => {
+    let baseFeatures: FeatureInfo[] = [];
+    if (character.class === "Bárbaro") baseFeatures = BARBARIAN_FEATURES;
+    if (character.class === "Guerreiro") baseFeatures = WARRIOR_FEATURES;
+
+    return baseFeatures.filter(f => {
       if (f.level !== level) return false;
       if (!f.subclass) return true;
       return f.subclass === character.subclass;
     });
   };
 
-  // Componente de Ornamento de Canto em SVG
+  const selectFightingStyle = (styleName: string) => {
+    const currentStyles = [...(character.fightingStyles || [])];
+    currentStyles[styleSlotTarget] = styleName;
+    updateCharacter({ fightingStyles: currentStyles });
+    setShowStyleModal(false);
+  };
+
   const CornerOrnament = ({ className }: { className?: string }) => (
     <svg viewBox="0 0 100 100" className={`absolute w-12 h-12 opacity-20 pointer-events-none ${className}`}>
       <path d="M10 10 L40 10 M10 10 L10 40 M10 10 L30 30" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -59,6 +98,7 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
       'Reação': isDark ? 'bg-blue-950/40 text-blue-400 border-blue-900/40' : 'bg-blue-50 text-blue-800 border-blue-200',
       'Passiva': isDark ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/40' : 'bg-emerald-50 text-emerald-800 border-emerald-200',
       'Upgrade': isDark ? 'bg-amber-400/10 text-amber-500 border-amber-500/20' : 'bg-yellow-50 text-yellow-800 border-yellow-200',
+      'Upgrade Final': isDark ? 'bg-purple-900/20 text-purple-400 border-purple-500/30' : 'bg-purple-50 text-purple-800 border-purple-200',
       'Estrutural': isDark ? 'bg-slate-800/40 text-slate-400 border-slate-700/40' : 'bg-slate-50 text-slate-800 border-slate-200'
     };
     
@@ -74,7 +114,6 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
   return (
     <div className="flex flex-col p-4 sm:p-8 max-w-5xl mx-auto gap-10 pb-40">
       
-      {/* AVISO DE SUBCLASSE REESTILIZADO - CHAMADO DO DESTINO */}
       {needsSubclass && (
         <div className={`p-10 border-4 border-double rounded-[3rem] animate-pulse shadow-[0_0_50px_rgba(212,175,55,0.2)] flex flex-col sm:flex-row items-center justify-between gap-8 relative overflow-hidden ${isDark ? 'bg-[#1a0f00] border-[#d4af37]/40' : 'bg-orange-50 border-[#8b4513]/30'}`}>
           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.15)_0%,transparent_70%)] pointer-events-none"></div>
@@ -102,7 +141,6 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
         </div>
       )}
 
-      {/* CABEÇALHO DA CLASSE REFINADO */}
       <div className={`border-4 rounded-[2.5rem] p-8 sm:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.4)] relative overflow-hidden flex flex-col items-center sm:items-start sm:flex-row gap-10 ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
         <CornerOrnament className="top-4 left-4" />
         <CornerOrnament className="top-4 right-4 rotate-90" />
@@ -121,7 +159,7 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
           </h2>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-3">
              {character.subclass ? (
-               <div className="flex items-center gap-3">
+               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
                 <span className={`fantasy-title text-2xl ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>
                   {translateValue(character.subclass, subclassTranslations)}
                 </span>
@@ -130,6 +168,16 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
                     {character.totemAnimal}
                   </span>
                 )}
+                <button 
+                  onClick={onSelectSubclass}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg cinzel text-[8px] font-extrabold uppercase tracking-widest border transition-all hover:scale-105 active:scale-95 ${
+                    isDark ? 'bg-white/5 border-white/10 text-[#d4af37]/60 hover:text-[#d4af37]' : 'bg-black/5 border-black/10 text-[#8b4513]/60 hover:text-[#8b4513]'
+                  }`}
+                  title={t.change_subclass}
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                  {t.manage}
+                </button>
                </div>
              ) : (
                <span className={`cinzel text-xs font-bold uppercase tracking-[0.4em] opacity-40 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>
@@ -151,7 +199,6 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
         )}
       </div>
 
-      {/* TIMELINE DE HABILIDADES */}
       <div className="space-y-16">
         <div className="flex items-center gap-6 opacity-30">
           <div className="h-px flex-1 bg-current"></div>
@@ -162,7 +209,6 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
         </div>
 
         <div className="grid grid-cols-1 gap-12 relative">
-          {/* Linha da Timeline lateral */}
           <div className={`absolute left-[19px] sm:left-[23px] top-4 bottom-4 w-1 hidden sm:block opacity-10 rounded-full ${isDark ? 'bg-white' : 'bg-black'}`}></div>
 
           {[...Array(20)].map((_, i) => {
@@ -170,7 +216,6 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
             const isUnlocked = level <= character.level;
             const levelFeatures = getFeaturesForLevel(level);
             
-            // Layout para Nível Bloqueado (Estado Selado)
             if (!isUnlocked) {
                return (
                 <div key={level} className="group relative flex gap-8 items-start opacity-20 grayscale transition-all duration-700">
@@ -194,7 +239,6 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
                );
             }
 
-            // Layout para Nível Desbloqueado com Conteúdo
             return (
               <div key={level} className="group relative flex gap-8 items-start transition-all duration-500">
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-none border-2 shadow-2xl transition-all group-hover:scale-110 z-20 ${
@@ -216,74 +260,106 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
                        </p>
                     </div>
                   ) : (
-                    levelFeatures.map((f, idx) => (
-                      <div 
-                        key={idx} 
-                        className={`border-2 rounded-[2rem] p-8 sm:p-10 shadow-2xl relative overflow-hidden transition-all group/card hover:shadow-[0_15px_40px_rgba(0,0,0,0.3)] ${
-                          f.isKey 
-                            ? (isDark ? 'bg-[#1a1a1a] border-[#d4af37]/40 ring-1 ring-[#d4af37]/20' : 'bg-white border-[#8b4513]/40 ring-1 ring-[#8b4513]/10')
-                            : (isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-white border-[#8b4513]/10')
-                        }`}
-                      >
-                        {/* Indicador de Chave / Especialização */}
-                        {f.isKey && (
-                          <div className={`absolute -right-12 -top-12 w-24 h-24 rotate-45 pointer-events-none opacity-20 ${isDark ? 'bg-[#d4af37]' : 'bg-[#8b4513]'}`}></div>
-                        )}
-                        
-                        <div className="flex flex-col gap-4">
-                          <div className="flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-3">
-                                <h4 className={`fantasy-title text-3xl tracking-wide group-hover/card:text-[#d4af37] transition-colors ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>
-                                  {f.name}
-                                </h4>
-                                {f.subclass && (
-                                  <span className={`px-2 py-0.5 rounded border text-[7px] cinzel font-bold uppercase tracking-widest ${
-                                    isDark ? 'bg-[#8b4513]/20 border-[#8b4513]/40 text-[#d4af37]' : 'bg-orange-50 border-[#8b4513]/20 text-[#8b4513]'
-                                  }`}>
-                                    {lang === 'pt' ? 'VÍNCULO DE CAMINHO' : 'PATH BOND'}
-                                  </span>
+                    levelFeatures.map((f, idx) => {
+                      // LÓGICA ESPECIAL PARA ESTILO DE LUTA
+                      const isStyleSlot = f.name === "Estilo de Luta" || f.name === "Estilo de Combate Adicional";
+                      const slotIdx = f.name === "Estilo de Luta" ? 0 : 1;
+                      const selectedStyleName = character.fightingStyles?.[slotIdx];
+                      const styleData = selectedStyleName ? FIGHTING_STYLES_PHB.find(s => s.name === selectedStyleName) : null;
+
+                      return (
+                        <div 
+                          key={idx} 
+                          className={`border-2 rounded-[2rem] p-8 sm:p-10 shadow-2xl relative overflow-hidden transition-all group/card hover:shadow-[0_15px_40px_rgba(0,0,0,0.3)] ${
+                            f.isKey 
+                              ? (isDark ? 'bg-[#1a1a1a] border-[#d4af37]/40 ring-1 ring-[#d4af37]/20' : 'bg-white border-[#8b4513]/40 ring-1 ring-[#8b4513]/10')
+                              : (isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-white border-[#8b4513]/10')
+                          }`}
+                        >
+                          {f.isKey && (
+                            <div className={`absolute -right-12 -top-12 w-24 h-24 rotate-45 pointer-events-none opacity-20 ${isDark ? 'bg-[#d4af37]' : 'bg-[#8b4513]'}`}></div>
+                          )}
+                          
+                          <div className="flex flex-col gap-4">
+                            <div className="flex flex-wrap items-center justify-between gap-4">
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-3">
+                                  <h4 className={`fantasy-title text-3xl tracking-wide group-hover/card:text-[#d4af37] transition-colors ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>
+                                    {isStyleSlot && styleData ? `${t.fighting_style} — ${styleData.name}` : f.name}
+                                  </h4>
+                                  {f.subclass && (
+                                    <span className={`px-2 py-0.5 rounded border text-[7px] cinzel font-bold uppercase tracking-widest ${
+                                      isDark ? 'bg-[#8b4513]/20 border-[#8b4513]/40 text-[#d4af37]' : 'bg-orange-50 border-[#8b4513]/20 text-[#8b4513]'
+                                    }`}>
+                                      {lang === 'pt' ? 'VÍNCULO DE CAMINHO' : 'PATH BOND'}
+                                    </span>
+                                  )}
+                                </div>
+                                {(f.summary || isStyleSlot) && (
+                                  <p className={`cinzel text-[10px] font-bold tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>
+                                    {isStyleSlot ? (styleData ? t.saves : t.fighting_style_modal_desc) : f.summary}
+                                  </p>
                                 )}
                               </div>
-                              {f.summary && (
-                                <p className={`cinzel text-[10px] font-bold tracking-widest opacity-60 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>
-                                  {f.summary}
-                                </p>
-                              )}
+                              <ActionBadge type={isStyleSlot && styleData ? 'Passiva' : f.actionType} />
                             </div>
-                            <ActionBadge type={f.actionType} />
-                          </div>
-                          
-                          <div className={`relative p-1 border-l-4 rounded-r-xl ${isDark ? 'border-[#d4af37]/20 bg-white/5' : 'border-[#8b4513]/20 bg-black/5'}`}>
-                            <p className={`parchment-text text-lg leading-relaxed p-4 italic ${isDark ? 'text-[#e8d5b5]/90' : 'text-[#3e2723]/90'}`}>
-                              "{f.description}"
-                            </p>
-                          </div>
+                            
+                            <div className={`relative p-1 border-l-4 rounded-r-xl ${isDark ? 'border-[#d4af37]/20 bg-white/5' : 'border-[#8b4513]/20 bg-black/5'}`}>
+                              <p className={`parchment-text text-lg leading-relaxed p-4 italic ${isDark ? 'text-[#e8d5b5]/90' : 'text-[#3e2723]/90'}`}>
+                                "{isStyleSlot && styleData ? styleData.description : f.description}"
+                              </p>
+                            </div>
 
-                          {/* Seletor de Totem - Mantido conforme lógica original mas com UI refinada */}
-                          {character.subclass === "Caminho do Guerreiro Totêmico" && f.name === "Totem Espiritual" && (
-                            <div className={`mt-8 p-6 rounded-2xl border-2 border-dashed ${isDark ? 'bg-[#d4af37]/5 border-[#d4af37]/20' : 'bg-orange-100/30 border-[#8b4513]/20'}`}>
-                               <p className="cinzel text-[10px] font-bold uppercase tracking-[0.3em] mb-6 opacity-60 text-center">{lang === 'pt' ? 'CONVOCAR ESPÍRITO GUARDIÃO' : 'SUMMON GUARDIAN SPIRIT'}</p>
-                               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                  {["Águia", "Lobo", "Urso"].map(totem => (
-                                    <button
-                                      key={totem}
-                                      onClick={() => updateCharacter({ totemAnimal: totem })}
-                                      className={`p-4 rounded-xl cinzel text-xs font-bold uppercase transition-all border-2 relative group/totem ${
-                                        character.totemAnimal === totem
-                                        ? (isDark ? 'bg-[#d4af37] border-white text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-105' : 'bg-[#8b4513] border-[#d4af37] text-white shadow-xl scale-105')
-                                        : (isDark ? 'bg-black/60 border-white/5 text-white/40 hover:border-[#d4af37]/40' : 'bg-white border-[#8b4513]/10 text-[#8b4513]/40 hover:border-[#8b4513]')
-                                      }`}
-                                    >
-                                      {totem}
-                                    </button>
-                                  ))}
-                               </div>
-                            </div>
-                          )}
+                            {/* UI DE SELEÇÃO DE ESTILO */}
+                            {isStyleSlot && (
+                              <div className="mt-4 flex gap-3">
+                                {!styleData ? (
+                                  <button 
+                                    onClick={() => { setStyleSlotTarget(slotIdx); setShowStyleModal(true); }}
+                                    className={`px-8 py-3 rounded-xl cinzel text-[10px] font-bold uppercase tracking-[0.2em] transition-all border-b-4 active:translate-y-1 active:border-b-0 shadow-lg ${
+                                      isDark ? 'bg-[#d4af37] text-black border-black/40' : 'bg-[#8b4513] text-white border-black/40'
+                                    }`}
+                                  >
+                                    {t.choose_fighting_style}
+                                  </button>
+                                ) : (
+                                  <button 
+                                    onClick={() => { setStyleSlotTarget(slotIdx); setShowStyleModal(true); }}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg cinzel text-[8px] font-bold uppercase tracking-widest transition-all opacity-40 hover:opacity-100 ${
+                                      isDark ? 'text-[#d4af37] border border-[#d4af37]/20' : 'text-[#8b4513] border border-[#8b4513]/20'
+                                    }`}
+                                  >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                    {t.change_fighting_style}
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                            {character.subclass === "Caminho do Guerreiro Totêmico" && f.name === "Totem Espiritual" && (
+                              <div className={`mt-8 p-6 rounded-2xl border-2 border-dashed ${isDark ? 'bg-[#d4af37]/5 border-[#d4af37]/20' : 'bg-orange-100/30 border-[#8b4513]/20'}`}>
+                                 <p className="cinzel text-[10px] font-bold uppercase tracking-[0.3em] mb-6 opacity-60 text-center">{lang === 'pt' ? 'CONVOCAR ESPÍRITO GUARDIÃO' : 'SUMMON GUARDIAN SPIRIT'}</p>
+                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    {["Águia", "Lobo", "Urso"].map(totem => (
+                                      <button
+                                        key={totem}
+                                        onClick={() => updateCharacter({ totemAnimal: totem })}
+                                        className={`p-4 rounded-xl cinzel text-xs font-bold uppercase transition-all border-2 relative group/totem ${
+                                          character.totemAnimal === totem
+                                          ? (isDark ? 'bg-[#d4af37] border-white text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-105' : 'bg-[#8b4513] border-[#d4af37] text-white shadow-xl scale-105')
+                                          : (isDark ? 'bg-black/60 border-white/5 text-white/40 hover:border-[#d4af37]/40' : 'bg-white border-[#8b4513]/10 text-[#8b4513]/40 hover:border-[#8b4513]')
+                                        }`}
+                                      >
+                                        {totem}
+                                      </button>
+                                    ))}
+                                 </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
               </div>
@@ -291,6 +367,73 @@ const ClassFeatures: React.FC<Props> = ({ character, updateCharacter, onSelectSu
           })}
         </div>
       </div>
+
+      {/* MODAL DE SELEÇÃO DE ESTILO DE LUTA */}
+      {showStyleModal && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+           <div className={`relative max-w-2xl w-full border-4 rounded-[2.5rem] shadow-[0_30px_80px_rgba(0,0,0,1)] overflow-hidden flex flex-col ${isDark ? 'bg-[#1a1a1a] border-[#333]' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
+              <div className={`absolute inset-0 opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/old-map.png')]`}></div>
+              
+              <div className={`p-8 sm:p-10 relative z-10 flex flex-col`}>
+                 <button 
+                   onClick={() => setShowStyleModal(false)}
+                   className="absolute top-8 right-8 text-[#d4af37] opacity-40 hover:opacity-100 transition-opacity"
+                 >
+                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                 </button>
+
+                 <h2 className={`fantasy-title text-4xl mb-2 ${isDark ? 'text-[#d4af37]' : 'text-[#3e2723]'}`}>
+                   {t.fighting_style}
+                 </h2>
+                 <p className={`parchment-text text-base italic opacity-70 mb-8 ${isDark ? 'text-[#e8d5b5]' : 'text-[#5d4037]'}`}>
+                   {t.fighting_style_modal_desc}
+                 </p>
+
+                 <div className="w-full space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
+                    {FIGHTING_STYLES_PHB.map(style => {
+                      const isAlreadyChosen = character.fightingStyles?.some((s, idx) => s === style.name && idx !== styleSlotTarget);
+                      
+                      return (
+                        <div 
+                          key={style.name}
+                          className={`p-6 rounded-2xl border-2 transition-all flex flex-col sm:flex-row items-center gap-6 ${
+                            isAlreadyChosen 
+                            ? 'opacity-30 grayscale cursor-not-allowed border-black/10' 
+                            : (isDark ? 'bg-white/5 border-white/5 hover:border-[#d4af37]/40' : 'bg-white border-[#8b4513]/10 hover:border-[#8b4513]/40')
+                          }`}
+                        >
+                           <div className="flex-grow text-center sm:text-left">
+                              <h4 className={`fantasy-title text-xl mb-1 ${isDark ? 'text-[#e8d5b5]' : 'text-[#3e2723]'}`}>{style.name}</h4>
+                              <p className="parchment-text text-sm opacity-80 leading-relaxed italic">"{style.description}"</p>
+                           </div>
+                           <button 
+                             disabled={isAlreadyChosen}
+                             onClick={() => selectFightingStyle(style.name)}
+                             className={`px-6 py-2 rounded-lg cinzel text-[9px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
+                               isAlreadyChosen
+                               ? 'bg-transparent text-gray-500 border border-gray-500/20'
+                               : (isDark ? 'bg-[#d4af37] text-black hover:brightness-110 shadow-lg' : 'bg-[#8b4513] text-white hover:brightness-110 shadow-lg')
+                             }`}
+                           >
+                             {isAlreadyChosen ? t.already_selected : t.select_btn}
+                           </button>
+                        </div>
+                      );
+                    })}
+                 </div>
+
+                 <div className="mt-8 pt-6 border-t border-black/10">
+                    <button 
+                      onClick={() => setShowStyleModal(false)}
+                      className={`w-full py-3 rounded-xl cinzel text-[10px] font-bold uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity`}
+                    >
+                      {t.cancel}
+                    </button>
+                 </div>
+              </div>
+           </div>
+        </div>
+      )}
     </div>
   );
 };

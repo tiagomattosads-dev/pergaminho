@@ -1,4 +1,3 @@
-
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { Character, Attribute, Skill, Weapon, OtherAttack } from '../types';
 import { SKILLS, CLASSES_PHB, getLevelFromXP, getProficiencyFromLevel, SUBCLASSES_PHB } from '../constants';
@@ -28,17 +27,14 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
   const getModifier = (score: number) => Math.floor((score - 10) / 2);
   const isDark = theme === 'dark';
 
-  // Helper para traduzir valores técnicos
   const translateValue = (val: string, dictionary: Record<string, { pt: string, en: string }>) => {
     return dictionary[val] ? dictionary[val][lang] : val;
   };
 
-  // Resetar erro do retrato quando o personagem mudar ou o link mudar
   useEffect(() => {
     setPortraitError(false);
   }, [character.id, character.portrait]);
 
-  // Fechar dropdown ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -76,13 +72,12 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
           <div className="flex items-center justify-center w-full h-full px-1">
             <input 
               type="number"
-              max={character.level === 1 ? 15 : 20}
+              max={30}
               min="0"
               value={score}
               onChange={(e) => {
                 let val = parseInt(e.target.value) || 0;
-                const maxAllowed = character.level === 1 ? 15 : 20;
-                if (val > maxAllowed) val = maxAllowed;
+                if (val > 30) val = 30;
                 updateCharacter({ stats: { ...character.stats, [attr]: val } });
               }}
               className={`text-4xl sm:text-5xl font-bold fantasy-title bg-transparent w-full text-center focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
@@ -133,12 +128,15 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
       classMetadata: CLASSES_PHB[selectedClass] 
     };
 
-    // Reset de campos específicos se não for mais Bárbaro
+    // Limpar estilos de luta se deixar de ser Guerreiro
+    if (selectedClass !== "Guerreiro") {
+      updates.fightingStyles = [];
+    }
+
     if (selectedClass !== "Bárbaro") {
       updates.totemAnimal = null;
     }
 
-    // Reset de subclasse se não pertencer à nova classe
     if (currentSubclass && !allowedSubclasses.includes(currentSubclass)) {
       updates.subclass = null;
     }
@@ -151,11 +149,9 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
     <div className="flex flex-col p-2 sm:p-4 lg:p-6 pb-12 gap-6">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && onImageUpload(e.target.files[0])} />
 
-      {/* SEÇÃO DE PERFIL EDITÁVEL */}
       <section className={`grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 rounded-xl border shadow-inner ${
         isDark ? 'bg-white/5 border-white/10' : 'bg-[#8b4513]/5 border-[#8b4513]/20'
       }`}>
-        {/* Campo de Classe Customizado */}
         <div className="flex flex-col relative" ref={dropdownRef}>
           <label className={`cinzel text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{t.class}</label>
           <button 
@@ -173,7 +169,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
             </svg>
           </button>
 
-          {/* Menu Dropdown Suspenso */}
           {isClassDropdownOpen && (
             <div className={`absolute top-full left-0 right-0 mt-2 z-[200] border-2 rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 ${
               isDark ? 'bg-[#1a1a1a] border-[#333]' : 'bg-[#fdf5e6] border-[#8b4513]'
@@ -197,7 +192,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
           )}
         </div>
 
-        {/* Outros campos de Perfil */}
         {[
           { label: t.race, value: character.race, key: 'race', dict: raceTranslations },
           { label: t.background, value: character.background, key: 'background', dict: null },
@@ -206,7 +200,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
           <div key={field.key} className="flex flex-col">
             <label className={`cinzel text-[10px] font-bold uppercase tracking-widest mb-1 opacity-80 ${isDark ? 'text-[#d4af37]' : 'text-[#8b4513]'}`}>{field.label}</label>
             <input 
-              value={field.dict ? translateValue(field.value, field.dict) : field.value} 
+              value={field.dict ? translateValue(field.value, field.dict as Record<string, {pt:string, en:string}>) : field.value} 
               onChange={(e) => updateCharacter({ [field.key]: e.target.value })}
               className={`bg-transparent border-b outline-none fantasy-title text-base sm:text-lg px-1 transition-colors h-[28px] sm:h-[32px] ${
                 isDark ? 'border-white/10 focus:border-[#d4af37] text-[#e8d5b5]' : 'border-[#8b4513]/20 focus:border-[#8b4513] text-[#3e2723]'
@@ -216,10 +210,7 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
         ))}
       </section>
 
-      {/* LAYOUT PRINCIPAL RESPONSIVO */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-        
-        {/* COLUNA ESQUERDA: ATRIBUTOS */}
         <section className="lg:col-span-2 flex flex-col gap-6 order-2 lg:order-1">
            <div className={`border-2 p-4 rounded-2xl shadow-inner ${isDark ? 'bg-black/20 border-white/5' : 'bg-[#fdf5e6]/70 border-[#8b4513]/20'}`}>
               <h3 className={`cinzel text-xs font-bold text-center mb-10 uppercase tracking-[0.2em] border-b pb-2 ${isDark ? 'text-[#d4af37] border-white/5' : 'text-[#8b4513] border-[#8b4513]/10'}`}>{t.attributes}</h3>
@@ -231,10 +222,8 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
            </div>
         </section>
 
-        {/* COLUNA CENTRAL: RETRATO, DEFESA, SALVAGUARDAS E VIDA */}
         <section className="lg:col-span-6 flex flex-col gap-6 order-1 lg:order-2">
           <div className="flex flex-col md:flex-row lg:flex-col gap-6">
-            {/* Retrato Quadrado */}
             <div className={`border-2 p-3 rounded-2xl shadow-xl flex flex-col items-center gap-4 relative ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
               <div className="w-full flex justify-between items-center z-10">
                 <div className={`flex flex-col items-center backdrop-blur-sm border p-1.5 rounded-lg w-16 shadow-sm ${isDark ? 'bg-black/40 border-white/10' : 'bg-white/70 border-[#8b4513]/20'}`}>
@@ -269,7 +258,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
               </div>
             </div>
 
-            {/* Defesa e Salvaguardas */}
             <div className="w-full md:w-1/2 lg:w-full space-y-6">
               <div className="grid grid-cols-3 gap-3">
                 {[
@@ -406,7 +394,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
           </div>
         </section>
 
-        {/* COLUNA DIREITA: PERÍCIAS E COMBATE */}
         <section className="lg:col-span-4 flex flex-col gap-6 order-3">
           <div className={`border-2 p-5 rounded-xl shadow-xl ${isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#fdf5e6] border-[#8b4513]'}`}>
             <h2 className={`cinzel text-sm font-bold border-b mb-6 pb-2 tracking-[0.2em] uppercase text-center ${isDark ? 'text-[#d4af37] border-white/10' : 'text-[#8b4513] border-[#8b4513]/30'}`}>{t.skills}</h2>
@@ -501,7 +488,6 @@ const CharacterSheet: React.FC<Props> = ({ character, updateCharacter, onImageUp
                           />
                         </div>
                       </div>
-                      {/* DESCRIÇÃO DE ARMA COM FONTE LIMPA */}
                       <div className="mt-2">
                         <textarea
                           placeholder={lang === 'pt' ? "Propriedades da arma (Acuidade, Versátil...)" : "Weapon properties (Finesse, Versatile...)"}
